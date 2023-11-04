@@ -2,3 +2,18 @@
 title: "Classifiers overview"
 sidebarTitle: "Overview"
 ---
+
+### Parameters
+
+| Parameter | Type   | Description                   |
+| --------- | ------ | ----------------------------- |
+| **value** | string | The text you want to analyze. |
+
+### Returns
+
+Returns an object with the detected label and respective scores.
+
+| Parameter        | Type    | Description                                                                                                   |
+| ---------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| **label**        | string? | The most probable label. Returns null if the analyzer fails.                                                  |
+| **label_scores** | obejct  | An object containing all the label scores. From 0-1 score with 1 meaning a high probability of being correct. |

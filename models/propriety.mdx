@@ -1,0 +1,29 @@
+---
+title: "Propriety model"
+sidebarTitle: "Propriety"
+---
+
+Detect sexual and flirty language. Closely related to the toxicity model but specialized to detect more subtle inappropriate comments.
+
+```json Response Example:
+{
+  "label": "FLIRTATION",
+  "label_scores": {
+    "FLIRTATION": 0.7784964,
+    "SEXUALLY_EXPLICIT": 0.315303,
+    "NEUTRAL": 0.2215036
+  }
+}
+```
+
+## Labels
+
+| Label                 | Description                                   |
+| --------------------- | --------------------------------------------- |
+| **FLIRTATION**        | Pickup lines, compliments on appearance, etc. |
+| **SEXUALLY_EXPLICIT** | References to sexual acts, body parts, etc.   |
+| **NEUTRAL**           | No sexual content                             |
+
+<Snippet file="languages.mdx" />
+
+<Snippet file="limitations.mdx" />

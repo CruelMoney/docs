@@ -1,0 +1,38 @@
+---
+title: "Toxicity model"
+sidebarTitle: "Toxicity"
+---
+
+Works on the whole text to detect general features like profanity, swearing, racism, threats etc. Contrary to our [profanity filter](#swear-words-and-profanity) the toxicity analyzer will detect cases where the profanity is not as pronounced.
+
+```json Toxicity Response Example:
+{
+  "label": "TOXICITY",
+  "score": 0.9563754,
+  "label_scores": {
+    "TOXICITY": 0.9563754,
+    "PROFANITY": 0.89909166,
+    "INSULT": 0.68668073,
+    "SEVERE_TOXICITY": 0.45895407,
+    "DISCRIMINATION": 0.27914262,
+    "THREAT": 0.09009721,
+    "NEUTRAL": 0.0436246
+  }
+}
+```
+
+## Labels
+
+| Label               | Description                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------ |
+| **TOXICITY**        | The general toxicity. If any other labels have a high score, this one is likely to score high as well. |
+| **PROFANITY**       | Containing swearing, curse words, and other obscene language.                                          |
+| **DISCRIMINATION**  | Racism and other discrimination based on race, religion, gender, etc.                                  |
+| **INSULT**          | Insulting, inflammatory, or negative language.                                                         |
+| **SEVERE_TOXICITY** | Very toxic, containing severe profanity, racism, etc.                                                  |
+| **THREAT**          | Threatening, bullying, or aggressive language.                                                         |
+| **NEUTRAL**         | Nothing toxic was detected.                                                                            |
+
+<Snippet file="languages.mdx" />
+
+<Snippet file="limitations.mdx" />

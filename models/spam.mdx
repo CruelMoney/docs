@@ -1,0 +1,31 @@
+---
+title: "Spam model"
+sidebarTitle: "Spam"
+---
+
+Detect spam and insubstantial text, etc.
+
+```json Response Example:
+{
+  "label": "SPAM",
+  "label_scores": {
+    "SPAM": 0.9337343,
+    "INCOHERENT": 0.89032257,
+    "UNSUBSTANTIAL": 0.68944305,
+    "NEUTRAL": 0.0662657
+  }
+}
+```
+
+## Labels
+
+| Label             | Description                                                           |
+| ----------------- | --------------------------------------------------------------------- |
+| **UNSUBSTANTIAL** | Trival or short content.                                              |
+| **INCOHERENT**    | Difficult to understand and nonsensical.                              |
+| **SPAM**          | Repetitive, irrelevant content trying to make you visit a website eg. |
+| **NEUTRAL**       | The text is relativey high quality.                                   |
+
+<Snippet file="languages.mdx" />
+
+<Snippet file="limitations.mdx" />

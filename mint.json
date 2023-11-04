@@ -145,7 +145,7 @@
           ]
         },
         {
-          "group": "Entity Extractors",
+          "group": "Entity filters",
           "pages": [
             "models/entity-extractor-overview",
             "models/email",
