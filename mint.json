@@ -115,6 +115,19 @@
     },
 
     {
+      "group": "Content queues",
+      "pages": [
+        "content-queues/overview",
+        "content-queues/configuration",
+        "content-queues/actions",
+        "content-queues/end-users",
+        "content-queues/webhooks",
+        "content-queues/integrations",
+        "content-queues/inviting-moderators"
+      ]
+    },
+
+    {
       "group": "Ready-made models",
       "pages": [
         "models/overview",

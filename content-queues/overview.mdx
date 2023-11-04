@@ -1,0 +1,39 @@
+---
+title: "Content queues"
+sidebarTitle: "Overview"
+description: "What are content queues and how do they work?"
+---
+
+<Frame>
+  <img
+    className="block "
+    src="/images/content-queue.png"
+    alt="Content queue for reviewing and improving automated moderation"
+  />
+</Frame>
+
+The moderation queue is a streamlined way to manually moderate content. It's an optional addition to the automated moderation.
+
+<Steps>
+  <Step title="Submit content">
+    Content submitted through the [moderation endpoint](/api-reference) will
+    enter the queue based on the queues filter.
+  </Step>
+  <Step title="Take actions">
+    The queue is a list of content that needs to be moderated. You can take
+    actions on the content, such as approving or rejecting it.
+  </Step>
+  <Step title="Resolve content">
+    The goal is to resolve all content in the queue. Once all content is
+    resolved, the queue is empty.
+  </Step>
+</Steps>
+
+#### Some of the things you can do with content queues:
+
+- Review content before it's published
+- Perform a manual review of content that was automatically rejected
+- Review content that was flagged by users
+- Ban users that are submitting unwanted content
+- Improve your models by correcting mistakes
+- Get insights into the content that is being submitted

@@ -1,0 +1,25 @@
+---
+title: "Queue actions"
+sidebarTitle: "Actions"
+description: "Learn how to use actions to moderate content and users"
+---
+
+You can create custom actions to execute on content or users. The actions will show up in the selected moderation queues, and can be executed by moderators.<br></br>
+
+On way of using actions is to create a custom queues that shows only content that have had a specific action performed. This way you can move content between queues using actions. <br></br>
+
+Actions can also be performed programmatically using the [execute action endpoint](/api-reference/execute-an-action).
+
+We recommend using actions for things like removing content from your platform, or banning users. <br></br>
+
+## Resolving an item when action is executed
+
+Actions can be configured to resolve the item when the action is executed. This means that the item will be removed from the queue when the action is executed.
+
+## Adding a value to an action
+
+You can add a value to an action. This value can be used to add a reason for the action, or to add a duration for a ban etc. <br></br>
+
+## Integrating actions
+
+To integrate actions in your application you can use [webhooks](/content-queues/webhooks) or use one of our [platform plugins](https://moderationapi.com/integrations).
