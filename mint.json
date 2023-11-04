@@ -98,11 +98,44 @@
     },
 
     {
+      "group": "Automate moderation",
+      "pages": [
+        "content-moderation/overview",
+        "content-moderation/project-setup",
+        {
+          "group": "Submitting content",
+          "pages": [
+            "content-moderation/analyze-text",
+            "content-moderation/analyze-image",
+            "content-moderation/analyze-video",
+            "content-moderation/analyze-audio"
+          ]
+        }
+      ]
+    },
+
+    {
+      "group": "Explore models",
+      "pages": [
+        {
+          "group": "Ready-made models",
+          "pages": ["models/ready-made-models"]
+        },
+        "models/custom-models",
+        "models/ai-agents",
+        "models/image",
+        "models/video",
+        "models/audio",
+        "models/wordlists"
+      ]
+    },
+    {
       "group": "",
       "pages": [
         "api-reference/introduction",
         "api-reference/authentication",
-        "api-reference/errors"
+        "api-reference/errors",
+        "api-reference/rate-limits"
       ]
     },
     {

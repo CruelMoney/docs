@@ -1,0 +1,148 @@
+---
+title: "Analyze text"
+sidebarTitle: "Analyze text"
+---
+
+To analyze text, you need to send a POST request to the [text moderation endpoint](/api-reference).
+
+```javascript Node.js text analysis example
+const response = await fetch(
+  "https://moderationapi.com/api/v1/moderation/text",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${PROJECT_API_KEY}`,
+    },
+    body: JSON.stringify({
+      value:
+        "You can contact me on mr_robot[at]gmail|DOT|com or call me on 12 34 65 78",
+    }),
+  }
+);
+
+const data = await data.json();
+```
+
+```json Response example
+{
+  "status": "success",
+  "request": {
+    "timestamp": 1612792574690,
+    "quota_usage": 1
+  },
+  "content_moderated": true,
+  "data_found": true,
+  "flagged": true,
+  "original": "You can contact me on mr_robot[at]gmail|DOT|com or call me on 12 34 65 78",
+  "content": "You can contact me on {{ email hidden }} or call me on {{ number hidden }}",
+  "email": {
+    "found": true,
+    "mode": "SUSPICIOUS",
+    "matches": ["mr_robot[at]gmail|DOT|com"]
+  },
+  "phone": {
+    "found": true,
+    "mode": "NORMAL",
+    "matches": ["12 34 65 78"]
+  },
+  "sentiment": {
+    "label": "NEUTRAL",
+    "labelIndex": 0,
+    "score": 0.997857,
+    "label_scores": {
+      "NEUTRAL": 0.997857,
+      "POSITIVE": 0.001105,
+      "NEGATIVE": 0.000666
+    }
+  }
+}
+```
+
+## Acting on the response
+
+Here are some examples on how to use the response in your application.
+
+### Utilize flagged field
+
+The easiest way to get started is to use the `flagged` field. The `flagged` field is a boolean that indicates if any of the models detected something non-neutral. You can adjust the thresholds for flagging content in the project settings. See [flagging thresholds](/content-moderation/project-setup#flagging-thresholds).
+
+```javascript
+if (data.flagged) {
+  // Do something
+}
+```
+
+### Utilize model scores
+
+You can also utilize the model scores to have more granular control over the content moderation. For example, if you want to flag content that has a negative sentiment score of more than 0.9, you can do the following:
+
+```javascript
+if (data.flagged && data.sentiment.label_scores.NEGATIVE > 0.9) {
+  // Do something
+}
+```
+
+### Saving matched entities
+
+You can also save the matched entities to your database. For example, if you want to save the email address that was detected in the content, you can do the following:
+
+```javascript
+if (data.email.mathces.length > 0) {
+  // Save data.email.matches[0] to your database
+}
+```
+
+### Storing moderated content
+
+Some models can be configured to modify the content. For example, the `email` model can mask email addresses with `{{ email hidden }}`. You can store the modified content in your database by using the `content` field.
+
+```javascript
+if (data.content_moderated) {
+  // Store data.content in your database
+}
+```
+
+This can be useful if you need to anonymize/pseudonymize the content before storing it in your database, or if you do not wish your end users to see personal information.
+
+## Adding context to requests
+
+The [text moderation endpoint](/api-reference) allows for `contextId` in the request body.<br></br>
+
+This could be the ID of a chatroom or a post thread.<br></br>
+
+This enables improved accuracy in some models as they account for previous messages in the same context.<br></br>
+
+If you are using [content queues](/content-queues) the `contextId` can also be used to filter the content queue to only show content from a specific context.
+
+## Adding author information
+
+The [text moderation endpoint](/api-reference) allows for `authorId` in the request body. <br></br>
+
+This would be the ID of the user who wrote the content. <br></br>
+
+This is useful if you are using [content queues](/content-queues), as it enables you to perform user level moderation, and to filter the content queue to only show content from a specific user.
+
+## Metadata
+
+The [text moderation endpoint](/api-reference) allows for a `metadata` object in the request body. <br></br>
+
+This can be used to add any additional information to the request. For example you can keep a reference ID to the original content in the metadata object. <br></br>
+
+Metadata is shown in the [content queues](/content-queues) and included in any webhooks.
+
+<Tip>
+  If you add a link to the original content in the metadata, you can easily
+  navigate to the original content from the content queues.
+</Tip>
+
+## Opt out of content store
+
+The [text moderation endpoint](/api-reference) allows for a `doNotStore` boolean in the request body. <br></br>
+
+If you set `doNotStore` to `true`, the content will not be stored and only pass through the moderation models. <br></br>
+
+<Warning>
+  If you set `doNotStore` to `true`, the content will not be available in the
+  [content queues](/content-queues) and you will not be able to train custom
+  models based on previous requests.
+</Warning>

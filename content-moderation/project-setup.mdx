@@ -1,0 +1,144 @@
+---
+title: "Project setup"
+description: "Learn to configure a project for your use-case"
+---
+
+## Creating a project
+
+<Note>
+  Depending on your plan your might have a limited number of projects available.
+</Note>
+
+You can create a new project from the [projects page](https://moderationapi.com/app/projects) on your dashboard.<br></br>
+
+We recommend to create a project for each part of your application. For example, if you have a chat application, you can create a project for the chat messages and another project for the user profiles. <br></br>
+
+It is also possible to create a single project for all the content of your application. However, this is not recommended because it makes it harder to manage, and can possibly lead to higher costs. <br></br>
+
+Lastly, it is recommended to create a seperate proejct project for your development environment to keep the data separate from your production environment and to avoid accidentally using your production API key in your development environment. <br></br>
+
+## Adding models
+
+<Note>
+  Depending on your plan your might have a limited number of models per project.
+</Note>
+
+Depending on what you want to do with your project, you will need to add different models. For example, if you want to use the project for sentiment analysis, you will need to add a sentiment analysis model. If you want to detect swear words, there's a profanity model for that.<br></br>
+
+Use multiple models to get a more complete analysis of your content. For example, you can use the toxicity model to detect toxic content and the NSFW model to detect sensitive content. <br></br>
+
+Each model will extend the API response with a new field: the ID of the model and the result of the model. For example, if you add the toxicity analysis model, the API response will include a `toxicity` field with the result of the toxicity model.<br></br>
+
+```json
+{
+  // ...
+  "flagged": false,
+  "original": "I like ice cream",
+  "toxicity": {
+    "label": "NEUTRAL",
+    "score": 0.977389501,
+    "label_scores": {
+      "TOXICITY": 0.022610499,
+      "PROFANITY": 0.016821137,
+      "INSULT": 0.008937885,
+      "THREAT": 0.0084793,
+      "DISCRIMINATION": 0.0048097214,
+      "SEVERE_TOXICITY": 0.0018978119,
+      "NEUTRAL": 0.977389501
+    }
+  }
+}
+```
+
+Find the details about each available model in the [models section](/models/ready-made-models) of the documentation. <br></br>
+
+## Flagging thresholds
+
+Notice in the example above, that the `flagged` field is set to `false`. This is because all the _non-neutral labels_ of the toxicity model have a score below the flagging threshold.<br></br>
+
+The default threshold is **0.5** (50% confidence), but you can configure the threshold for each model in your project. <br></br>
+
+<Frame>
+  <img
+    className="block "
+    src="/images/flagging-thresholds.png"
+    alt="Flagging thresholds"
+  />
+</Frame>
+
+By changing the flagging threshold, you can control how strict the model is. For example, if you want to accept more content, you can increase the threshold to 0.75. This means that the model will only flag content if it is 75% confident about a non-neutral label. <br></br>
+
+On the other hand, if you want to be more strict, you can lower the threshold to 0.25. This means that the model will flag content even if it's only 25% confident about a non-neutral label.
+
+<CodeGroup>
+```json Threshold 50%
+{
+  // Threshold set to 0.5
+  "flagged": false, // 👈 not flagged
+  "original": "Only hobbits live in the shire",
+  "toxicity": {
+    "label": "NEUTRAL",
+    "score": 0.72952238,
+    "label_scores": {
+        // ...
+        "TOXICITY": 0.27047762, // 👈 score not above 0.5
+        "NEUTRAL": 0.72952238
+    }
+  }
+}
+```
+```json Threshold 25%
+{
+  // Threshold set to 0.25
+  "flagged": true, // 👈 flagged
+  "original": "Only hobbits live in the shire",
+  "toxicity": {
+    "label": "NEUTRAL",
+    "score": 0.72952238,
+    "label_scores": {
+        // ...
+        "TOXICITY": 0.27047762, // 👈 score above 0.25
+        "NEUTRAL": 0.72952238
+    }
+  }
+}
+```
+</CodeGroup>
+<br></br>
+<Info>
+  Please note that changing the flagging threshold does not affect the score or
+  output of the individual models. It only affects the `flagged` field of the
+  API response.
+</Info>
+
+Thresholds can be configured independently for each model. So you can be more strict with some types of content and more loose with others. If any of the models exceeds their respective threshold, the `flagged` field will be set to `true`.
+
+### What is the flagged field used for?
+
+We recommend to use the `flagged` field in your application code to make decisions about the content. That way, you can change the flagging threshold without having to change your application code. <br></br>
+
+Next, when using [content queues](/content-queues/overview), you can filter the content based on the `flagged` field. By default only flagged content enters the queue.
+
+### Flagging for recognizer models
+
+Some models do not return any scores, but a list of matches. For example, the profanity model returns a list of swear words that were found in the text. In this case, you the item is flagged if the list contains at least one item. <br></br>
+
+## Manage project API key
+
+<Warning>
+  Keep your API key secret. Anyone with your API key can use your project.
+</Warning>
+
+After you've created a project, you can find the API key in the project integration page.<br></br>
+
+<Frame>
+  <img className="block " src="/images/api-key.png" alt="Project API key" />
+</Frame>
+
+To reset the API key, click the "Reset API key" button. This will invalidate the old API key and generate a new one. <br></br>
+
+## Changing project name
+
+You can change the name of your project at any time. The name is only used for your own reference.<br></br>
+
+Find the project name in the project settings page.<br></br>
