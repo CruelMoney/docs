@@ -1,0 +1,203 @@
+---
+title: "Webhooks"
+sidebarTitle: "Webhooks"
+---
+
+You can set up webhooks for common events and actions from the [moderation queue](/content-queues/overview). This is useful if you want to integrate the queue with your own systems. Webhooks are configured under [integrations in your dashboard](https://moderationapi.com/app/moderation/integrations)<br></br>
+
+The webhook payload will be sent as a `POST` request to the URL you specify. <br></br>
+
+The webhooks require your server to respond with a 200 status code within 5 seconds, otherwise they will be retried. Webhooks are tried at most 5 times. <br></br>
+
+## Webhook payload
+
+<br></br>
+
+<ResponseField name="id" type="string" required>
+  The unique id of the event.
+</ResponseField>
+<ResponseField name="type" type="string" required>
+  The type of the webhook. Can be `QUEUE_ITEM_NEW`, `QUEUE_ITEM_ACTION` or
+  `QUEUE_ITEM_COMPLETED`.
+</ResponseField>
+<ResponseField name="timestamp" type="number" required>
+  The timestamp of when the webhook was sent.
+</ResponseField>
+<ResponseField name="item" type="Item Object" required>
+  The content item that triggered the webhook.
+  <Expandable title="properties">
+    <ResponseField name="id" type="string" required>
+      The id of the content item.
+    </ResponseField>
+    <ResponseField name="flagged" type="boolean" required>
+      Whether or not the content item has been flagged by your project
+      configuration.
+    </ResponseField>
+    <ResponseField name="labels" type="array" required>
+      An array of labels that the content item has been analyzed for - comes
+      from your project configuration.
+    </ResponseField>
+    <ResponseField name="language" type="string" required>
+      The ISO2 language code of the content item.
+    </ResponseField>
+    <ResponseField name="content" type="string" required>
+      The original content of the content item.
+    </ResponseField>
+    <ResponseField name="timestamp" type="number" required>
+      The timestamp of when the content item was submitted.
+    </ResponseField>
+    <ResponseField name="metadata" type="object">
+      The metadata of the content item. Specified by you when sending the
+      content for [moderation](/api-reference).
+    </ResponseField>
+    <ResponseField name="contextId" type="string">
+      The context id of the content item. Specified by you when sending the
+      content for [moderation](/api-reference).
+    </ResponseField>
+    <ResponseField name="authorId" type="string">
+      The author id of the content item. Specified by you when sending the
+      content for [moderation](/api-reference).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="queue" type="object">
+  The queue that the content item is in.
+  <Expandable title="properties">
+    <ResponseField name="id" type="string" required>
+      The id of the queue.
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+      The name of the queue.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="action" type="object">
+  The action that was taken on the content item if the type is
+  `QUEUE_ITEM_ACTION`.
+  <Expandable title="properties">
+    <ResponseField name="id" type="string" required>
+      The id of the action.
+    </ResponseField>
+    <ResponseField name="name" type="string" required>
+      The name of the action.
+    </ResponseField>
+    <ResponseField name="value" type="string">
+      The value of the action.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+<br></br>
+
+```json Webhook payload example
+{
+  "id": "123",
+  "type": "QUEUE_ITEM_ACTION",
+  "timestamp": 1691496019049,
+  "item": {
+    "id": "644718a7fc78a41ec9f34a6d",
+    "flagged": true,
+    "labels": [
+      {
+        "label": "nsfw/UNSAFE",
+        "score": 0.7266457980882517,
+        "flagged": true,
+        "manual": false
+      },
+      {
+        "label": "nsfw/SENSITIVE",
+        "score": 0.01,
+        "flagged": false,
+        "manual": false
+      }
+    ],
+    "language": "en",
+    "content": "Example content",
+    "timestamp": 1691496019049,
+    "metadata": {
+      "key": "value"
+    },
+    "queue": {
+      "id": "123",
+      "name": "My queue"
+    },
+    "action": {
+      "id": "123",
+      "name": "Remove content",
+      "value": "spam"
+    },
+    "contextId": "demo-context",
+    "authorId": "author-123"
+  }
+}
+```
+
+## Webhook signing
+
+You can verify that the webhook is coming from us by comparing the signature of the payload with the signature provided in the `modapi-signature` header. <br></br>
+
+The signature is a `HMAC SHA256` hash of the payload using your webhook secret as the key. Find you webhook secret under [integrations in your dashboard](https://moderationapi.com/app/moderation/integrations).
+
+```js Next.js webhook signing example
+import crypto from "crypto";
+import { buffer } from "micro";
+
+const handler = async (req, res) => {
+  try {
+    let rawBody = await buffer(req);
+    rawBody = rawBody.toString("utf8");
+
+    // The signature provided by Moderation API
+    const signature = Buffer.from(
+      req.headers["modapi-signature"] || "",
+      "utf8"
+    );
+
+    if (signature.length > 0) {
+      const digest = Buffer.from(
+        crypto
+          .createHmac("sha256", process.env.MODAPI_WEBHOOK_SECRET)
+          .update(rawBody)
+          .digest("hex"),
+        "utf8"
+      );
+
+      // Compare the provided signature to the one we generated
+      const isValid =
+        signature.length == digest.length &&
+        crypto.timingSafeEqual(signature, digest);
+
+      if (!isValid) {
+        throw new Error(
+          `Request body digest (${digest}) did not match modapi-signature (${signature})`
+        );
+      }
+    }
+
+    const payload = JSON.parse(rawBody);
+
+    console.log({ payload });
+
+    res.json({
+      ok: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error,
+      time: new Date(),
+    });
+  }
+};
+
+// disable body parser so we can access raw body
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default handler;
+```
+
+### Preventing replay attacks
+
+To prevent replay attacks, you can use the timestamp in the payload of the webhook to ensure that the webhook is not older than 5 minutes. <br></br>
