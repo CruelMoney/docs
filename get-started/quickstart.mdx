@@ -1,86 +1,104 @@
 ---
-title: 'Quickstart'
-description: 'Start building awesome documentation in under 5 minutes'
+title: "Quickstart"
+description: "Start moderating your content in under 5 minutes"
 ---
 
-## Setup your development
+## 1. Create a project
 
-Learn how to update your docs locally and and deploy them to the public.
+Visit the [dashboard](https://moderationapi.com/app) and create a new project. You can either create a project using one of the templates or create a blank project.
 
-### Edit and preview
+You can add multiple models to a project. Each model will detect a different type of content. For example, you can create a project with a `toxicity` model and a `profanity` model to prevent innapropriate content from being posted on your platform.
 
-<AccordionGroup>
-  <Accordion icon="github" title="Clone your docs locally">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Preview changes">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `mint.json` is): ``` mintlify dev ```
-  </Accordion>
-</AccordionGroup>
+<Frame>
+  <img
+    className="block "
+    src="/images/project-page.png"
+    alt="Content moderation project"
+  />
+</Frame>
 
-### Deploy your changes
+## 2. Submit content for analysis
 
-<AccordionGroup>
+After configuring up your project you can submit content to the project for analysis.
 
-<Accordion icon="message-bot" title="Install our Github app">
-  Our Github app automatically deploys your changes to your docs site, so you
-  don't need to manage deployments yourself. You can find the link to install on
-  your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-  successfully installed, there should be a check mark next to the commit hash
-  of the repo.
-</Accordion>
-<Accordion icon="rocket" title="Push your changes">
-  [Commit and push your changes to
-  Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push)
-  for your changes to update in your docs site. If you push and don't see that
-  the Github app successfully deployed your changes, you can also manually
-  update your docs through our [dashboard](https://dashboard.mintlify.com).
-</Accordion>
+<Tabs>
 
-</AccordionGroup>
+<Tab icon="rocket" title="Using the dashboard">
+  The easiest way to submit content for analysis is to use the dashboard. You
+  can submit content for analysis by clicking on the `Send API request` button
+  on the project page. <br></br>
+  <br></br>This is mainly useful for testing and debugging purposes while configuring
+  your project.
+</Tab>
 
-## Update your docs
+<Tab icon="code" title="Using the API">
+  To submit content using the API you'll need your project's API key. You can
+  find your project's API key on the project page under the `Integrate` section.
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+<Frame>
+  <img className="block " src="/images/api-key.png" alt="Api-key" />
+</Frame>
 
-<CardGroup>
+Use the API key to authenticate your requests to the API. You can submit content for analysis by sending a `POST` request to the `/api/v1/moderation/text` endpoint.
 
-<Card title="Style Your Docs" icon="paintbrush" href="/settings/global">
-  Add flair to your docs with personalized branding.
-</Card>
+```javascript
+const data = await fetch("https://moderationapi.com/api/v1/moderation/text", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${API_KEY}`,
+  },
+  body: JSON.stringify({
+    value: "Hello world!",
+  }),
+});
 
-<Card
-  title="Add API Endpoints"
-  icon="square-code"
-  href="/api-playground/configuration"
->
-  Implement your OpenAPI spec and enable API user interaction.
-</Card>
+const { flagged } = await data.json();
 
-<Card
-  title="Integrate Analytics"
-  icon="chart-mixed"
-  href="/analytics/supported-integrations"
->
-  Draw insights from user interactions with your documentation.
-</Card>
+if (flagged) {
+  // Return error to user etc.
+} else {
+  // Add to database etc.
+}
+```
 
-<Card
-  title="Host on a Custom Domain"
-  icon="browser"
-  href="/settings/custom-domain/subdomain"
->
-  Keep your docs on your own website's subdomain.
-</Card>
+Utilize the `flagged` field to determine how to handle the content. For example if the `flagged` field is `true` then the content should be blocked. If the `flagged` field is `false` then the content is safe to be posted.
 
-</CardGroup>
+</Tab>
+
+<Tab icon="rocket" title="Using an integration">
+  You can also submit content using one of our integrations. <br></br>
+  
+  For example you can use Zapier to submit content from your favorite apps like Google Sheets, Airtable, and more. <br></br>
+  
+  Or use our WordPress plugin to automatically moderate comments and reviews on your website. <br></br>
+  
+  
+   See which integrations are available on our [integrations page](https://moderationapi.com/integrations).
+
+</Tab>
+
+</Tabs>
+
+## 3. Review flagged content (optional)
+
+Content that is flagged by the model will be sent to the **Content Queue**. This is useful if you want to combine automated content moderation with human moderation, or if you simply want to review what content is being flagged.<br></br>
+
+<Frame>
+  <img
+    className="block "
+    src="/images/content-queue.png"
+    alt="Content queue for reviewing and improving automated moderation"
+  />
+</Frame>
+
+The content queue can be used for a variety of use cases:
+
+- **Human moderation** - Review content that is flagged by the model and decide whether to block or allow the content.
+- **Improve custom models** - Review content that is flagged by the model and provide feedback to the model. This will help the model learn and improve over time.
+- **Manual actions** - Ban, block, or warn users based on the content they post.
+- **Multiple queues** - Create multiple queues for different use cases. For example, you can create a queue for each language that you support or different types of content.
+- **Invite moderators** - Invite your team or hire moderators to help you review content in the queue.
+
+## All done!
+
+Congrats! You’ve now automated your content moderation! Need support or want to give some feedback? You can drop us an email at [support@moderationapi.com](mailto:support@moderationapi.com).
