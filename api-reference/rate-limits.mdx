@@ -1,0 +1,11 @@
+---
+title: "Rate limits"
+---
+
+The default API rate limit is 10 requests per 10 seconds.
+
+We may reduce limits to prevent abuse, or increase limits to enable high-traffic applications. To request an increased rate limit, please contact support.
+
+### Handling rate limts
+
+A basic technique for integrations to gracefully handle limiting is to watch for `429` status codes and build in a retry mechanism. The retry mechanism should follow an exponential backoff schedule to reduce request volume when necessary.
