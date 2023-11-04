@@ -19,11 +19,14 @@ There are 3 classes of models:
 - **Custom models**: These are models that are trained on user-provided data to analyze content specific to their use case.
 - **AI agents**: AI agents is a way of creating your own model, without prior training data. Just provide the AI with your own set of rules.
 
-## Content queue
+## Content queues
 
-Content queues are used to manually review and act on content submitted to your projects. You can configure what content you want in the queue by setting up filters.<br />
+<Note>
+  The queues are optional to use, but they are useful as your own customizable
+  moderation dashboard.
+</Note>
 
-The queues are optional to use, but they are useful as your own customizable moderation dashboard.<br />
+Content queues are used to manually review and act on content submitted to your projects. You can create multiple queues and configure what content you want in a queue by setting up filters.<br />
 
 How you use the content queue is up to you. For example, you can use it to review content before it is published, or to review content that has already been published. <br />
 
@@ -37,6 +40,11 @@ Actions can be used to, for example, delete content, block a user, send content 
 
 ## Self-learning
 
+<Warning>
+  We never use your data to train our own models. Data is only used to improve
+  your own models when you use the self-learning feature.
+</Warning>
+
 You can use the content queue to train and improve your custom models. For example, you can use the content queue to review content that has been flagged by a model, and then use the feedback to improve your models. <br />
 
 ## Quota
@@ -49,4 +57,4 @@ Each request to your project will use a certain amount of quota. Usually this is
 
 Some models can be configured to use wordlists. Wordlists are used to add custom words to the models vocabulary.<br />
 
-The wordlists are smart and can be used to add words with different variations. For example, if you add the word `run` to a wordlist, the model will also recognize `running` and `ran`.<br />
+The wordlists are smart and can be used to add words with different variations. For example, if you add the word `run` to a wordlist, the model will also recognize `running`, `ran` and `ruuuun` etc.<br />
