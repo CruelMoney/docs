@@ -106,8 +106,8 @@
           "group": "Submitting content",
           "pages": [
             "content-moderation/analyze-text",
-            "content-moderation/analyze-image",
-            "content-moderation/analyze-video",
+            "content-moderation/analyze-images",
+            "content-moderation/analyze-videos",
             "content-moderation/analyze-audio"
           ]
         }
@@ -115,20 +115,55 @@
     },
 
     {
-      "group": "Explore models",
+      "group": "Ready-made models",
       "pages": [
+        "models/overview",
         {
-          "group": "Ready-made models",
-          "pages": ["models/ready-made-models"]
+          "group": "Text classifiers",
+          "pages": [
+            "models/classifier-overview",
+            "models/toxicity",
+            "models/NSFW",
+            "models/sentiment",
+            "models/propriety",
+            "models/language",
+            "models/spam"
+          ]
         },
-        "models/custom-models",
-        "models/ai-agents",
-        "models/image",
-        "models/video",
-        "models/audio",
-        "models/wordlists"
+        {
+          "group": "Entity Extractors",
+          "pages": [
+            "models/entity-extractor-overview",
+            "models/email",
+            "models/phone-number",
+            "models/url",
+            "models/address",
+            "models/name",
+            "models/username",
+            "models/profanity",
+            "models/word",
+            "models/sensitive-number"
+          ]
+        },
+        "models/wordlists",
+        "models/image-models",
+        "models/video-models",
+        "models/audio-models"
       ]
     },
+    {
+      "group": "Custom models",
+      "pages": [
+        "custom-models/creating-a-model",
+        "custom-models/improving-a-model"
+      ]
+    },
+
+    {
+      "group": "AI Agents",
+      "pages": ["ai-agents/creating-an-agent", "ai-agents/using-an-agent"]
+    },
+
     {
       "group": "",
       "pages": [
