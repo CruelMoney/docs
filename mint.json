@@ -1,78 +1,100 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "openapi": "http://localhost:3001/api/openapi.json",
+  "name": "Moderation API",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/light.svg",
+    "light": "/logo/dark.svg",
+    "href": "https://moderationapi.com"
   },
+  "feedback": {
+    "thumbsRating": true
+  },
+  "api": {
+    "playground": {
+      "mode": "show"
+    },
+    "auth": {
+      "inputPrefix": "Bearer "
+    }
+  },
+  "isWhiteLabeled": true,
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#2563EB",
+    "light": "#3b82f6",
+    "dark": "#2563EB",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#2563EB",
+      "to": "#3b82f6"
     }
   },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "name": "Sign up",
+      "url": "https://moderationapi.com/app"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "url": "https://moderationapi.com/app"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
+
+  "topAnchor": {
+    "icon": "book-open",
+    "iconType": "solid",
+    "name": "Guides"
+  },
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "API References",
+      "icon": "code",
+      "url": "api-reference",
+      "iconType": "solid"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "name": "Changelog",
+      "icon": "list",
+      "url": "https://moderationapi.com/blog/tag/updates/"
     },
     {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Status",
+      "url": "https://stats.uptimerobot.com/jJKn6IjEKD",
+      "icon": "wave-pulse",
+      "iconType": "solid"
+    },
+    {
+      "name": "Speak to an Expert",
+      "icon": "user",
+      "url": "https://moderationapi.com/sales",
+      "iconType": "solid"
+    },
+    {
+      "name": "Email us",
+      "url": "mailto:support@moderationapi.com",
+      "icon": "envelope",
+      "iconType": "solid"
     }
   ],
+
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["introduction", "quickstart", "development"]
+      "pages": ["get-started/introduction", "get-started/quickstart"]
     },
+
     {
-      "group": "Essentials",
-      "pages": ["essentials/markdown", "essentials/code", "essentials/images", "essentials/settings", "essentials/navigation"]
-    },
-    {
-      "group": "API Documentation",
-      "pages": ["api-reference/introduction"]
-    },
-    {
-      "group": "Endpoint Examples",
+      "group": "",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/introduction",
+        "api-reference/authentication",
+        "api-reference/errors",
+        "api-reference/authentication"
       ]
+    },
+    {
+      "group": "Queue actions",
+      "pages": ["api-reference/execute-an-action"]
     }
-  ],
-  "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
-  }
+  ]
 }
