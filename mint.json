@@ -154,6 +154,7 @@
     {
       "group": "Custom models",
       "pages": [
+        "custom-models/overview",
         "custom-models/creating-a-model",
         "custom-models/improving-a-model"
       ]
@@ -161,7 +162,11 @@
 
     {
       "group": "AI Agents",
-      "pages": ["ai-agents/creating-an-agent", "ai-agents/using-an-agent"]
+      "pages": [
+        "ai-agents/overview",
+        "ai-agents/creating-an-agent",
+        "ai-agents/using-an-agent"
+      ]
     },
 
     {
