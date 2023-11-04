@@ -80,7 +80,20 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["get-started/introduction", "get-started/quickstart"]
+      "pages": [
+        "get-started/introduction",
+        "get-started/quickstart",
+        "get-started/concepts"
+      ]
+    },
+
+    {
+      "group": "Account",
+      "pages": [
+        "account/quota-usage",
+        "account/upgrading",
+        "account/adding-team-members"
+      ]
     },
 
     {

@@ -1,0 +1,52 @@
+---
+title: Concepts
+description: "A quick overview of the concepts used in the moderation API."
+---
+
+## Projects
+
+A project is used to configure how you want to analyze content. You do this by adding models to your project and adjust the project settings to your needs. <br />
+
+Each project has its own API key, so you can create multiple projects for example to separate different types of content or to separate your production and development environments.
+
+## Models
+
+Models are used to analyze content. You can add multiple models to a project. Each model has its own settings and can be used to analyze content in a different way.<br />
+
+There are 3 classes of models:
+
+- **Readymade models**: These are pre-built models that can be used to analyze content without any additional training.
+- **Custom models**: These are models that are trained on user-provided data to analyze content specific to their use case.
+- **AI agents**: AI agents is a way of creating your own model, without prior training data. Just provide the AI with your own set of rules.
+
+## Content queue
+
+Content queues are used to manually review and act on content submitted to your projects. You can configure what content you want in the queue by setting up filters.<br />
+
+The queues are optional to use, but they are useful as your own customizable moderation dashboard.<br />
+
+How you use the content queue is up to you. For example, you can use it to review content before it is published, or to review content that has already been published. <br />
+
+## Queue actions
+
+When you review content in the content queue, you can take actions on the content. <br/>
+
+You can create your own custom actions and assign them to the queues you want. <br/>
+
+Actions can be used to, for example, delete content, block a user, send content to a different queue, or send content to a human moderator.
+
+## Self-learning
+
+You can use the content queue to train and improve your custom models. For example, you can use the content queue to review content that has been flagged by a model, and then use the feedback to improve your models. <br />
+
+## Quota
+
+Depending on your plan you have a certain amount of quota. <br />
+
+Each request to your project will use a certain amount of quota. Usually this is 1 quota per request, but some models use more quota.
+
+## Wordlists
+
+Some models can be configured to use wordlists. Wordlists are used to add custom words to the models vocabulary.<br />
+
+The wordlists are smart and can be used to add words with different variations. For example, if you add the word `run` to a wordlist, the model will also recognize `running` and `ran`.<br />
