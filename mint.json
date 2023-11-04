@@ -115,10 +115,11 @@
     },
 
     {
-      "group": "Content queues",
+      "group": "Content queue dashboard",
       "pages": [
         "content-queues/overview",
         "content-queues/configuration",
+        "content-queues/using",
         "content-queues/actions",
         "content-queues/end-users",
         "content-queues/webhooks",
