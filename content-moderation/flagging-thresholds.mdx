@@ -1,0 +1,77 @@
+---
+title: "Flagging thresholds"
+description: "Learn how to configure flagging thresholds for your models."
+---
+
+Moderation API will flag content based on the models you've added to your project. Flagging happens When all the _non-neutral labels_ of a model have a score below the flagging threshold.<br></br>
+
+The default threshold is **0.5** (50% confidence), but you can configure the threshold for each model in your project. <br></br>
+
+<Frame>
+  <img
+    className="block "
+    src="/images/flagging-thresholds.png"
+    alt="Flagging thresholds"
+  />
+</Frame>
+
+## Changing the thresholds
+
+By changing the flagging threshold, you can control how strict the model is. For example, if you want to accept more content, you can increase the threshold to 0.75. This means that the model will only flag content if it is 75% confident about a non-neutral label. <br></br>
+
+On the other hand, if you want to be more strict, you can lower the threshold to 0.25. This means that the model will flag content even if it's only 25% confident about a non-neutral label.
+
+<CodeGroup>
+```json Threshold 50%
+{
+  // Threshold set to 0.5
+  "flagged": false, // 👈 not flagged
+  "original": "Only hobbits live in the shire",
+  "toxicity": {
+    "label": "NEUTRAL",
+    "score": 0.72952238,
+    "label_scores": {
+        // ...
+        "TOXICITY": 0.27047762, // 👈 score not above 0.5
+        "NEUTRAL": 0.72952238
+    }
+  }
+}
+```
+```json Threshold 25%
+{
+  // Threshold set to 0.25
+  "flagged": true, // 👈 flagged
+  "original": "Only hobbits live in the shire",
+  "toxicity": {
+    "label": "NEUTRAL",
+    "score": 0.72952238,
+    "label_scores": {
+        // ...
+        "TOXICITY": 0.27047762, // 👈 score above 0.25
+        "NEUTRAL": 0.72952238
+    }
+  }
+}
+```
+</CodeGroup>
+<br></br>
+<Info>
+  Please note that changing the flagging threshold does not affect the score or
+  output of the individual models. It only affects the `flagged` field of the
+  API response.
+</Info>
+
+Thresholds can be configured independently for each model. So you can be more strict with some types of content and more loose with others.
+
+If any of the models exceeds their respective threshold, the `flagged` field will be set to `true`.
+
+### What is the flagged field used for?
+
+We recommend to use the `flagged` field in your application code to make decisions about the content. That way, you can change the flagging threshold without having to change your application code. <br></br>
+
+Next, when using [content queues](/content-queues/overview), you can filter the content based on the `flagged` field. By default only flagged content enters the queue.
+
+### Flagging for recognizer models
+
+Some models do not return any scores, but a list of matches. For example, the profanity model returns a list of swear words that were found in the text. In this case, you the item is flagged if the list contains at least one item. <br></br>

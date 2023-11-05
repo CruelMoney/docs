@@ -71,7 +71,7 @@
       "iconType": "solid"
     },
     {
-      "name": "Email us",
+      "name": "Support email",
       "url": "mailto:support@moderationapi.com",
       "icon": "envelope",
       "iconType": "solid"
@@ -101,7 +101,15 @@
       "group": "Automate moderation",
       "pages": [
         "content-moderation/overview",
-        "content-moderation/project-setup",
+        {
+          "group": "Project setup",
+          "pages": [
+            "content-moderation/creating-projects",
+            "content-moderation/adding-models",
+            "content-moderation/flagging-thresholds",
+            "content-moderation/manage-api-key"
+          ]
+        },
         {
           "group": "Submitting content",
           "pages": [
@@ -170,8 +178,7 @@
       "pages": [
         "custom-models/overview",
         "custom-models/creating-a-model",
-        "custom-models/using",
-        "custom-models/improving-a-model"
+        "custom-models/using"
       ]
     },
 

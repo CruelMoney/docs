@@ -1,0 +1,25 @@
+---
+title: "Using AI agents"
+sidebarTitle: "Using an agent"
+---
+
+After you've created an agent, the model will show up alongside all the ready-made models in your project, and you can [add it like any other model](/content-moderation/adding-models).
+
+### Response signature
+
+AI agents have a similar response signature to the [ready-made classifiers](/models/classifier-overview), with the addition of a `rule` field.
+
+<ResponseField name="label" type="string" required>
+  The label of the rule that was triggered. Returns NEUTRAL if no rules were
+  triggered.
+</ResponseField>
+<ResponseField name="score" type="number" required>
+  The score of the most probable label. Always 1 or 0.
+</ResponseField>
+<ResponseField name="label_scores" type="object" required>
+  An object containing all the rules with either 0 or 1 as the score.
+</ResponseField>
+<ResponseField name="rule" type="string">
+  The description of the rule that was triggered. Returns null if no rules were
+  triggered.
+</ResponseField>
