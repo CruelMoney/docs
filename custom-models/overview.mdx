@@ -1,23 +1,63 @@
 ---
 title: "Custom models"
 sidebarTitle: "Overview"
+description: "Create custom models tailored to your specific needs and improve accuracy for special use cases."
 ---
+
+<Frame type="glass">
+  <img
+    className="block  "
+    src="/images/illustration-1.jpg"
+    alt="Illustration of blocks"
+    noZoom
+    style={{
+      height: 350,
+      objectFit: "cover",
+      width: "100%",
+    }}
+  />
+</Frame>
 
 Create custom models tailored to your specific needs and improve accuracy for special use cases.
 
 Training a custom model may seem daunting at first, but the workflow is userfriendly and designed so anyone can train a model with minimal effort. You can get started in less than 10 minutes.
 
-Custom models can help you:
+**Custom models helps you**
 
 - Improve accuracy for special use cases
 - Improve models over time with self-learning
 - Classify your data with new labels
 - Bake all your policies into a single model
 
+## How it works
+
+<Steps>
+  <Step title="Define labels">For example "Allowed" and "Blocked".</Step>
+  <Step title="Add training data">
+    Upload a CSV or use content you've already submitted to Moderation API.
+  </Step>
+  <Step title="Annotate data">
+    If your training data is missing labels, you can annotate it using our
+    annotation tools.
+  </Step>
+  <Step title="Begin training">
+    Start the training and wait for it to finish.
+  </Step>
+  <Step title="Use your new model ">
+    Once your model is trained, you can use it your projects in Moderation API.
+  </Step>
+</Steps>
+
 ## Training data
 
-You can train a model with as little as a 100 examples.
+It is recommended that you have some examples of your content, ideally 200+ examples, but you can get started with as little as 20 examples.
 
-If you don't have any data yet, you can start collecting it today with Moderation API. And use AI agents
+If you don't have any data to upload, you can start collecting it today with Moderation API. Everything submitted using the [text moderation endpoint](/api-reference) will we available as training data for your custom model.
 
 ## Self-learning models
+
+Custom models are self-learning, which means that they will improve over time as you use them. This is done by using the [content queue](/content-queues) and correcting the model when it makes a mistake.
+
+## Need help getting started?
+
+If you need any guidance for creating a custom model please [send us a message](https://moderationapi.com/sales) any time. We're happy to help with anything from advice on creating a dataset for your business to implementing the model in your product.
