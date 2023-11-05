@@ -1,0 +1,27 @@
+---
+title: "Phone number matching"
+sidebarTitle: "Phone number"
+description: "Detect, extract, or hide phone numbers in text."
+---
+
+> Model key: `phone`
+
+```json Response example
+{
+  "found": true,
+  "mode": "NORMAL",
+  "matches": ["12 34 56 78"]
+}
+```
+
+## Examples
+
+| Value                                     | Detected by                         | Matches                                 |
+| ----------------------------------------- | ----------------------------------- | --------------------------------------- |
+| "12 34 56 78"                             | `NORMAL`, `SUSPICIOUS` , `PARANOID` | 12 34 56 78                             |
+| "one two three four five six seven eight" | `SUSPICIOUS` , `PARANOID`           | one two three four five six seven eight |
+| "12 this 34 is 46 an 7 example 8"         | `PARANOID`                          | 12 this 34 is 46 an 7 example 8         |
+
+<Snippet file="languages-entity.mdx" />
+
+<Snippet file="limitations.mdx" />

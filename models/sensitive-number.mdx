@@ -1,0 +1,49 @@
+---
+title: "Sensitive number matching"
+sidebarTitle: "Sensitive number"
+description: "Detect, extract, or hide sensitive numbers in text."
+---
+
+> Model key: `sensitive`
+
+This model detects a range of sensitive information:
+
+- **Personal Numbers**: detect social security numbers, driver IDs, passport numbers, etc.
+- **Bank Accounts**: detect account numbers and routing numbers.
+- **Payment Cards**: detect card numbers, expiry dates and CVV.
+- **Passwords**: detect passwords and 4-digit pin codes.
+- **Digital Addresses**: detect IP-addresses and MAC addresses.
+
+```json Response example
+{
+  "found": true,
+  "mode": "NORMAL",
+  "matches": ["password1234", "4242 4242 4242 4242"],
+  "components": [
+    {
+      "password": "password1234",
+      "credit_debit_number": "4242 4242 4242 4242"
+    }
+  ]
+}
+```
+
+## Components
+
+| Key                   | Description                         |
+| --------------------- | ----------------------------------- |
+| `password`            | Passwords                           |
+| `credit_debit_number` | Credit and debit card numbers.      |
+| `bank_account_number` | Bank account numbers.               |
+| `ip_address`          | IP addresses.                       |
+| `mac_address`         | MAC addresses.                      |
+| `pin`                 | 4-digit PIN codes.                  |
+| `credit_debit_expiry` | Credit and debit card expiry dates. |
+| `credit_debit_cvv`    | Credit and debit card CVV codes.    |
+| `driver_id`           | Driver IDs.                         |
+| `ssn`                 | Social security numbers.            |
+| `passport_number`     | Passport numbers.                   |
+
+<Snippet file="languages-entity.mdx" />
+
+<Snippet file="limitations.mdx" />

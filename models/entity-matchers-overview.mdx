@@ -1,0 +1,114 @@
+---
+title: "Entity matchers overview"
+sidebarTitle: "Overview"
+---
+
+Entity matchers are used to find various data in text. For example, you can use them to find dates, numbers, emails, and so on. This enables you to:
+
+- Detect if a text contains certain data
+- Extract structured data from unstructured text
+- Mask out swear words, phone numbers, and other sensitive data
+- Pseudonymize data for GDPR compliance
+
+## Masking
+
+You can use entity matchers to mask out certain words or phrases. For example, you can mask out swear words, phone numbers, or other sensitive data. You can enable masking and set the replacement value when you add a matcher to your project.
+
+When masking is enabled the `content` field of the [text moderation response](/api-reference) will the modified text, the `original` field will contain the original text. The `content_moderated` field will indicate whether the content differs from the original text.
+
+```json Response example with masked content
+{
+  // ...
+  "content_moderated": true,
+  "data_found": true,
+  "flagged": true,
+  "original": "You can contact me on mr_robot[at]gmail|DOT|com or call me on 12 34 65 78",
+  "content": "You can contact me on {{ email hidden }} or call me on {{ number hidden }}",
+  "email": {
+    "found": true,
+    "mode": "SUSPICIOUS",
+    "matches": ["mr_robot[at]gmail|DOT|com"]
+  },
+  "phone": {
+    "found": true,
+    "mode": "NORMAL",
+    "matches": ["12 34 65 78"]
+  }
+}
+```
+
+## Detection levels
+
+For most matchers you can set the detection level. This determines how strict the matcher should be.
+
+| Level        | Description                                                   |
+| ------------ | ------------------------------------------------------------- |
+| `NORMAL`     | Detect values that are spelled and formatted correctly.       |
+| `SUSPICIOUS` | Also detect values that are mispelled or obfuscated.          |
+| `PARANOID`   | Also detect values even if somewhat unsure about correctness. |
+
+## Response signature
+
+All matcher models have the same response signature:
+
+<ResponseField name="mode" type="NORMAL | SUSPICIOUS | PARANOID" required>
+  The detection level used for the match.
+</ResponseField>
+<ResponseField name="found" type="boolean" required>
+  Whether the matcher found a match.
+</ResponseField>
+<ResponseField name="matches" type="string[]" required>
+  An array of all the matches found.
+</ResponseField>
+<ResponseField name="components" type="object[]">
+  An array of objects with the components of each match. For example, for a name
+  matcher, the components would be the first and last name.
+</ResponseField>
+
+## Ready-made entity matchers
+
+<CardGroup cols={3}>
+
+<Card title="email" href="/models/email" icon="envelope">
+  Detects email.
+</Card>
+
+{" "}
+
+<Card title="Phone number" href="/models/phone-number" icon="phone">
+  Detects phone numbers.
+</Card>
+
+<Card title="URL" href="/models/url" icon="link">
+  Detects URLs.
+</Card>
+
+<Card title="Address" href="/models/address" icon="location-dot">
+  Detects addresses.
+</Card>
+
+<Card title="Name" href="/models/name" icon="user">
+  Detects names.
+</Card>
+
+<Card title="Username" href="/models/username" icon="signature">
+  Detects usernames.
+</Card>
+
+<Card title="Profanity" href="/models/profanity" icon="triangle-exclamation">
+  Detects profanity.
+</Card>
+
+<Card title="Word" href="/models/word" icon="align-left">
+  Detects words from a list.
+</Card>
+
+<Card
+  title="Sensitive number"
+  href="/models/sensitive-number"
+  icon="user-secret"
+>
+  Credit card numbers etc.
+</Card>
+
+</CardGroup>

@@ -1,0 +1,32 @@
+---
+title: "Username matching"
+sidebarTitle: "Username"
+description: "Detect, extract, or hide usernames in text."
+---
+
+> Model key: `username`
+
+<Note>
+  We are currently working on improving the username model. If you have any
+  feedback, please let us know.
+</Note>
+
+For examples detect Instagram handles or other social media usernames.
+
+```json Response example
+{
+  "found": true,
+  "mode": "SUSPICIOUS",
+  "matches": ["@chris_93"]
+}
+```
+
+## Examples
+
+| Value                      | Detected by                        | Matches     |
+| -------------------------- | ---------------------------------- | ----------- |
+| "My username is @chris_93" | `NORMAL`, `SUSPICIOUS`, `PARANOID` | `@chris_93` |
+
+<Snippet file="languages-entity.mdx" />
+
+<Snippet file="limitations.mdx" />

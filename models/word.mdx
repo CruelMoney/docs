@@ -1,0 +1,29 @@
+---
+title: "Word matching"
+sidebarTitle: "Word"
+description: "Detect and hide words in text."
+---
+
+> Model key: `word`
+
+This model helps you detect and hide your own list of words in text. To use it, you need to create a [wordlist](/models/wordlists) first.
+
+```json Response example
+{
+  "found": true,
+  "mode": "NORMAL",
+  "matches": ["Big corp ACME"]
+}
+```
+
+## Supported languages
+
+This model supports all languages.
+
+## Wordlist support
+
+This model supports wordlists if you want to allow or block specific words.
+
+You can use the [wordlist editor](/models/wordlists)
+
+<Snippet file="limitations.mdx" />
