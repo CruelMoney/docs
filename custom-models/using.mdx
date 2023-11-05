@@ -1,0 +1,22 @@
+---
+title: "Using a custom model"
+sidebarTitle: "Using a custom model"
+---
+
+### Response signature
+
+Custom models have a similar response signature to the [ready-made classifiers](/models/classifier-overview).
+
+Each model returns an object with the detected label and the respective scores. This object is added to the API response under the model's key.
+
+<ResponseField name="label" type="string" required>
+  The most probable label. This will always be the label with the highest score.
+  Returns null if the analyzer fails.
+</ResponseField>
+<ResponseField name="score" type="number" required>
+  The score of the label. From 0-1 score with 1 meaning a high probability of
+  being correct.
+</ResponseField>
+<ResponseField name="label_scores" type="object" required>
+  An object containing all the label scores.
+</ResponseField>

@@ -170,6 +170,7 @@
       "pages": [
         "custom-models/overview",
         "custom-models/creating-a-model",
+        "custom-models/using",
         "custom-models/improving-a-model"
       ]
     },
