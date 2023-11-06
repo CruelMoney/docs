@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "openapi": "http://localhost:3001/api/openapi.json",
+  "openapi": "http://localhost:3000/api/openapi.json",
   "name": "Moderation API",
   "logo": {
     "dark": "/logo/light.svg",
@@ -192,7 +192,7 @@
     },
 
     {
-      "group": "",
+      "group": "API",
       "pages": [
         "api-reference/introduction",
         "api-reference/authentication",
@@ -201,8 +201,24 @@
       ]
     },
     {
+      "group": "Content moderation",
+      "pages": [
+        "api-reference/analyze-text",
+        "api-reference/analyze-image",
+        "api-reference/analyze-video",
+        "api-reference/analyze-audio"
+      ]
+    },
+    {
       "group": "Queue actions",
-      "pages": ["api-reference/execute-an-action"]
+      "pages": [
+        "api-reference/create-an-action",
+        "api-reference/get-an-action",
+        "api-reference/update-an-action",
+        "api-reference/delete-an-action",
+        "api-reference/list-actions",
+        "api-reference/execute-an-action"
+      ]
     }
   ]
 }

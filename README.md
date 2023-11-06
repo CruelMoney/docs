@@ -22,9 +22,15 @@ Run the following command at the root of your documentation (where mint.json is)
 mintlify dev
 ```
 
+Update docs from OpenAPI
+
+```
+npx @mintlify/scraping@latest openapi-file http://localhost:3000/api/openapi.json
+```
+
 ### Publishing Changes
 
-Install our Github App to autopropagate changes from youre repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
+Install our Github App to autopropagate changes from youre repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard.
 
 #### Troubleshooting
 

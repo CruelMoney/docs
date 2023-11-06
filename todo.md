@@ -1,5 +1,4 @@
 Docs
-[] - Inviting moderators
 [] - How to use content queues
 [] - Creating a new content queue
 
