@@ -14,3 +14,20 @@ The API uses the following error codes:
 | 429        | Too Many Requests -- See [rate limits](/api-reference/rate-limits)                        |
 | 500        | Internal Server Error -- We had a problem with our server. Try again later.               |
 | 503        | Service Unavailable -- We're temporarily offline for maintenance. Please try again later. |
+
+## Response signature
+
+Error responses are returned with a JSON object with the following signature:
+
+<ResponseField name="code" type="string" required>
+  The error code. `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`,
+  `METHOD_NOT_ALLOWED`, `TOO_MANY_REQUESTS`, `INTERNAL_SERVER_ERROR`,
+  `SERVICE_UNAVAILABLE`
+</ResponseField>
+<ResponseField name="message" type="string" required>
+  A human-readable message providing more details about the error.
+</ResponseField>
+<ResponseField name="issues" type="array">
+  An array of issues that caused the error. For example input fields that are
+  invalid.
+</ResponseField>

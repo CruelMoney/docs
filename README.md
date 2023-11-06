@@ -25,7 +25,7 @@ mintlify dev
 Update docs from OpenAPI
 
 ```
-npx @mintlify/scraping@latest openapi-file http://localhost:3000/api/openapi.json
+npx @mintlify/scraping@latest openapi-file https://api.moderationapi.com/v1/openapi.json
 ```
 
 ### Publishing Changes
