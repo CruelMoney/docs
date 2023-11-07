@@ -39,10 +39,10 @@ After configuring up your project you can submit content to the project for anal
   <img className="block " src="/images/api-key.png" alt="Api-key" />
 </Frame>
 
-Use the API key to authenticate your requests to the API. You can submit content for analysis by sending a `POST` request to the `/api/v1/moderation/text` endpoint.
+Use the API key to authenticate your requests to the API. You can submit content for analysis by sending a `POST` request to the `/api/v1/moderate/text` endpoint.
 
 ```javascript Text moderation example
-const data = await fetch("https://moderationapi.com/api/v1/moderation/text", {
+const data = await fetch("https://moderationapi.com/api/v1/moderate/text", {
   method: "POST",
   headers: {
     Authorization: `Bearer ${API_KEY}`,
