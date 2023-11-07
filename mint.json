@@ -129,14 +129,14 @@
     {
       "group": "Review queue dashboard",
       "pages": [
-        "content-queues/overview",
-        "content-queues/configuration",
-        "content-queues/using-queues",
-        "content-queues/actions",
-        "content-queues/end-users",
-        "content-queues/webhooks",
-        "content-queues/integrations",
-        "content-queues/inviting-moderators"
+        "review-queues/overview",
+        "review-queues/configuration",
+        "review-queues/using-queues",
+        "review-queues/actions",
+        "review-queues/end-users",
+        "review-queues/webhooks",
+        "review-queues/integrations",
+        "review-queues/inviting-moderators"
       ]
     },
 

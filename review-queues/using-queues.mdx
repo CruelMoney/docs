@@ -1,18 +1,18 @@
 ---
-title: "How to use content queues"
+title: "How to use review queues"
 sidebarTitle: "How to use queues"
-description: "Going over the basics of how to use content queues"
+description: "Going over the basics of how to use review queues"
 ---
 
 <Frame>
   <img
     className="block "
-    src="/images/content-queue.png"
-    alt="Content queue for reviewing and improving automated moderation"
+    src="/images/review-queue.png"
+    alt="Review queue for reviewing and improving automated moderation"
   />
 </Frame>
 
-Content queues are a tool for reviewing and improving automated moderation. They are a way to review content that has been flagged by the model, take action on it, and optionally provide feedback to the model.
+Review queues are a tool for reviewing and improving automated moderation. They are a way to review content that has been flagged by the model, take action on it, and optionally provide feedback to the model.
 
 The idea of the queue is to resolve content often, to keep the queue tidy. This means that you have reviewed the content, decided what to do with it, and don't need to look at it anymore.
 
@@ -20,7 +20,7 @@ The idea of the queue is to resolve content often, to keep the queue tidy. This 
 
 Content enters a queue when it is submitted to the API using any of the [/moderate](/api-reference/analyze-text) endpoints.
 
-Content will then be added to the queue if it mathces the queue's configuration. By default only items that are [flagged](/content-moderation/flagging-thresholds) show up in the queue. See [how to configure queues](/content-queues/configuration#configuring-the-queue) to decide what content goes into a queue.
+Content will then be added to the queue if it mathces the queue's configuration. By default only items that are [flagged](/content-moderation/flagging-thresholds) show up in the queue. See [how to configure queues](/review-queues/configuration#configuring-the-queue) to decide what content goes into a queue.
 
 ## Using the charts
 
@@ -32,7 +32,7 @@ The chart is interactive, so you can zoom in on a date range by clicking and dra
   <img
     className="block "
     src="/images/queue-zoom.gif"
-    alt="Content queue for reviewing and improving automated moderation"
+    alt="Review queue for reviewing and improving automated moderation"
   />
 </Frame>
 
@@ -51,8 +51,8 @@ Below the charts you have the list of items in the queue. Here you can:
 <Frame caption="The queue is a list of items that need to be reviewed">
   <img
     className="block "
-    src="/images/content-queue-list.png"
-    alt="Content queue for reviewing and improving automated moderation"
+    src="/images/review-queue-list.png"
+    alt="Review queue for reviewing and improving automated moderation"
   />
 </Frame>
 
@@ -63,8 +63,8 @@ If you quickly want to resolve a lot of items, you can select the items you want
 <Frame caption="The detail view for an item in the queue">
   <img
     className="block "
-    src="/images/content-queue-detail-2.png"
-    alt="Content queue detail view"
+    src="/images/review-queue-detail-2.png"
+    alt="Review queue detail view"
   />
 </Frame>
 
@@ -104,14 +104,14 @@ If you remove all labels, it will be interpreted as a `NEUTRAL` label, indicatin
 <Frame caption="Correcting AI decision by removing a label and adding a new.">
   <img
     className="block "
-    src="/images/content-queue-correct.gif"
+    src="/images/review-queue-correct.gif"
     alt="Correcting model decision"
   />
 </Frame>
 
 ### Executing actions and resolving
 
-In the detail view you can also execute [actions](/content-queues/actions) for the item, or resolve the item.
+In the detail view you can also execute [actions](/review-queues/actions) for the item, or resolve the item.
 
 When the item is resolved, the detail view will automatically show the next item in the queue.
 
@@ -135,7 +135,7 @@ To recap, you can resolve content in a few different ways:
 1.  [By pressing the checkmark in list view](#using-the-list-view)
 2.  [By checking the checkbox in list view and pressing resolve](#using-the-list-view)
 3.  [By pressing resolve in the detail view](#executing-actions-and-resolving)
-4.  [By executeing an action that resolves the item](/content-queues/actions#resolving-an-item-when-action-is-executed)
+4.  [By executeing an action that resolves the item](/review-queues/actions#resolving-an-item-when-action-is-executed)
     <br></br>
 
 <Info>

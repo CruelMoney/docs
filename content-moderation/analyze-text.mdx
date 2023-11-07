@@ -111,7 +111,7 @@ This could be the ID of a chatroom or a post thread.<br></br>
 
 This enables improved accuracy in some models as they account for previous messages in the same context.<br></br>
 
-If you are using [content queues](/content-queues) the `contextId` can also be used to filter the content queue to only show content from a specific context.
+If you are using [review queues](/review-queues) the `contextId` can also be used to filter the review queue to only show content from a specific context.
 
 ## Adding author information
 
@@ -119,7 +119,7 @@ The [text moderation endpoint](/api-reference) allows for `authorId` in the requ
 
 This would be the ID of the user who wrote the content. <br></br>
 
-This is useful if you are using [content queues](/content-queues), as it enables you to perform user level moderation, and to filter the content queue to only show content from a specific user.
+This is useful if you are using [review queues](/review-queues), as it enables you to perform user level moderation, and to filter the review queue to only show content from a specific user.
 
 ## Metadata
 
@@ -127,11 +127,11 @@ The [text moderation endpoint](/api-reference) allows for a `metadata` object in
 
 This can be used to add any additional information to the request. For example you can keep a reference ID to the original content in the metadata object. <br></br>
 
-Metadata is shown in the [content queues](/content-queues) and included in any webhooks.
+Metadata is shown in the [review queues](/review-queues) and included in any webhooks.
 
 <Tip>
   If you add a link to the original content in the metadata, you can easily
-  navigate to the original content from the content queues.
+  navigate to the original content from the review queues.
 </Tip>
 
 ## Opt out of content store
@@ -142,6 +142,6 @@ If you set `doNotStore` to `true`, the content will not be stored and only pass 
 
 <Warning>
   If you set `doNotStore` to `true`, the item will not enter the [content
-  queues](/content-queues) and you will not be able to train custom models based
+  queues](/review-queues) and you will not be able to train custom models based
   on previous requests.
 </Warning>
