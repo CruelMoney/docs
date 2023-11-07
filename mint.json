@@ -127,7 +127,7 @@
     },
 
     {
-      "group": "Content queue dashboard",
+      "group": "Review queue dashboard",
       "pages": [
         "content-queues/overview",
         "content-queues/configuration",
