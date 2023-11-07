@@ -126,7 +126,7 @@
       "pages": [
         "content-queues/overview",
         "content-queues/configuration",
-        "content-queues/using",
+        "content-queues/using-queues",
         "content-queues/actions",
         "content-queues/end-users",
         "content-queues/webhooks",
