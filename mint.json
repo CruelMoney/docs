@@ -15,8 +15,7 @@
       "mode": "show"
     },
     "auth": {
-      "method": "bearer",
-      "inputPrefix": "Bearer "
+      "method": "bearer"
     }
   },
   "isWhiteLabeled": true,
@@ -71,7 +70,7 @@
       "iconType": "solid"
     },
     {
-      "name": "Support email",
+      "name": "Email support",
       "url": "mailto:support@moderationapi.com",
       "icon": "envelope",
       "iconType": "solid"

@@ -1,14 +1,15 @@
 ---
 title: "Errors"
+description: "Learn about the error codes and messages that Moderation API returns."
 ---
 
-The API uses the following error codes:
+Moderation API uses conventional HTTP response codes to indicate the success or failure of an API request. In general: Codes in the 2xx range indicate success. Codes in the 4xx range indicate an error that failed given the information provided (e.g., a required parameter was omitted or is formatted incorrectly, etc.). Codes in the 5xx range indicate an error with Moderation API's servers.
 
 | Error Code | Meaning                                                                                   |
 | ---------- | ----------------------------------------------------------------------------------------- |
-| 400        | Bad Request -- Your request is invalid.                                                   |
-| 401        | Unauthorized -- Your API key is wrong.                                                    |
-| 403        | Forbidden -- The requested resource is for administrators only.                           |
+| 400        | Bad Request -- The request was unacceptable, often due to missing a required parameter.   |
+| 401        | Unauthorized -- No valid API key provided.                                                |
+| 403        | Forbidden --The API key doesn't have permissions to perform the request.                  |
 | 404        | Not Found -- The specified resource could not be found.                                   |
 | 405        | Method Not Allowed -- You tried to access a resource with an invalid method.              |
 | 429        | Too Many Requests -- See [rate limits](/api-reference/rate-limits)                        |
@@ -31,3 +32,7 @@ Error responses are returned with a JSON object with the following signature:
   An array of issues that caused the error. For example input fields that are
   invalid.
 </ResponseField>
+
+## Handling errors
+
+Our API can return errors for many reasons, such as a authentication errors, and network unavailability. We recommend writing code that gracefully handles all possible API errors to avoid making your own service unavailable.
