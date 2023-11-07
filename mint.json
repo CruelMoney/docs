@@ -102,7 +102,7 @@
     },
 
     {
-      "group": "Automate moderation",
+      "group": "Automate Moderation",
       "pages": [
         "content-moderation/overview",
         {
@@ -127,7 +127,7 @@
     },
 
     {
-      "group": "Review queue dashboard",
+      "group": "Review Queue Dashboard",
       "pages": [
         "review-queues/overview",
         "review-queues/configuration",
@@ -141,7 +141,7 @@
     },
 
     {
-      "group": "Ready-made models",
+      "group": "Ready-made Models",
       "pages": [
         "models/overview",
         {
@@ -178,7 +178,7 @@
       ]
     },
     {
-      "group": "Custom models",
+      "group": "Custom Models",
       "pages": [
         "custom-models/overview",
         "custom-models/creating-a-model",
