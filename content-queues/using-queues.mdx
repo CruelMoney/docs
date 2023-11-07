@@ -1,44 +1,178 @@
 ---
 title: "How to use content queues"
 sidebarTitle: "How to use queues"
+description: "Going over the basics of how to use content queues"
 ---
-
-## Steps
-
-1. Content enters queue
-2. Review content
-3. Resolve content
-
-## How content enters a queue
-
-## Reviewing content
-
-Detail view
-
-### Correcting model decisions
-
-### Executing actions
-
-### Bulk actions
-
-## Resolving content
-
-resolving is scoped to the single queue. Resolving a piece of content in one queue does not resolve it in another queue.
-
-### Bulk resolving content
-
-## Using the charts
-
-## Using the filter
-
-### Image, video, and audio
-
-Any content submitted as HTML will be rendered in the queue, including images, videos and audio. This enables you to easily review content that contains media.
 
 <Frame>
   <img
     className="block "
-    src="/images/content-queue-detail.png"
+    src="/images/content-queue.png"
+    alt="Content queue for reviewing and improving automated moderation"
+  />
+</Frame>
+
+Content queues are a tool for reviewing and improving automated moderation. They are a way to review content that has been flagged by the model, take action on it, and optionally provide feedback to the model.
+
+The idea of the queue is to resolve content often, to keep the queue tidy. This means that you have reviewed the content, decided what to do with it, and don't need to look at it anymore.
+
+## How content enters a queue
+
+Content enters a queue when it is submitted to the API using any of the [/moderate](/api-reference/analyze-text) endpoints.
+
+Content will then be added to the queue if it mathces the queue's configuration. By default only items that are [flagged](/content-moderation/flagging-thresholds) show up in the queue. See [how to configure queues](/content-queues/configuration#configuring-the-queue) to decide what content goes into a queue.
+
+## Using the charts
+
+The first thing you see when you open a queue is the chart. The chart shows the number of items in the queue over time. Bars represent the number of items submitted at a given day. The dark green part of the bar represents the items that have been resolved and the light green part of the bar represents items that are still in the queue, waiting to be resolved.
+
+The chart is interactive, so you can zoom in on a date range by clicking and dragging on the chart. The filter will update to show items in the queue for the given date range.
+
+<Frame caption="Selecting a date range using the chart">
+  <img
+    className="block "
+    src="/images/queue-zoom.gif"
+    alt="Content queue for reviewing and improving automated moderation"
+  />
+</Frame>
+
+Below the chart you can see the relevant labels and a circular gauge representing the progress on resolving items with that label.
+
+You can press labels to filter the queue by that label.
+
+## Using the list view
+
+Below the charts you have the list of items in the queue. Here you can:
+
+- Open the detail view for an item by pressing on it
+- Resolve an item by pressing the checkmark
+- Take bulk actions on items by checking off items and press one of your actions
+
+<Frame caption="The queue is a list of items that need to be reviewed">
+  <img
+    className="block "
+    src="/images/content-queue-list.png"
+    alt="Content queue for reviewing and improving automated moderation"
+  />
+</Frame>
+
+If you quickly want to resolve a lot of items, you can select the items you want to resolve and press resolve. The queue will automatically refresh and the items will be removed from the queue.
+
+## Reviewing content
+
+<Frame caption="The detail view for an item in the queue">
+  <img
+    className="block "
+    src="/images/content-queue-detail-2.png"
     alt="Content queue detail view"
   />
 </Frame>
+
+When you press an item in the queue, you will be taken to the detail view for that item.
+
+Here you can see:
+
+- The original content
+- The labels that were applied to the item
+- If the item was flagged or not
+- The history of the item
+- Metadata that was submitted with the item
+
+<Tip>
+  **HTML**
+  <span>
+    Any content submitted as HTML will be fully rendered in the detail view,
+    including images, videos and audio. This enables you to easily review
+    content that contains media.
+  </span>
+</Tip>
+
+<Tip>
+  **URLs**
+  <span>
+    If any metadata looks like an URL, it will be rendered as a link. This could
+    be useful for linking to the content in your own system.
+  </span>
+</Tip>
+
+### Correcting model decisions
+
+If you disagree with the model's decision, you can correct it by removing the label that was applied and optionally select another label.
+
+If you remove all labels, it will be interpreted as a `NEUTRAL` label, indicating that the item should not have been flagged.
+
+<Frame caption="Correcting AI decision by removing a label and adding a new.">
+  <img
+    className="block "
+    src="/images/content-queue-correct.gif"
+    alt="Correcting model decision"
+  />
+</Frame>
+
+### Executing actions and resolving
+
+In the detail view you can also execute [actions](/content-queues/actions) for the item, or resolve the item.
+
+When the item is resolved, the detail view will automatically show the next item in the queue.
+
+<Tip>
+  **Keyboard shortcuts**
+  <span>
+    In the detail view, you can use the keyboard shortcuts <kbd>cmd</kbd> +{" "}
+    <kbd>enter</kbd> to resolve an item, and <kbd>cmd</kbd> + <kbd>1</kbd>-
+    <kbd>9</kbd> to execute an action.
+  </span>
+</Tip>
+
+## Resolving content
+
+Resolving content means that you have reviewed the content and decided what to do with it. This could be to approve it, reject it, or take some other action.
+
+When you resolve an item, it is removed from the queue.
+
+To recap, you can resolve content in a few different ways:
+
+1.  [By pressing the checkmark in list view](#using-the-list-view)
+2.  [By checking the checkbox in list view and pressing resolve](#using-the-list-view)
+3.  [By pressing resolve in the detail view](#executing-actions-and-resolving)
+4.  [By executeing an action that resolves the item](/content-queues/actions#resolving-an-item-when-action-is-executed)
+    <br></br>
+
+<Info>
+**Resolve scope**
+
+<span>
+Resolving items is scoped to a single queue. This means that resolving an item in one queue does not resolve it in another queue.
+
+This is important if you have multiple queues for different purposes. For example, you might have a queue for escalating content to a senior moderator. In this case you would escalate it to the senior moderator queue, and then resolve the item in the main queue.
+
+</span>
+</Info>
+
+## Using the filter
+
+Using the queue filter button you can narrow down on a set of items in the queue.
+
+### Filter by context
+
+If you submit a context ID with your content, you can filter the queue by that context ID.
+
+For example, if you submit a context ID for a thread in your forum, you can filter the queue to only show items from that thread in order. This makes it easy to review all content in a thread in one go, and see items in the context of the thread.
+
+### Filter by author
+
+If you submit an author ID with your content, you can filter the queue by that author ID.
+
+To do this you can press the author ID in the detail view. This will add the author ID to the filter and show you all items in the queue from that author.
+
+### Filter by labels
+
+You might want to filter the queue by a specific label. You can do this either by selecting the label in the chart, or by setting the labels in the filter.
+
+When filtering by labels, you can select multiple labels. This will show you all items that have any of the selected labels.
+
+### Showing resolved items
+
+By default, resolved items are removed from the queue. If you need to see items you've previously resolved, you can check the "Show all items" checkbox in the filter.
+
+Here you can also unresolve items if you need to review them again.

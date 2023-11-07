@@ -3,8 +3,91 @@ title: "Creating a new content queue"
 sidebarTitle: "Creating a queue"
 ---
 
-To create a new queue you can press the plus button in side bar on the queue dashboard or simply [go to the page here](https://moderationapi.com/app/moderation/new).
+To create a new queue you can press the plus button in side bar on the queue dashboard or simply [create a new queue here](https://moderationapi.com/app/moderation/new).
 
-## Configuring the queue
+<Note>Feel free to edit the default queue if it doesn't match your needs.</Note>
+
+## Configuring a queue
+
+When you create or update a queue you can decide what items should be sent to the queue using the configuration.
+
+### Filter by projects
+
+You can select which projects should be included in the queue. If you don't select any projects, all projects will be included.
+
+<Info>
+  #### Example - Dedicated projects
+  <span>
+    Create a project for each type of content you want to moderate. For example,
+    you could create a project for user profiles and another for comments. You
+    can then have a queue dedicated for profiles and another for comments.
+  </span>
+</Info>
+
+### Filter by date or time
+
+You can select a date range to include items from. If you don't select a date range, all items will be included.
+
+It is recommended to only include items from the last 3 months to ensure the queue doesn't get too large.
+
+Depending on your throughput, you may want to include a shorter time range.
+
+### Filter by language
+
+You can select which languages should be included in the queue. If you don't select any languages, all languages will be included.
+
+One approach is to have a queues dedicated to each language, and have your moderators assigned based on the language they speak.
+
+### Filter by actions taken on items
+
+If you choose to filter by actions taken on items, the queue will only contain items that have had one of the selected actions executed.
+
+This is a powerful way to create queues for items that need to be reviewed, or items that have been flagged by users.
+
+<Info>
+  #### Example - Flagging queue
+  <span>
+    You can create an action called "Flag" and have users flag items they think
+    should be reviewed. You can then create a queue that only contains items
+    that have been flagged.
+  </span>
+</Info>
+
+<Info>
+  #### Example - Escalated queue
+  <span>
+    You can create an action called "Escalated" and have moderators escalate
+    items they think should be reviewed by a senior moderator. You can then
+    create a queue that only contains items that have been escalated.
+  </span>
+</Info>
+
+### Filter by flags
+
+You can decide whether to show items that have been flagged by your project models ([see flagging thresholds](/content-moderation/flagging-thresholds)) or items that have not been flagged or all items.
+
+It is recommended to focus on items that have been flagged by your project, and adjusting the flagging thresholds to match your needs.
+
+### Filter by labels
+
+You can choose to focus your queue on specific labels. For example, you could create a queue that only contains items that have been labelled as "Toxic" or "Negative".
+
+This way you can create higher priority queues for items that are more likely to be problematic.
+
+**Label score**
+
+Additionally you can also require those labels to have a minimum score. For example, you could create a queue that only contains items that have been labelled as "Toxic" with a confidence of 90% or higher.
+
+### Items order
+
+By default the queue will show items in the order they were created. This is to ensure that items that have been in the queue for a long time are not forgotten.
+
+You can change this to show the newest items first.
 
 ## Updating the configuration
+
+When you update the configuration of a queue, the queue will instantly update to show only items matching the new configuration.
+
+You can safely update the configuration of a queue to test different configurations, and then revert back to the original configuration.
+
+Items you've previously resolved will still be resolved, and wont reappear in the queue.
