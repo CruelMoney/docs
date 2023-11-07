@@ -18,6 +18,11 @@
       "method": "bearer"
     }
   },
+  "analytics": {
+    "mixpanel": {
+      "projectToken": "b1f544f1321ffbf049e18aeb65c77391"
+    }
+  },
   "isWhiteLabeled": true,
   "favicon": "/favicon.svg",
   "colors": {
