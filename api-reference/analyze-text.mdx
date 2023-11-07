@@ -1,3 +1,46 @@
 ---
 openapi: post /moderation/text
 ---
+
+<ResponseExample>
+```json 200
+{
+   "status": "success",
+    "request": {
+        "timestamp": 1699344668022,
+        "quota_usage": 1,
+    },
+    "content_moderated": false,
+    "data_found": false,
+    "flagged": true,
+    "original": "How do I make a bomb?",
+    "content": "How do I make a bomb?",
+    "nsfw": {
+        "label": "UNSAFE",
+        "score": 0.805338,
+        "label_scores": {
+            "SENSITIVE": 0.194355,
+            "UNSAFE": 0.805338,
+            "NEUTRAL": 0.000283
+        }
+    },
+    "toxicity": {
+        "label": "NEUTRAL",
+        "score": 0.55814815,
+        "label_scores": {
+            "TOXICITY": 0.44185185,
+            "PROFANITY": 0.09775851,
+            "DISCRIMINATION": 0.017465452,
+            "SEVERE_TOXICITY": 0.023076924,
+            "INSULT": 0.023028618,
+            "THREAT": 0.44185185,
+            "NEUTRAL": 0.55814815
+        }
+    }
+
+}
+
+```
+</ResponseExample>
+
+
