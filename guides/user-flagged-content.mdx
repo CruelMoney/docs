@@ -1,7 +1,7 @@
 ---
-title: "How to handle user reported content"
-sidebarTitle: "User reported content"
-description: "Learn how to handle user reported content with Moderation API"
+title: "How to handle user flagged content"
+sidebarTitle: "User flagged content"
+description: "Learn how to handle user flagged content with Moderation API"
 ---
 
 ## Introduction
@@ -17,6 +17,8 @@ When users report a profile, we'll add it to a review queue so that an admin can
 - Analyze reported profiles to focus on the worst offenders
 
 ## Setting up the dashboard
+
+Let's prepare everything in the dashboard first. We'll need to create a project, a review queue, and a custom action.
 
 ### Add a new project
 
@@ -34,11 +36,13 @@ We keep the flagging thresholds at their default values for now.
 
 ### Add a new review queue
 
-Next lets create a queue to review content submitted to our project. We'll call it _Reported Profiles_. To make sure that only reported profiles show up in this queue we configure the queue to only show items submitted to the project `Flagged profiles`.
+Next lets create a queue to review content submitted to our project. We'll call it _Reported Profiles_.
 
-We also make sure to configure the queue to show `all items` instead of just `flagged` items. This way we can see all the profiles that have been reported, even if they haven't been flagged by the system.
+To make sure that only reported profiles show up in this queue we configure the queue to only show items submitted to the project `Flagged profiles`.
 
-Lastly, we'll configure the queue to only show items from the last month.
+We also make sure to configure the queue to show `all items` instead of just `flagged` items. This way we can see all the profiles that have been reported, even if they haven't been flagged by the models in our project.
+
+Lastly, we'll configure the queue to only show items from the last month to keep it focused.
 
 <Frame>
   <img
@@ -50,9 +54,13 @@ Lastly, we'll configure the queue to only show items from the last month.
 
 ### Add a removal action to the queue
 
-Now we have functionality in our application to report profiles, but we still need to add actions to the queue so that we can remove profiles from our application.
+Now we have prepared our dashboard to handle reporting profiles, but we also want to add an action to the queue, so that we can manually remove profiles from our application.
 
-We call the action `Remove profile` and we configure it to call a webhook on our servers. We also configure the action to only show up our newly created queue, and to remove the profile from the queue once the action is executed.
+We call the action `Remove profile` and configure it to only show up our newly created queue.
+
+We also want the action to remove the profile from the queue once the action is executed, so we check "Action resolves items".
+
+Lastly, we configure it to call a webhook on our application servers.
 
 <Frame>
   <img
@@ -64,15 +72,17 @@ We call the action `Remove profile` and we configure it to call a webhook on our
 
 ## Application code
 
-Next we need to write some code in our application to handle user reports and removing profiles.
+Next we need to write some code for our application to handle user reports and removing profiles.
 
 ### Adding report functionality to our application
 
-Back in our dating app, we'll add a function in our code to handle user reports. Here we are using Moderation API's Node SDK, but you can use the [REST API](/api-reference/introduction) or any of the other SDKs as well.
+Back in our dating app, we'll add a function in our code to handle user reports.
 
-To use Moderation API in our application we'll need to use our project's API key. The project API key can be found in the project dashboard under **integrate** in the sidebar.
+In this example we are using Moderation API's Node SDK, but you can use the [REST API](/api-reference/introduction) with any language.
 
-We'll call the [moderate/text endpoint](/api-reference/analyze-text) to analyze the profile and add it to the review queue.
+To use Moderation API in our application we'll need to use our project's API key. The project API key can be found in the project dashboard under `integrate` in the sidebar.
+
+We'll call the [moderate/text endpoint](/api-reference/analyze-text) to analyze the reported profile and add it to the review queue.
 
 ```typescript Node.js
 import ModerationApi from "@moderation-api/sdk";
@@ -101,7 +111,9 @@ const handleUserReport = async (profile, reportingUser) => {
 
 ### Handling the webhook
 
-Back in our application code we'll add a webhook handler to handle the `Remove profile` action. In this example we're using Next.js.
+Next we'll add a webhook handler to handle the `Remove profile` action.
+
+In this example we're using Next.js and Moderation API's Node SDK to verify the webhook signature. See the [webhook documentation](/review-queues/webhooks) for more information.
 
 ```js Next.js webhook verification with Node SDK
 import ModerationApi from "@moderation-api/sdk";
@@ -154,7 +166,9 @@ export default handler;
 
 ## Using our review queue
 
-Now that we have everything in place we can start using our review queue. We'll start by reporting a few profiles and then we'll go through reviewing each of them.
+Now that we have everything in place we can start using our review queue.
+
+I've already received a few reports from users on our wizard dating app, so now we'll go through reviewing each of them.
 
 Upon opening the queue we can see that we have 3 items waiting to be reviewed. Using the chart, we can also see we have some unresolved items under `TOXICITY` and `THREAT`, so we might want to focus on those first.
 
@@ -166,13 +180,13 @@ Upon opening the queue we can see that we have 3 items waiting to be reviewed. U
   />
 </Frame>
 
-### Focusing on flagged profiles
+### Focusing on the worst offenders
 
-To focus on the flagged profiles we can use the queue filter.
+To focus on profiles flagged by our model analysis we can use the queue filter.
 
-We can do this by opening the filter and selecting the labels we want to focus on, but we can also do this by clicking on the labels in the chart.
+We can do this by opening the filter and selecting the labels we want to focus on. A faster way is to press on the labels in the chart.
 
-Now we can focus on the 1 item with these serious labels.
+Afte setting the filter, we see 1 item with these serious labels.
 
 <Frame>
   <img className="block  " src="/guides/images/5.png" alt="Queue filter" />
@@ -182,9 +196,9 @@ Now we can focus on the 1 item with these serious labels.
 
 Upon opening the first item we see the content.
 
-> "I hate wizards and I will curse you if you message me!"
+> **"I hate wizards and I will curse you if you message me!"**
 
-We can see that content has been flagged correctly with the labels `THREAT` model and `TOXICITY`.
+We can see that content has been flagged correctly with the labels `THREAT` and `TOXICITY`.
 
 <Frame>
   <img
@@ -200,19 +214,21 @@ This profile is clearly not a good fit for our application, so we'll remove it b
 
 Next, let's open the filter and press `Reset` so we can see all the remaining items again.
 
-Now we can see that we have 2 items left to review. Let's open the first one.
+Now we see that we have 2 items left to review.
 
-> "I'm actually a muggle but I'm looking for a something magical"
+Let's open the first one:
+
+> **"I'm actually a muggle but I'm looking for a something magical"**
 
 This item has not been flagged by any of the models, but it has been reported by a user.
 
-Notice (in the screenshot above) how we can see all the metadata we've submitted with the item. The URL is clickable so we can quickly view the profile to check if the profile has any other issues.
+Notice (in the screenshot above) how we can see all the metadata we've submitted with the item. The profile URL is clickable so we can quickly view the profile to check if the profile has any other issues.
 
 Everything seems fine, so we just press the `Resolve` button to remove the item from the queue.
 
 The next item automatically opens:
 
-> "I am a wizard looking for a witch to cast a spell on me ✨"
+> **"I am a wizard looking for a witch to cast a spell on me ✨"**
 
 This item also seems fine, so we'll resolve it as well.
 

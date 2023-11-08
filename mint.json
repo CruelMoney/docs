@@ -136,7 +136,8 @@
         "review-queues/end-users",
         "review-queues/webhooks",
         "review-queues/integrations",
-        "review-queues/inviting-moderators"
+        "review-queues/inviting-moderators",
+        "guides/user-flagged-content"
       ]
     },
 
