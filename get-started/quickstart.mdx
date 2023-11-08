@@ -39,9 +39,33 @@ After configuring up your project you can submit content to the project for anal
   <img className="block " src="/images/api-key.png" alt="Api-key" />
 </Frame>
 
-Use the API key to authenticate your requests to the API. You can submit content for analysis by sending a `POST` request to the `/api/v1/moderate/text` endpoint.
+Use the API key to authenticate your requests to the API.
 
-```javascript Text moderation example
+You can submit content for analysis by sending a `POST` request to the `/api/v1/moderate/text` endpoint.
+
+Or use one of our [server SDKs](/api-reference/introduction#sdks) to make it even easier to integrate with the API.
+
+<CodeGroup>
+
+```typescript Node.js example
+import ModerationAPi from "@moderation-api/sdk";
+
+const moderationApi = new ModerationAPi({
+  key: process.env.API_KEY,
+});
+
+const analysis = await moderationApi.moderate.text({
+  value: "Hello world!",
+});
+
+if (analysis.flagged) {
+  // Return error to user etc.
+} else {
+  // Add to database etc.
+}
+```
+
+```javascript Fetch example
 const data = await fetch("https://moderationapi.com/api/v1/moderate/text", {
   method: "POST",
   headers: {
@@ -60,6 +84,8 @@ if (flagged) {
   // Add to database etc.
 }
 ```
+
+</CodeGroup>
 
 Utilize the `flagged` field to determine how to handle the content. For example if the `flagged` field is `true` then the content should be blocked. If the `flagged` field is `false` then the content is safe to be posted.
 
