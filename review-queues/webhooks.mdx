@@ -137,7 +137,39 @@ You can verify that the webhook is coming from us by comparing the signature of 
 
 The signature is a `HMAC SHA256` hash of the payload using your webhook secret as the key. Find you webhook secret under [integrations in your dashboard](https://moderationapi.com/app/moderation/integrations).
 
-```js Next.js webhook signing example
+<CodeGroup>
+
+```js Next.js webhook verification with Node SDK
+import ModerationApi from "@moderation-api/sdk";
+
+const moderationApi = new ModerationApi({
+  key: PROJECT_API_KEY,
+});
+
+import { buffer } from "micro";
+
+const handler = async (req, res) => {
+  const webhookRawBody = await buffer(req);
+  const webhookSignatureHeader = req.headers["modapi-signature"];
+
+  const payload = await moderationApi.webhooks.constructEvent(
+    webhookRawBody,
+    webhookSignatureHeader,
+    process.env.MODAPI_WEBHOOK_SECRET
+  );
+};
+
+// disable body parser so we can access raw body
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export default handler;
+```
+
+```js Next.js webhook manual verification
 import crypto from "crypto";
 import { buffer } from "micro";
 
@@ -197,6 +229,8 @@ export const config = {
 
 export default handler;
 ```
+
+</CodeGroup>
 
 ### Preventing replay attacks
 
