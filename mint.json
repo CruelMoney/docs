@@ -154,7 +154,11 @@
             "models/sentiment",
             "models/propriety",
             "models/language",
-            "models/spam"
+            "models/spam",
+            "models/sexual",
+            "models/discrimination",
+            "models/self-harm",
+            "models/violence"
           ]
         },
         {
