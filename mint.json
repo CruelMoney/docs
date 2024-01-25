@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "openapi": "https://staging.moderationapi.com/api/v1/openapi.json",
+  "openapi": "https://moderationapi.com/api/v1/openapi.json",
   "name": "Moderation API",
   "logo": {
     "dark": "/logo/light.svg",
