@@ -205,6 +205,7 @@
       "pages": [
         "api-reference/introduction",
         "api-reference/authentication",
+        "api-reference/get-account",
         "api-reference/errors",
         "api-reference/rate-limits"
       ]
