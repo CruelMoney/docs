@@ -108,6 +108,16 @@ if (data.email.mathces.length > 0) {
 }
 ```
 
+### Detecting look-alike characters
+
+Spammers might try to get around your moderation by spoofing text with look-alike characters. For example, they might write `🅼🅾🅽🅴🆈` instead of `money`, or it can be an even more subtle replacement like hidden spaces or very similar looking letters.
+
+Moderation API detects and normalizes look-alike characters before analyzing content. You can find the normalized text in the `content` field of the response, and the original text in the `original` field.
+
+Additionally you can use the `unicode_spoofing` field to see if look-alike characters were detected.
+
+Lastly, models like the `spam` model are trained to take look-alike characters into account. Specifically the `spam` model should raise a flag for excessive use of look-alike characters. Other models like the `email` model will run on the normalized text to improve accuracy.
+
 ### Storing moderated content
 
 Some models can be configured to modify the content. For example, the `email` model can mask email addresses with `{{ email hidden }}`. You can store the modified content in your database by using the `content` field.
