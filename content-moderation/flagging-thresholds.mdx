@@ -5,7 +5,7 @@ description: "Learn how to configure flagging thresholds for your models."
 
 Moderation API will flag content based on the models you've added to your project. Flagging happens When all the _non-neutral labels_ of a model have a score below the flagging threshold.<br></br>
 
-The default threshold is **0.5** (50% confidence), but you can configure the threshold for each model in your project. <br></br>
+The default threshold is **0.5** (50% confidence), but you can configure the threshold for each label in your project. <br></br>
 
 <Frame>
   <img
@@ -62,15 +62,15 @@ On the other hand, if you want to be more strict, you can lower the threshold to
   API response.
 </Info>
 
-Thresholds can be configured independently for each model. So you can be more strict with some types of content and more loose with others.
+Thresholds can be configured independently for each model and labels. So you can be more strict with some types of content and more loose with others.
 
 If any of the models exceeds their respective threshold, the `flagged` field will be set to `true`.
 
 ### What is the flagged field used for?
 
-We recommend to use the `flagged` field in your application code to make decisions about the content. That way, you can change the flagging threshold without having to change your application code. <br></br>
+When using [review queues](/review-queues/overview), you can filter the content based on the `flagged` field. By default only flagged content enters the queue.
 
-Next, when using [review queues](/review-queues/overview), you can filter the content based on the `flagged` field. By default only flagged content enters the queue.
+We also recommend to use the `flagged` field in your application code to make decisions about the content. That way, you can change the flagging threshold without having to change your application code. <br></br>
 
 ### Flagging for recognizer models
 
