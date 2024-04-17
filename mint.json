@@ -187,7 +187,8 @@
       "pages": [
         "custom-models/overview",
         "custom-models/creating-a-model",
-        "custom-models/using"
+        "custom-models/using",
+        "custom-models/adaptive-model-optimization"
       ]
     },
 
