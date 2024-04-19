@@ -23,27 +23,33 @@ After configuring up your project you can submit content to the project for anal
 
 <Tabs>
 
-<Tab icon="rocket" title="Using the dashboard">
-  The easiest way to submit content for analysis is to use the dashboard. You
-  can submit content for analysis by clicking on the `Send API request` button
-  on the project page. <br></br>
-  <br></br>This is mainly useful for testing and debugging purposes while configuring
-  your project.
-</Tab>
-
 <Tab icon="code" title="Using the API">
   To submit content using the API you'll need your project's API key. You can
-  find your project's API key on the project page under the `Integrate` section.
+  find your project's API key on the project page under the `settings` tab. Use the API key to authenticate your requests to the API by adding it to the `Authorization` header.
 
-<Frame>
-  <img className="block " src="/images/api-key.png" alt="Api-key" />
-</Frame>
+Now you can submit content for analysis by sending a `POST` request to the `/api/v1/moderate/text` endpoint.
 
-Use the API key to authenticate your requests to the API.
+Or use one of our [server SDKs](/api-reference/introduction#sdks) to make it even easier to integrate with the API. In this example we will use the Node.js SDK.
 
-You can submit content for analysis by sending a `POST` request to the `/api/v1/moderate/text` endpoint.
+#### Install the SDK
 
-Or use one of our [server SDKs](/api-reference/introduction#sdks) to make it even easier to integrate with the API.
+<CodeGroup>
+
+```bash npm
+npm install @moderation-api/sdk
+```
+
+```bash yarn
+yarn add @moderation-api/sdk
+```
+
+```bash pnpm
+pnpm add @moderation-api/sdk
+```
+
+</CodeGroup>
+
+#### Submit content using the SDK
 
 <CodeGroup>
 
@@ -54,11 +60,35 @@ const moderationApi = new ModerationApi({
   key: process.env.API_KEY,
 });
 
-const analysis = await moderationApi.moderate.text({
+// Text moderation
+const textAnalysis = await moderationApi.moderate.text({
   value: "Hello world!",
+  // Optional content data
+  authorId: "123",
+  contextId: "456",
+  metadata: {
+    customField: "value",
+  },
 });
 
-if (analysis.flagged) {
+if (textAnalysis.flagged) {
+  // Return error to user etc.
+} else {
+  // Add to database etc.
+}
+
+// Image moderation
+const imageAnalysis = await moderationApi.moderate.image({
+  url: "https://example.com/image.jpg",
+  // Optional content data
+  authorId: "123",
+  contextId: "456",
+  metadata: {
+    customField: "value",
+  },
+});
+
+if (imageAnalysis.flagged) {
   // Return error to user etc.
 } else {
   // Add to database etc.
@@ -73,6 +103,12 @@ const data = await fetch("https://moderationapi.com/api/v1/moderate/text", {
   },
   body: JSON.stringify({
     value: "Hello world!",
+    // Optional content data
+    authorId: "123",
+    contextId: "456",
+    metadata: {
+      customField: "value",
+    },
   }),
 });
 
@@ -89,6 +125,14 @@ if (flagged) {
 
 Utilize the `flagged` field to determine how to handle the content. For example if the `flagged` field is `true` then the content should be blocked. If the `flagged` field is `false` then the content is safe to be posted.
 
+</Tab>
+
+<Tab icon="rocket" title="Using the dashboard">
+  The easiest way to submit content for analysis is to use the dashboard. You
+  can submit content for analysis by clicking on the `Send API request` button
+  on the project page. <br></br>
+  <br></br>This is mainly useful for testing and debugging purposes while configuring
+  your project.
 </Tab>
 
 <Tab icon="rocket" title="Using an integration">
