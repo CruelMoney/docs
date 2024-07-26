@@ -111,7 +111,8 @@
             "content-moderation/creating-projects",
             "content-moderation/adding-models",
             "content-moderation/flagging-thresholds",
-            "content-moderation/manage-api-key"
+            "content-moderation/manage-api-key",
+            "content-moderation/custom-region"
           ]
         },
         {
