@@ -118,7 +118,7 @@ Additionally you can use the `unicode_spoofing` field to see if look-alike chara
 
 Lastly, models like the `spam` model are trained to take look-alike characters into account. Specifically the `spam` model should raise a flag for excessive use of look-alike characters. Other models like the `email` model will run on the normalized text to improve accuracy.
 
-### Storing moderated content
+### Storing modified content
 
 Some models can be configured to modify the content. For example, the `email` model can mask email addresses with `{{ email hidden }}`. You can store the modified content in your database by using the `content` field.
 
@@ -130,17 +130,21 @@ if (data.content_moderated) {
 
 This can be useful if you need to anonymize/pseudonymize the content before storing it in your database, or if you do not wish your end users to see personal information.
 
-## Adding context to requests
+## Adding data to the request
+
+You can add metadata to the content you are sending for moderation. Some specific metadata is used by the moderation pipeline and is documented below.
+
+### ContextId
 
 The [text moderation endpoint](/api-reference) allows for `contextId` in the request body.<br></br>
 
 This could be the ID of a chatroom or a post thread.<br></br>
 
-This enables improved accuracy in some models as they account for previous messages in the same context.<br></br>
-
 If you are using [review queues](/review-queues) the `contextId` can also be used to filter the review queue to only show content from a specific context.
 
-## Adding author information
+Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the contextId.
+
+### AuthorId
 
 The [text moderation endpoint](/api-reference) allows for `authorId` in the request body. <br></br>
 
@@ -148,7 +152,9 @@ This would be the ID of the user who wrote the content. <br></br>
 
 This is useful if you are using [review queues](/review-queues), as it enables you to perform user level moderation, and to filter the review queue to only show content from a specific user.
 
-## Metadata
+Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the authorId.
+
+### Other metadata
 
 The [text moderation endpoint](/api-reference) allows for a `metadata` object in the request body. <br></br>
 
@@ -157,9 +163,39 @@ This can be used to add any additional information to the request. For example y
 Metadata is shown in the [review queues](/review-queues) and included in any webhooks.
 
 <Tip>
-  If you add a link to the original content in the metadata, you can easily
-  navigate to the original content from the review queues.
+  If you add a link it will be clickable from the review queue. Useful if you
+  link to the original content in the metadata, you can easily navigate to the
+  original content from the review queues.
 </Tip>
+
+## Context awareness
+
+Enable `Context awareness` in your project settings, and then include `authorId` and/or `contextId` in the API request. This enables models to pull in previous messages for their analysis and increase their accuracy.
+
+<Note>
+  Context awareness can increase quota usage as it requires additional
+  processing and analysis of previous messages. Each contextual message analyzed
+  counts towards your quota usage. Consider this when implementing context
+  awareness in your project, especially for high-volume applications.
+</Note>
+
+LLM models like AI agents can use the `contextId` to see the previous messages in the same context, and `authorId` to see the previous messages from the same author.
+
+Specifically this can prevent unwanted content that are spread of multiple messages.
+
+```
+msg 1 -> f
+msg 2 -> u
+msg 3 -> c
+msg 4 -> k [FLAGGED with context awareness]
+```
+
+It can also help understanding messages in the context of a conversation.
+
+```
+user 1 -> What's the worst thing you know?
+user 2 -> European people [FLAGGED with context awareness]
+```
 
 ## Opt out of content store
 
@@ -168,7 +204,12 @@ The [text moderation endpoint](/api-reference) allows for a `doNotStore` boolean
 If you set `doNotStore` to `true`, the content will not be stored and only pass through the moderation models. <br></br>
 
 <Warning>
-  If you set `doNotStore` to `true`, the item will not enter the [content
-  queues](/review-queues) and you will not be able to train custom models based
-  on previous requests.
+  If you set `doNotStore` to `true`, it will make parts of the moderation
+  dashboards less useful.
 </Warning>
+
+<Warning>
+  Do not disable content store if you wish to train or optimize models based on
+  your own data.
+</Warning>
+```
