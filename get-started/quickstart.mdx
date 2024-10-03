@@ -149,6 +149,14 @@ Utilize the `flagged` field to determine how to handle the content. For example 
 
 </Tabs>
 
+### Dry-run on your production data
+
+You can submit content for analysis without actually moderating it. This is useful for testing and debugging purposes while configuring your project, or simply to get an idea of how the moderation models work on your data.
+
+Essentially this means the API will always return `flagged: false`, but the content is still analyzed and will show up as flagged in the dashboard.
+
+Enable dry-run mode per project in the settings tab.
+
 ## 3. Review flagged content (optional)
 
 Content that is flagged by the model will be sent to the [Review Queue](/review-queues). This is useful if you want to combine automated content moderation with human moderation, or if you simply want to review what content is being flagged.<br></br>
