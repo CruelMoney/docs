@@ -1,0 +1,125 @@
+---
+title: "Wordlists"
+description: "Smart wordlists that understand semantic meaning, similar words, and obfuscations"
+---
+
+## When to use a wordlist
+
+In many cases an AI agent is a better solution to enforce certain guidelines as they understand context and intent, but wordlists are useful if you want to prevent specific words or phrases from being used on your platform.
+
+#### Smart wordlists
+
+Wordlists understand semantic meaning, so if you add the word `YouTube` to a wordlist, the model understands that `Vimeo` is similar and it can be flagged as well without you having to add `Vimeo` to the wordlist. It also means that the wordlist understands tense and plural forms without you having to add them.
+
+This is what makes our wordlists smarter than a simple match on a list of words.
+
+## Creating a wordlist
+
+You can create a Wordlist in the Model Studio or directly from your project.
+
+You can add words to the Wordlist by either typing them in or uploading a CSV or Excel file with a list of words. When uploading a spreadsheet each column is treated as a separate item in the wordlist.
+
+**Case insensitive**
+
+The wordlist is case insensitive, and words you add are automatically converted to lowercase.
+
+**Duplicate words are automatically removed.**
+
+If you add the word `apple` twice, it will automatically be deduplicated.
+
+**Adding phrases**
+
+You can add phrases as well as single words. Phrases are matched exactly as you type them, but also work with semantic meaning. For example, if you add the phrase `New York` to the wordlist, it will also match `NYC`.
+
+**Embedding processing**
+
+If you add a lot of words at once, the wordlist will automatically process them in the background to understand semantic meaning. This can take a few minutes for large wordlists, and the wordlist will not detect words until this processing is complete.
+
+## Flagging threshold
+
+<Frame>
+  <img
+    className="block "
+    src="/images/wordlist-threshold.png"
+    alt="Wordlist thresholds"
+  />
+</Frame>
+
+As wordlists understand semantic meaning, you can set a flagging threshold, which determines how similar a word should be in percentage for the wordlist to flag it.
+
+Thresholds are set on a per project basis. This means that you can be more strict in some projects and less strict in others.
+
+We provide 4 levels, but you can also set a specific threshold between 0 and 100% using the slider.
+
+For reference here
+
+- **Exact match (100%)**: This requires an exact match of the word or phrase and basically disables semantic matching.
+- **Same word (90%)**: Looks for the same word in the text but also tries to match plural and tense variants.
+- **Similar word (50%)**: Looks for a word that is similar to the word in the text, so it also matches semantically related words and synonyms.
+- **Nearest word (10%)**: Here you'll always get a match, but also for words that are not similar at all. However you can use it find the most similar word in the text or for debugging.
+
+## Flagging mode
+
+Wordlists are usually used as a block list, but you can also use them as an allow list or to pass through all content.
+
+#### Block list
+
+A match will cause the content to be flagged. Use it to prevent certain words from being used on your platform.
+
+#### Allow list
+
+If the wordlist does not find a match, the content will be flagged. Use it to require certain words in the content.
+
+#### Pass through
+
+The content will never be flagged, even if it matches the wordlist. Use it if you just need the data for analysis.
+
+## API response
+
+Each wordlist in a project will return its results under the `wordlists` field when you use the [moderate/text](/api-reference/analyze-text) endpoint. You can identify the wordlist by the `id` field or the `name`.
+
+| Field     | Description                                                                                                                                   |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`      | The unique identifier of the wordlist                                                                                                         |
+| `name`    | The name of the wordlist                                                                                                                      |
+| `found`   | Indicates if the wordlist found a match                                                                                                       |
+| `flagged` | Indicates if the wordlist caused the content to be flagged. Can differ from `found` if the wordlist is set to allow list or pass through mode |
+| `matches` | Contains the words that were matched                                                                                                          |
+| `score`   | Indicates the similarity score between the word in the text and the word in the wordlist                                                      |
+
+```json Response example
+{
+  "wordlists": [
+    {
+      "mode": "BLOCKLIST",
+      "found": false,
+      "matches": [],
+      "flagged": false,
+      "name": "Test",
+      "id": "6733929e16bb8934be4c",
+      "score": 0
+    },
+    {
+      "mode": "BLOCKLIST",
+      "found": true,
+      "matches": ["youtube"],
+      "flagged": true,
+      "name": "Brandlist",
+      "id": "673c7e571d5502b6441d",
+      "score": 0.9999997615814209
+    }
+  ]
+}
+```
+
+## Debugging wordlists
+
+If you wonder why a word is not flagged, try to lower the flagging threshold to see the similarity score. This might provide insights on how similar a word is perceived by the model.
+
+The project playground is a good way to quickly test and debug any model.
+
+## Legacy wordlist model
+
+We previously offered wordlists as a separate model under the Pre-built models section. This model did not understand semantic meaning and was not as smart as the wordlists available today.
+
+We recommend using the wordlists feature instead as it is more flexible and smarter.

@@ -3,13 +3,13 @@ title: "Using AI agents"
 sidebarTitle: "Using your agent"
 ---
 
-After you've created an agent, the model will show up alongside all the ready-made models in your project, and you can [add it like any other model](/content-moderation/adding-models).
+After you've created an agent, the model will show up alongside all the pre-built models in your project, and you can [add it like any other model](/content-moderation/adding-models).
 
 The agent will classify your content based on the safety categories you've defined when creating the agent.
 
 ### Response signature
 
-AI agents have a similar response signature to the [ready-made classifiers](/models/classifier-overview), with the addition of a `rule` field.
+AI agents have a similar response signature to the [pre-built classifiers](/models/classifier-overview), with the addition of a `rule` field.
 
 <ResponseField name="label" type="string" required>
   The label of the rule that was triggered. Returns NEUTRAL if no rules were
