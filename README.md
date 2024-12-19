@@ -25,7 +25,8 @@ mintlify dev
 Update docs from OpenAPI
 
 ```
-npx @mintlify/scraping@latest openapi-file https://moderationapi.com/api/v1/openapi.json
+wget https://staging.moderationapi.com/api/v1/openapi.json
+npx @mintlify/scraping@latest openapi-file openapi.json
 ```
 
 ### Publishing Changes

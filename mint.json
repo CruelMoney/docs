@@ -221,7 +221,8 @@
         "api-reference/analyze-text",
         "api-reference/analyze-image",
         "api-reference/analyze-video",
-        "api-reference/analyze-audio"
+        "api-reference/analyze-audio",
+        "api-reference/analyze-object"
       ]
     },
     {
