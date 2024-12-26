@@ -115,15 +115,8 @@
             "content-moderation/custom-region"
           ]
         },
-        {
-          "group": "Submitting content",
-          "pages": [
-            "content-moderation/analyze-text",
-            "content-moderation/analyze-images",
-            "content-moderation/analyze-videos",
-            "content-moderation/analyze-audio"
-          ]
-        }
+        "content-moderation/analyze-content",
+        "content-moderation/content-types"
       ]
     },
     {
@@ -195,6 +188,7 @@
       "pages": [
         "review-queues/overview",
         "review-queues/configuration",
+        "review-queues/submit-content",
         "review-queues/using-queues",
         "review-queues/actions",
         "review-queues/end-users",

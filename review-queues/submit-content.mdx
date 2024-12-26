@@ -1,0 +1,15 @@
+---
+title: "Submitting content to review queues"
+sidebarTitle: "Submitting content"
+description: "How to submit content to review queues"
+---
+
+Content will be automatically added to review queues when analyzed using a [moderation endpoint](/content-moderation/analyze-content).
+
+You can edit a queues filter to change which content shows up in a given review queue. See [how to configure a queue](/review-queues/configuration#configuring-a-queue) for more information.
+
+<Note>
+  If you set the `doNotStore` flag to `true` when calling the API, the content
+  will not be stored in the database and as a result the content will not be
+  available to preview anywhere in the dashboard including the review queue.
+</Note>
