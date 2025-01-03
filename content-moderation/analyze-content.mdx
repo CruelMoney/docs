@@ -11,11 +11,37 @@ Remember to [create a project](/content-moderation/creating-projects) first and 
 
 We provide 5 different endpoints for analyzing content:
 
-- [Text moderation](/api-reference/analyze-text)
-- [Image moderation](/api-reference/analyze-image)
-- [Object moderation](/api-reference/analyze-object)
-- [Audio moderation (enterprise)](/api-reference/analyze-audio)
-- [Video moderation (enterprise)](/api-reference/analyze-video)
+<CardGroup cols={2}>
+
+<Card title="Text" icon="align-left" href="/api-reference/analyze-text">
+  /api/moderate/text
+</Card>
+
+<Card title="Image" icon="image" href="/api-reference/analyze-image">
+  /api/moderate/image
+</Card>
+
+<Card title="Object" icon="brackets-curly" href="/api-reference/analyze-object">
+  /api/moderate/object
+</Card>
+
+<Card
+  title="Video (enterprise)"
+  icon="film"
+  href="/api-reference/analyze-video"
+>
+  /api/moderate/video
+</Card>
+
+<Card
+  title="Audio (enterprise)"
+  icon="waveform-lines"
+  href="/api-reference/analyze-audio"
+>
+  /api/moderate/audio
+</Card>
+
+</CardGroup>
 
 ## Acting on the response
 
@@ -49,7 +75,7 @@ if (data.flagged && data.sentiment.label_scores.NEGATIVE > 0.9) {
 
 ### Saving matched entities
 
-You can also save the matched entities to your database. For example, if you want to save the email address that was detected in the content, you can do the following:
+If you are using entity matcher models, you can also save the matched entities to your database. For example, if you want to save the email address that was detected in the content, you can do the following:
 
 ```javascript
 if (data.email.mathces.length > 0) {
