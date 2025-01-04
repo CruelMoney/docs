@@ -3,13 +3,13 @@ title: "Flagging thresholds"
 description: "Learn how to configure flagging thresholds for your models."
 ---
 
-Moderation API will flag content based on the models you've added to your project. Flagging happens When all the _non-neutral labels_ of a model have a score below the flagging threshold.<br></br>
+Moderation API flags content based on the models you’ve added to your project. A piece of content is flagged when all the <em>non-neutral labels</em> of a model have a score <strong>above</strong> the configured flagging threshold.
 
-The default threshold is **0.5** (50% confidence), but you can configure the threshold for each label in your project. <br></br>
+By default, the threshold is set to **0.5** (i.e., 50% confidence). However, you can configure a separate threshold for each label in your project to fit your specific needs. Setting a higher threshold makes the model less likely to flag content, while lowering it makes it more sensitive to potential issues.
 
 <Frame>
   <img
-    className="block "
+    className="block"
     src="/images/flagging-thresholds.png"
     alt="Flagging thresholds"
   />
@@ -17,9 +17,10 @@ The default threshold is **0.5** (50% confidence), but you can configure the thr
 
 ## Changing the thresholds
 
-By changing the flagging threshold, you can control how strict the model is. For example, if you want to accept more content, you can increase the threshold to 0.75. This means that the model will only flag content if it is 75% confident about a non-neutral label. <br></br>
+Choosing different flagging thresholds allows you to control how strict the moderation should be for various types of content.
 
-On the other hand, if you want to be more strict, you can lower the threshold to 0.25. This means that the model will flag content even if it's only 25% confident about a non-neutral label.
+• If you’d like to be more lenient, you can increase the threshold (e.g., to 0.75). The model will only flag content if it is at least 75% confident that a non-neutral label applies.  
+• To be more cautious, you can lower the threshold (e.g., to 0.25). Even a 25% confidence level for a non-neutral label would be enough for the content to be flagged.
 
 <CodeGroup>
 ```json Threshold 50%
@@ -55,23 +56,29 @@ On the other hand, if you want to be more strict, you can lower the threshold to
 }
 ```
 </CodeGroup>
+
 <br></br>
 <Info>
-  Please note that changing the flagging threshold does not affect the score or
-  output of the individual models. It only affects the `flagged` field of the
-  API response.
+  Adjusting the flagging threshold won’t change the actual confidence scores
+  given by the model—they remain the same. Instead, altering the threshold only
+  impacts whether the final flagged field in the API response is set to true or
+  false.
 </Info>
+Thresholds can be independently configured for each model and label. This flexibility
+allows you to be more cautious with certain subject matter while remaining lenient
+with others. If <strong>any</strong> model involved in the analysis has a non-neutral
+label that exceeds its respective threshold, the flagged field will be set to true.
 
-Thresholds can be configured independently for each model and labels. So you can be more strict with some types of content and more loose with others.
+## What is the flagged field used for?
 
-If any of the models exceeds their respective threshold, the `flagged` field will be set to `true`.
+When using review queues, the flagged field is
+often used to filter content and prioritize items that may require your attention
+or moderation. By default, only flagged content enters the review queue. You can
+also use the flagged field in your application code to make immediate decisions about
+how to handle content (e.g., pushing it for review or blocking it outright). This
+mechanism enables you to adjust thresholds on the fly without making extensive code
+changes.
 
-### What is the flagged field used for?
+## Flagging for entity matchers
 
-When using [review queues](/review-queues/overview), you can filter the content based on the `flagged` field. By default only flagged content enters the queue.
-
-We also recommend to use the `flagged` field in your application code to make decisions about the content. That way, you can change the flagging threshold without having to change your application code. <br></br>
-
-### Flagging for recognizer models
-
-Some models do not return any scores, but a list of matches. For example, the profanity model returns a list of swear words that were found in the text. In this case, you the item is flagged if the list contains at least one item. <br></br>
+Some models, such as profanity detectors, or email matchers, return a list of flagged terms rather than probability scores. In these cases, the item is flagged if the model finds <em>any</em> matched terms. This means no explicit threshold configuration is necessary for certain types of “recognizer” models—they simply flag content when certain triggers are detected.

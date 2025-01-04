@@ -1,0 +1,92 @@
+---
+title: "Understand and act on API responses"
+sidebarTitle: "Understanding API responses"
+description: "Learn what the API response contains and how to act on it."
+---
+
+```json Detecting email addresses example response
+{
+  "status": "success",
+  "contentId": "676d4d3ddf4a56580e7866d8",
+  "request": {
+    "timestamp": 1735902168566,
+    "quota_usage": 1
+  },
+  "flagged": true,
+  "content_moderated": false,
+  "unicode_spoofing": false,
+  "data_found": true,
+  "original": "This is a test, my email is test@example.com",
+  "content": "This is a test, my email is {{ email hidden }}",
+  "email": {
+    "matches": ["test@example.com"]
+  }
+}
+```
+
+It's up to you how you want to act on the result of the moderation.
+
+- You could block the content and return an error message to your user if it gets flagged.
+- You could store it to your database and let a human review it (e.g. use our [review queues](/review-queues)).
+- Or do something in between and only review content when the AI is not so confident in its decision.
+
+Here we look at the fields in the response you can use to act on the response.
+
+## Check if flagged
+
+The easiest way to get started is to use the `flagged` field and will be sufficient for most use cases. The `flagged` field is a boolean that indicates if any of the models that you have enabled detected something non-neutral.
+
+You can adjust the thresholds for flagging content in the project settings. See [flagging thresholds](/content-moderation/flagging-thresholds).
+
+```javascript
+if (data.flagged) {
+  // Do something
+}
+```
+
+## Utilize model scores
+
+You can also utilize the model scores to have more granular control over the content moderation. For example, if you want to flag content that has a negative sentiment score of more than 0.9, you can do the following:
+
+```javascript
+if (data.flagged && data.sentiment.label_scores.NEGATIVE > 0.9) {
+  // Do something
+}
+```
+
+<Note>
+  We recommend adjusting the thresholds in the project settings and utilize the
+  `flagged` field instead of hardcoding the thresholds in your code.
+</Note>
+
+## Saving matched entities
+
+If you are using entity matcher models, you can also save the matched entities to your database. For example, if you want to save the email address that was detected in the content, you can do the following:
+
+```javascript
+if (data.email.mathces.length > 0) {
+  // Save data.email.matches[0] to your database
+}
+```
+
+## Detecting look-alike characters
+
+Spammers might try to get around your moderation by spoofing text with look-alike characters. For example, they might write `🅼🅾🅽🅴🆈` instead of `money`, or it can be an even more subtle replacement like hidden spaces or very similar looking letters.
+
+Moderation API detects and normalizes look-alike characters before analyzing content. You can find the normalized text in the `content` field of the response, and the original text in the `original` field.
+
+Additionally you can use the `unicode_spoofing` field to see if look-alike characters were detected.
+
+Lastly, models like the `spam` model are trained to take look-alike characters into account. Specifically the `spam` model should raise a flag for excessive use of look-alike characters. Other models like the `email` model will run on the normalized text to improve accuracy.
+
+## Storing modified content
+
+Some models can be configured to modify the content. For example, the `email` model can mask email addresses with `{{ email hidden }}`. You can store the modified content in your database by using the `content` field.
+
+```javascript
+if (data.content_moderated) {
+  // Store data.content in your database
+}
+```
+
+This can be useful if you need to anonymize/pseudonymize the content before storing it in your database, or if you do not wish your end users to see personal information.

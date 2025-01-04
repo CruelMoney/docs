@@ -1,0 +1,79 @@
+---
+title: "Optimizing accuracy"
+sidebarTitle: "Optimizing accuracy"
+description: "The Moderation API is designed to work for a broad range of use cases, but you might need to make adjustments for optimal accuracy in your context."
+---
+
+## False positives and negatives
+
+When you’re relying on a content moderation system, a key concept to understand is the trade-off between false positives and false negatives:
+
+- **False positives** occur when a system flags content as violating policy when it is actually compliant.
+- **False negatives** occur when a system fails to flag content that does violate policy.
+
+It’s crucial to decide which type of error is more costly to your specific use case. Some use cases demand minimal tolerance for any potentially harmful content (prioritizing avoiding false negatives), while others might tolerate a small amount of non-harmful content being flagged incorrectly (i.e., false positives).
+
+Balancing these is an ongoing process. Consider the following strategies:
+
+- Adjust thresholds (covered below) to tightly align with your standards and risk appetite.
+- Supplement automated checks with human moderation for borderline cases to reduce both types of errors.
+
+## Adjusting flagging thresholds
+
+The Moderation API allows configuration for how strictly it flags content. By experimenting with threshold scores, you can tweak the sensitivity:
+
+1. **Lowering the threshold:** This will reduce false negatives (because more content is flagged), but potentially increase false positives.
+2. **Raising the threshold:** This will reduce false positives (because the system flags fewer pieces of content), but potentially increase false negatives.
+
+It’s helpful to analyze your actual data for patterns. If you notice consistent misclassifications in content that truly violates your policies, lower the threshold. Conversely, if you see a flood of harmless content getting flagged, consider raising it. In production, you might set different thresholds per category (e.g., hateful vs. spam content) based on your tolerance.
+
+Read more about [how to adjust thresholds](/content-moderation/flagging-thresholds).
+
+## Adding or removing models
+
+Your workflow or platform could be improved by adding specialized models or removing unnecessary ones:
+
+- **Adding specialized models**: If your use case deals with a specific domain (e.g., medical or legal), you might consider training or deploying a model tuned for that domain. This model could work in tandem with the general Moderation API to reduce domain-specific false flags.
+- **Removing unneeded models**: If your current pipeline includes multiple checks from overlapping or redundant models, rationalizing them may reduce complexity and potential conflicts in results. It can also streamline moderation decisions.
+
+## Using AI agents
+
+AI agents function as custom models that you can configure with your own guidelines. Some potential advantages include:
+
+- Automatically reviewing flagged content again with a different approach or additional data.
+- Analyzing user behavior or past content to add context before making a final moderation decision.
+- Escalating borderline content to human reviewers, re-checking the system’s decision, or adding notes for context.
+
+By layering AI agents on top of your Moderation API, you can tailor decisions to your workflow. Some teams use these agents to handle complex reasoning or domain-specific logic that goes beyond simple text classification. For instructions on creating and using AI agents, see [How to create an AI Agent](/ai-agents/creating-an-agent) and [Using AI agents](/ai-agents/using-your-agent).
+
+## Enabling context awareness
+
+Many moderation challenges arise when the system doesn’t understand the broader context behind the text:
+
+- Certain terms might be acceptable in an educational or reclaiming context (e.g., quoting a slur to explain its original meaning).
+- Cultural or community-specific language usage might not translate well with a general-purpose model.
+
+Some ways to incorporate context:
+
+- Provide additional metadata or preceding conversation snippets along with your text, to give the Moderation API or other classifiers a better understanding of what’s being said.
+- Enable Context Awareness in your project settings and include `authorId` and `contextId` in your requests so the system can reference previous messages. See [Submitting content to Moderation API](/content-moderation/submit-content) for more details.
+
+## Training custom models
+
+If you find that standard models are not meeting your performance requirements, consider building a custom fine-tuned model. This can help if:
+
+- You have a substantial dataset specific to your industry or type of content.
+- You need higher precision for borderline or ambiguous cases.
+- You want to reduce reliance on manual moderation for specialized content.
+
+With careful curation of training data and setting well-defined moderation policies, a custom model can further reduce both false positives and false negatives, fine-tuning decisions for your exact use case.
+
+## Get help from our team
+
+If you need help deciding how to set up moderation, fine-tuning or advanced configurations, reach out to our support teams. We can help you:
+
+- Determine the right thresholds for your workflow.
+- Explore sample code to integrate moderation into your application.
+- Identify potential pitfalls with domain-specific moderation.
+
+Working together, we can ensure that your content moderation solution is well-aligned with your application’s requirements—minimizing harm, maximizing safety, and providing users with the best possible experience.

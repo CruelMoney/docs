@@ -1,25 +1,97 @@
 ---
 title: "Quota usage"
-description: "How your quota is calculated and how to check your usage."
+description: "Understanding how quota usage works and how to manage it is important for managing your costs."
 ---
 
-Depending on your plan you have a certain amount of quota. You can see your quota and usage in the [usage dashboard](https://moderationapi.com/app/usage).<br />
+## Included quota
 
-Each request to your project will use a certain amount of quota. Usually this is 1 quota per request, but some models use more quota. You can see the quota usage per model when you add it to your project.<br />
+All Moderation API plans include a certain amount of quota. This quota is used when you submit content for moderation.
 
-<Warning>
-  If you run out of quota, the API will respond with an error and status code
-  `403`.
-</Warning>
+The included quota is different for each plan. See the [pricing page](/pricing) for more information.
 
-## Quota period
+Custom plans can be created with a different quota for use cases where you need more quota, so please [reach out](https://moderationapi.com/sales) if you need more quota.
 
-The quota period is the period of time in which your quota is calculated. For example, if your quota period is 1 month, your quota will be reset every month. You can see your current quota period in the [usage dashboard](https://moderationapi.com/app/usage).<br />
+## Exceeding the included quota
 
-Most accounts have a quota period of 1 month from the 1st of the month to the last day of the month. If you have a custom plan, your quota period may be different.
+By default, the API will block requests when you've exceeded the included quota and repond with a `429 status code`. If you want to continue submitting content, you can **upgrade** your plan or enable **pay-as-you-go**.
 
-## Pay-as-you-go
+### Upgrade to a higher plan
 
-You can enable pay-as-you-go on your account. This means that you will be charged for any usage above your plan's quota. You can enable pay-as-you-go in the [usage dashboard](https://moderationapi.com/app/usage).<br />
+If you upgrade to a higher plan, your quota will immediately be reset to the included quota for the new plan.
 
-This is useful if you want to make sure your API requests are never rejected, or if you want to use just a little bit more quota than your plan allows.
+<CardGroup columns={2}>
+
+<Card
+  title="Upgrade to a higher plan"
+  icon="fire"
+  href="https://moderationapi.com/app/upgrade"
+>
+  Upgrade to a higher plan in the dashboard here.
+</Card>
+
+</CardGroup>
+
+### Pay-as-you-go
+
+If you enable pay-as-you-go, you will be billed for the quota you use on top of your included quota. This is useful if you want to avoid being blocked when you exceed the included quota.
+
+<CardGroup columns={2}>
+
+<Card
+  title="Enable Pay-as-you-go"
+  icon="rocket"
+  href="https://moderationapi.com/app/billing"
+>
+  Set up pay-as-you-go limits in the dashboard here.
+</Card>
+
+</CardGroup>
+
+#### When is pay-as-you-go billed?
+
+Pay-as-you-go is billed monthly at the same time as your subscription.
+
+## Viewing quota usage
+
+You can view your quota usage in the dashboard.
+
+<CardGroup columns={2}>
+
+<Card
+  title="View quota usage"
+  icon="chart-bar"
+  href="https://moderationapi.com/app/billing/usage"
+>
+  View your quota usage in the dashboard here.
+</Card>
+
+</CardGroup>
+
+## When does the quota reset?
+
+Your quota resets at the beginning of your billing cycle.
+
+For example, if you have a monthly plan, your quota will reset on the day that you started your plan. You can also see the start date of your billing cycle in the dashboard on the [billing page](https://moderationapi.com/app/billing).
+
+## How is the quota usage calculated?
+
+The quota usage is calculated based on the number of requests you make to the API, which models you use, and the plan your account is on.
+
+You can see the quota usage for a request in the response.
+
+- Pre-built text models use 1 quota unit per request no matter how many models you use.
+- Pre-built image models use 3 quota units per image.
+- Custom models and AI Agents use 1 quota unit per request per model.
+- Some exceptions might apply.
+
+#### Example:
+
+- Your project is configured with 5 pre-built text models and 1 AI Agent.
+  - 5 pre-built text models = 1 quota unit per request
+  - 1 AI Agent = 1 quota unit per request
+  - Total quota usage = 2 quota units per request
+  - Submit 10 requests to the API = 10 x 2 quota units = 20 quota units
+
+## Please reach out if you need a custom quota solution
+
+If your use case does not fit into the default price model, please [reach out](https://moderationapi.com/sales) and we can discuss a custom plan or another solution.

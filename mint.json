@@ -115,8 +115,14 @@
             "content-moderation/custom-region"
           ]
         },
-        "content-moderation/analyze-content",
-        "content-moderation/content-types"
+        {
+          "group": "Analyzing content",
+          "pages": [
+            "content-moderation/submit-content",
+            "content-moderation/acting-on-responses"
+          ]
+        },
+        "content-moderation/optimizing-accuracy"
       ]
     },
     {

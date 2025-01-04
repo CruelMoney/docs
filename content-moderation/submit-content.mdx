@@ -1,0 +1,260 @@
+---
+title: "Submitting content to Moderation API"
+sidebarTitle: "Submit content"
+description: "How to submit content for moderation and which content types you can analyze with Moderation API."
+---
+
+To analyze content, you need to send a POST request with the content to one of the [moderation endpoints](/api-reference/analyze-text) and you will receive a response with the results right away.
+
+Remember to [create a project](/content-moderation/creating-projects) first and configure the models you want to use to analyze your content.
+
+<CodeGroup>
+
+```typescript Node.js example
+import ModerationApi from "@moderation-api/sdk";
+
+const moderationApi = new ModerationApi({
+  key: process.env.API_KEY,
+});
+
+// Text moderation
+const textAnalysis = await moderationApi.moderate.text({
+  value: "Hello world!",
+  // Optional content data
+  contentId: "text-1",
+  authorId: "123",
+  contextId: "456",
+  metadata: {
+    customField: "value",
+  },
+});
+
+if (textAnalysis.flagged) {
+  // Return error to user etc.
+} else {
+  // Add to database etc.
+}
+
+// Image moderation
+const imageAnalysis = await moderationApi.moderate.image({
+  url: "https://example.com/image.jpg",
+  // Optional content data
+  contentId: "image-1",
+  authorId: "123",
+  contextId: "456",
+  metadata: {
+    customField: "value",
+  },
+});
+
+if (imageAnalysis.flagged) {
+  // Return error to user etc.
+} else {
+  // Add to database etc.
+}
+```
+
+```javascript Fetch example
+const data = await fetch("https://moderationapi.com/api/v1/moderate/text", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${API_KEY}`,
+  },
+  body: JSON.stringify({
+    value: "Hello world!",
+    // Optional content data
+    contentId: "text-1",
+    authorId: "123",
+    contextId: "456",
+    metadata: {
+      customField: "value",
+    },
+  }),
+});
+
+const { flagged } = await data.json();
+
+if (flagged) {
+  // Return error to user etc.
+} else {
+  // Add to database etc.
+}
+```
+
+</CodeGroup>
+
+## Content metadata
+
+You can add metadata to the content you are sending for moderation. Some specific metadata is used by the moderation pipeline to improve the accuracy of the moderation and some is used to improve the dashboard experience.
+
+### ContentId
+
+Specify a `contentId` to associate the requests with a specific content. This will usually be the content's unique identifier from your own database.
+
+If you do not specify a `contentId`, the API will generate a random ID for the content.
+
+When including a `contentId` Moderation API will know that submitting the same `contentId` will be an update to the existing content. This is especially useful if you are using [review queues](/review-queues) and want to update the content in the review queue without adding a new item to the queue.
+
+The contentId can also be used to excute actions in the reviiew queue programmatically. For example you can allow users to report content on your platform and then add it to a review queue.
+
+### ContextId
+
+The [text moderation endpoint](/api-reference) allows for `contextId` in the request body.<br></br>
+
+This could be the ID of a chatroom or a post thread.<br></br>
+
+If you are using [review queues](/review-queues) the `contextId` can also be used to filter the review queue to only show content from a specific context.
+
+Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the contextId.
+
+### AuthorId
+
+The [text moderation endpoint](/api-reference) allows for `authorId` in the request body. <br></br>
+
+This would be the ID of the user who wrote the content. <br></br>
+
+This is useful if you are using [review queues](/review-queues), as it enables you to perform user level moderation, and to filter the review queue to only show content from a specific user.
+
+Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the authorId.
+
+### Other metadata
+
+The [text moderation endpoint](/api-reference) allows for a `metadata` object in the request body. <br></br>
+
+This can be used to add any additional information to the request. For example you can keep a reference ID to the original content in the metadata object. <br></br>
+
+Metadata is shown in the [review queues](/review-queues) and included in any webhooks.
+
+<Tip>
+  If you add a link it will be clickable from the review queue. Useful if you
+  link to the original content in the metadata, you can easily navigate to the
+  original content from the review queues.
+</Tip>
+
+## Context awareness
+
+Enable `Context awareness` in your project settings, and then include `authorId` and/or `contextId` in the API request. This enables models to pull in previous messages for their analysis and increase their accuracy.
+
+<Note>
+  Context awareness can increase quota usage as it requires additional
+  processing and analysis of previous messages. Each contextual message analyzed
+  counts towards your quota usage. Consider this when implementing context
+  awareness in your project, especially for high-volume applications.
+</Note>
+
+LLM models like AI agents can use the `contextId` to see the previous messages in the same context, and `authorId` to see the previous messages from the same author.
+
+Specifically this can prevent unwanted content that are spread of multiple messages.
+
+```
+msg 1 -> f
+msg 2 -> u
+msg 3 -> c
+msg 4 -> k [FLAGGED with context awareness]
+```
+
+It can also help understanding messages in the context of a conversation.
+
+```
+user 1 -> What's the worst thing you know?
+user 2 -> European people [FLAGGED with context awareness]
+```
+
+## Content types
+
+We provide 5 different endpoints for analyzing content:
+
+<CardGroup cols={2}>
+
+<Card title="Text" icon="align-left" href="/api-reference/analyze-text">
+  /api/moderate/text
+</Card>
+
+<Card title="Image" icon="image" href="/api-reference/analyze-image">
+  /api/moderate/image
+</Card>
+
+<Card title="Object" icon="brackets-curly" href="/api-reference/analyze-object">
+  /api/moderate/object
+</Card>
+
+<Card
+  title="Video (enterprise)"
+  icon="film"
+  href="/api-reference/analyze-video"
+>
+  /api/moderate/video
+</Card>
+
+<Card
+  title="Audio (enterprise)"
+  icon="waveform-lines"
+  href="/api-reference/analyze-audio"
+>
+  /api/moderate/audio
+</Card>
+
+</CardGroup>
+
+### Text
+
+[/moderate/text](/api-reference/analyze-text)
+
+Text moderation is the most common type of content moderation. It's used to moderate text-based content such as:
+
+- chat messages
+- forum posts
+- comments
+- reviews
+- product descriptions
+- profile bios
+
+If you are analyzing chat messages or other thread based content, you might benefit from enabling [context awareness](/content-moderation/analyze-content#context-awareness) in your project settings.
+
+### Image
+
+[/moderate/image](/api-reference/analyze-image)
+
+Image moderation involves analyzing visual content to detect inappropriate or harmful images. This can include identifying nudity, violence, or other objectionable content. The Moderation API uses advanced image recognition techniques to provide accurate and reliable results.
+
+### Object
+
+[/moderate/object](/api-reference/analyze-object)
+
+Object moderation can be used for a comprehensive content analysis across different media types, and simplifies analyzing an entire entity.
+
+You can select the type of object you want to moderate. Selecting the right type of object can improve the accuracy of the moderation. We currently support the following types:
+
+- Profile
+- Product
+- Event
+- Object (general)
+
+### Audio (enterprise)
+
+[/moderate/audio](/api-reference/analyze-audio)
+
+Audio moderation is available for enterprise users and involves analyzing audio content to detect inappropriate language or sounds. This can be useful for moderating podcasts, voice messages, or any other audio content.
+
+### Video (enterprise)
+
+[/moderate/video](/api-reference/analyze-video)
+
+Video moderation, also available for enterprise users, involves analyzing video content to detect inappropriate scenes or actions. This can include identifying violence, nudity, or other objectionable content within video files.
+
+## Opt out of content store
+
+The [text moderation endpoint](/api-reference) allows for a `doNotStore` boolean in the request body. <br></br>
+
+If you set `doNotStore` to `true`, the content will not be stored and only pass through the moderation models. <br></br>
+
+<Warning>
+  If you set `doNotStore` to `true`, it will make parts of the moderation
+  dashboards less useful.
+</Warning>
+
+<Warning>
+  Do not disable content store if you wish to train or optimize models based on
+  your own data.
+</Warning>
+```
