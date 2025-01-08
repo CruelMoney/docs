@@ -5,9 +5,9 @@ description: "Start moderating your content in under 5 minutes"
 
 ## 1. Create a project
 
-Visit the [dashboard](https://moderationapi.com/app) and create a new project. You can either create a project using one of the templates or create a blank project.
-
-You can add multiple models to a project. Each model will detect a different type of content. For example, you can create a project with a `toxicity` model and a `profanity` model to prevent innapropriate content from being posted on your platform.
+1. Visit the [dashboard](https://moderationapi.com/app) and create a new project.
+2. You can either create a project using one of the templates or opt for a blank project.
+3. Add one or more models to handle different content types or classification tasks. For example, use the `toxicity` model to detect harmful language and the `profanity` model to catch offensive words.
 
 <Frame>
   <img
@@ -17,149 +17,129 @@ You can add multiple models to a project. Each model will detect a different typ
   />
 </Frame>
 
+> Tip: If you’re not sure which models to choose, start with the most commonly used one (toxicity) and expand later.
+
+---
+
 ## 2. Submit content for analysis
 
-After configuring up your project you can submit content to the project for analysis.
+Once your project is set up, you can begin sending text, images, or other media to your models for moderation. There are several ways to do this:
 
-<Tabs>
+### Option A: Using the API Directly
 
-<Tab icon="code" title="Using the API">
-  To submit content using the API you'll need your project's API key. You can
-  find your project's API key on the project page under the `settings` tab. Use the API key to authenticate your requests to the API by adding it to the `Authorization` header.
+To send content to the API, you’ll need:
 
-Now you can submit content for analysis by sending a `POST` request to the `/api/v1/moderate/text` endpoint.
-
-Or use one of our [server SDKs](/api-reference/introduction#sdks) to make it even easier to integrate with the API. In this example we will use the Node.js SDK.
-
-#### Install the SDK
-
-<CodeGroup>
-
-```bash npm
-npm install @moderation-api/sdk
-```
-
-```bash yarn
-yarn add @moderation-api/sdk
-```
-
-```bash pnpm
-pnpm add @moderation-api/sdk
-```
-
-</CodeGroup>
-
-#### Submit content using the SDK
-
-<CodeGroup>
-
-```typescript Node.js example
-import ModerationApi from "@moderation-api/sdk";
-
-const moderationApi = new ModerationApi({
-  key: process.env.API_KEY,
-});
-
-// Text moderation
-const textAnalysis = await moderationApi.moderate.text({
-  value: "Hello world!",
-  // Optional content data
-  authorId: "123",
-  contextId: "456",
-  metadata: {
-    customField: "value",
-  },
-});
-
-if (textAnalysis.flagged) {
-  // Return error to user etc.
-} else {
-  // Add to database etc.
-}
-
-// Image moderation
-const imageAnalysis = await moderationApi.moderate.image({
-  url: "https://example.com/image.jpg",
-  // Optional content data
-  authorId: "123",
-  contextId: "456",
-  metadata: {
-    customField: "value",
-  },
-});
-
-if (imageAnalysis.flagged) {
-  // Return error to user etc.
-} else {
-  // Add to database etc.
-}
-```
+- Your project’s API key, which you can find under the **Settings** tab on your project page.
+- The `/api/v1/moderate/text` endpoint to moderate text content (use the corresponding endpoints for other content types).
 
 ```javascript Fetch example
-const data = await fetch("https://moderationapi.com/api/v1/moderate/text", {
+const API_KEY = "YOUR_SECRET_API_KEY_HERE";
+
+const response = await fetch("https://moderationapi.com/api/v1/moderate/text", {
   method: "POST",
   headers: {
+    "Content-Type": "application/json",
     Authorization: `Bearer ${API_KEY}`,
   },
   body: JSON.stringify({
     value: "Hello world!",
-    // Optional content data
+    authorId: "123", // optional
+    contextId: "456", // optional
+    metadata: {
+      source: "forum-post",
+    },
+  }),
+});
+
+if (!response.ok) {
+  // Handle the error (e.g., invalid API key, network error, etc.)
+  throw new Error("Failed to moderate content.");
+}
+
+const { flagged, categories } = await response.json();
+
+if (flagged) {
+  // Return an error to the user, or block the content
+  console.error("Content was flagged:", categories);
+} else {
+  // Approve the content, send it to your DB, etc.
+  console.log("Content is safe to display.");
+}
+```
+
+### Option B: Using the Node.js SDK
+
+Or use one of our [server SDKs](/api-reference/introduction#sdks). Below is a minimal Node.js example that demonstrates text and image moderation via the SDK:
+
+```typescript Node.js example
+import ModerationApi from "@moderation-api/sdk";
+
+// Configure your client using an environment variable for the API key
+const moderationApi = new ModerationApi({
+  key: process.env.API_KEY,
+});
+
+try {
+  // Text moderation
+  const textAnalysis = await moderationApi.moderate.text({
+    value: "Hello world!",
     authorId: "123",
     contextId: "456",
     metadata: {
       customField: "value",
     },
-  }),
-});
+  });
 
-const { flagged } = await data.json();
+  if (textAnalysis.flagged) {
+    console.warn("Text content flagged:", textAnalysis.categories);
+    // Block the content, show an error, etc...
+  } else {
+    console.log("Text content is safe.");
+    // Save to database or proceed...
+  }
 
-if (flagged) {
-  // Return error to user etc.
-} else {
-  // Add to database etc.
+  // Image moderation
+  const imageAnalysis = await moderationApi.moderate.image({
+    url: "https://example.com/image.jpg",
+    authorId: "123",
+    contextId: "456",
+    metadata: {
+      customField: "value",
+    },
+  });
+
+  if (imageAnalysis.flagged) {
+    console.warn("Image content flagged:", imageAnalysis.categories);
+    // Block or require review
+  } else {
+    console.log("Image is safe.");
+    // Save to database or proceed...
+  }
+} catch (error) {
+  console.error("Error invoking moderation API:", error);
 }
 ```
 
-</CodeGroup>
+> Note: Always store your API key securely and rotate it regularly to maintain security.
 
-Utilize the `flagged` field to determine how to handle the content. For example if the `flagged` field is `true` then the content should be blocked. If the `flagged` field is `false` then the content is safe to be posted.
+### Option D: Using an Integration
 
-</Tab>
+We also provide handy integrations to streamline content moderation in popular platforms:
 
-<Tab icon="rocket" title="Using the dashboard">
-  The easiest way to submit content for analysis is to use the dashboard. You
-  can submit content for analysis by clicking on the `Send API request` button
-  on the project page. <br></br>
-  <br></br>This is mainly useful for testing and debugging purposes while configuring
-  your project.
-</Tab>
+- Zapier: Submit content from Google Sheets, Airtable, etc.
+- WordPress Plugin: Automatically moderate comments, reviews, and form entries.
 
-<Tab icon="rocket" title="Using an integration">
-  You can also submit content using one of our integrations. <br></br>
-  
-  For example you can use Zapier to submit content from your favorite apps like Google Sheets, Airtable, and more. <br></br>
-  
-  Or use our WordPress plugin to automatically moderate comments and reviews on your website. <br></br>
-  
-  
-   See which integrations are available on our [integrations page](https://moderationapi.com/integrations).
+See our [integrations page](https://moderationapi.com/integrations) for all available options.
 
-</Tab>
+---
 
-</Tabs>
+> **Dry-run Mode:** If you want to analyze production data without enforcing moderation outcomes, enable “dry-run” in your project settings. This ensures the API always returns `flagged: false` when you submit content, yet still logs the analysis in your dashboard. Perfect for pre-production experiments or diagnosing how the model flags real-world data.
 
-### Dry-run on your production data
-
-You can submit content for analysis without actually moderating it. This is useful for testing and debugging purposes while configuring your project, or simply to get an idea of how the moderation models work on your data.
-
-Essentially this means the API will always return `flagged: false`, but the content is still analyzed and will show up as flagged in the dashboard.
-
-Enable dry-run mode per project in the settings tab.
+---
 
 ## 3. Review flagged content (optional)
 
-Content that is flagged by the model will be sent to the [Review Queue](/review-queues). This is useful if you want to combine automated content moderation with human moderation, or if you simply want to review what content is being flagged.<br></br>
+If content is flagged by any of your models, it will appear in the [Review Queue](/review-queues). This allows you to blend automated and human moderation:
 
 <Frame>
   <img
@@ -169,16 +149,22 @@ Content that is flagged by the model will be sent to the [Review Queue](/review-
   />
 </Frame>
 
-Some of the things you can do with review queues:
+In the review queue, you can:
 
-- Review content before it's published
-- Perform a manual review of content that was automatically rejected
-- Review content that was flagged by users
-- Ban users that are submitting unwanted content
-- Improve your models by correcting mistakes
-- Get insights into the content that is being submitted
-- Invite moderators to help you review content
+- Sanity-check items before they’re published.
+- Override automatic rejections if they’re false positives.
+- Identify repeat offenders and ban them.
+- Improve your models by correcting misclassifications.
+- Invite team members or moderators to help review flagged items.
 
-## All done!
+---
 
-Congrats! You’ve now automated your content moderation! Need support or want to give some feedback? You can drop us an email at [support@moderationapi.com](mailto:support@moderationapi.com).
+## All Done!
+
+Congratulations! You’ve run your first moderation checks. Here are a few next steps:
+
+- Continue tweaking your project settings and models as your platform grows.
+- Explore advanced features like real-time notifications or custom classification.
+- If you have questions, reach out to our [support team](mailto:support@moderationapi.com).
+
+We love hearing from you—please share how you’re using the service and let us know if you have suggestions or need help. Happy moderating!

@@ -1,0 +1,148 @@
+---
+title: "Generate Client Libraries"
+description: "Learn how to generate client libraries with our OpenAPI specification"
+---
+
+## Overview
+
+OpenAPI (formerly known as Swagger) is a widely adopted framework for describing RESTful APIs. By leveraging our OpenAPI 3.0.3 specification, you can automatically generate client libraries in many different programming languages. This ensures that you can easily integrate with our API, reduce boilerplate code, and minimize the risk of coding mistakes.
+
+## Getting the OpenAPI Specification
+
+You can find our OpenAPI specification at the following URL:
+
+```bash
+https://moderationapi.com/api/v1/openapi.json
+```
+
+Feel free to download the specification file or use the URL directly with any OpenAPI-compatible tool.
+
+---
+
+## Using OpenAPI Generator
+
+[OpenAPI Generator](https://openapi-generator.tech/) is a widely used command-line tool for generating client libraries from OpenAPI specifications.
+
+### 1. Install OpenAPI Generator CLI
+
+Below are several ways to install the CLI on your system:
+
+```bash
+# Using npm
+npm install @openapitools/openapi-generator-cli -g
+
+# Using Homebrew (macOS)
+brew install openapi-generator
+
+# Using Docker
+docker pull openapitools/openapi-generator-cli
+```
+
+### 2. Generate a Client Library
+
+With the CLI installed, you can generate a client library by specifying the input specification URL (`-i`) and the target language or framework (`-g`). Here are some examples:
+
+```bash
+# Python
+openapi-generator generate \
+  -i https://moderationapi.com/api/v1/openapi.json \
+  -g python \
+  -o ./client-python
+
+# TypeScript (Axios)
+openapi-generator generate \
+  -i https://moderationapi.com/api/v1/openapi.json \
+  -g typescript-axios \
+  -o ./client-typescript
+
+# Java
+openapi-generator generate \
+  -i https://moderationapi.com/api/v1/openapi.json \
+  -g java \
+  -o ./client-java
+```
+
+OpenAPI Generator supports [over 50 languages](https://openapi-generator.tech/docs/generators) and frameworks—feel free to explore additional options.
+
+---
+
+## Using Swagger Codegen
+
+[Swagger Codegen](https://github.com/swagger-api/swagger-codegen) is an alternative to OpenAPI Generator and also supports a range of languages.
+
+### 1. Install Swagger Codegen
+
+```bash
+# Using Homebrew (macOS)
+brew install swagger-codegen
+
+# Using Docker
+docker pull swaggerapi/swagger-codegen-cli
+```
+
+### 2. Generate a Client
+
+You can generate a client similarly by specifying the specification URL or a local file:
+
+```bash
+swagger-codegen generate \
+  -i https://moderationapi.com/api/v1/openapi.json \
+  -l python \
+  -o ./client-python
+```
+
+---
+
+## Language-Specific Tools
+
+Depending on your language of choice, you may want to use specialized tools that simplify the process even further.
+
+### Python
+
+If you prefer a Python-first approach, consider [openapi-python-client](https://github.com/openapi-generators/openapi-python-client). It can generate Python clients that align well with modern Pythonic standards:
+
+```bash
+pip install openapi-python-client
+openapi-python-client generate \
+  --url https://moderationapi.com/api/v1/openapi.json
+```
+
+By default, this creates a new folder with a Python package ready to install and use.
+
+### TypeScript
+
+For projects that primarily use TypeScript, [openapi-typescript](https://github.com/drwpow/openapi-typescript) provides a type-safe way to consume the specification:
+
+```bash
+npm install openapi-typescript
+npx openapi-typescript https://moderationapi.com/api/v1/openapi.json -o types.ts
+```
+
+This approach focuses on generating TypeScript type definitions rather than a fully featured client library, enabling you to write custom service logic while still benefiting from type safety.
+
+---
+
+## Verifying Your Generated Client
+
+1. Install the generated client's dependencies (e.g., run npm install for Node.js or pip install . for Python) according to its README instructions.
+2. Initialize the client with your API key or Bearer token (depending on your authentication mechanism).
+3. Make a small test request to ensure the client communicates with the API successfully.
+
+---
+
+## Common Tips and Troubleshooting
+
+- Make sure your OpenAPI specification is valid. You can use the [OpenAPI Validator](https://validator.swagger.io/) to check for any syntax or schema issues.
+- Keep your generated client code up-to-date with the latest version of the specification by regenerating when the API changes.
+- For language-specific best practices (like environment configuration or error handling), consult the official documentation of the library you've generated and the language you are using.
+
+---
+
+## Support
+
+If you run into issues generating or using your client, feel free to reach out to us:
+
+- Contact our support team directly.
+- File an issue or submit a pull request in our [GitHub repository](https://github.com/moderationapi/moderation-api).
+
+We appreciate your feedback and contributions, as your suggestions help us improve the experience for everyone.

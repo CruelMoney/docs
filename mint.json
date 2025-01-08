@@ -56,153 +56,136 @@
       "icon": "code",
       "url": "api-reference",
       "iconType": "solid"
-    },
-    {
-      "name": "Changelog",
-      "icon": "list",
-      "url": "https://moderationapi.com/blog/tag/updates/"
-    },
-    {
-      "name": "Status",
-      "url": "https://stats.uptimerobot.com/jJKn6IjEKD",
-      "icon": "wave-pulse",
-      "iconType": "solid"
-    },
-    {
-      "name": "Speak to an Expert",
-      "icon": "user",
-      "url": "https://moderationapi.com/sales",
-      "iconType": "solid"
-    },
-    {
-      "name": "Email support",
-      "url": "mailto:support@moderationapi.com",
-      "icon": "envelope",
-      "iconType": "solid"
     }
   ],
 
   "navigation": [
     {
-      "group": "Get Started",
-      "pages": [
-        "get-started/introduction",
-        "get-started/quickstart",
-        "get-started/concepts"
-      ]
+      "group": "Documentation",
+      "pages": ["get-started/introduction"]
     },
-
     {
-      "group": "Account",
-      "pages": [
-        "account/quota-usage",
-        "account/upgrading",
-        "account/adding-team-members"
-      ]
+      "group": "Quickstart",
+      "pages": ["quickstart/nodejs", "quickstart/ruby"]
     },
-
     {
-      "group": "Automate Moderation",
+      "group": "Learn",
       "pages": [
-        "content-moderation/overview",
         {
-          "group": "Project setup",
+          "group": "Manage account",
           "pages": [
-            "content-moderation/creating-projects",
-            "content-moderation/adding-models",
-            "content-moderation/flagging-thresholds",
-            "content-moderation/manage-api-key",
-            "content-moderation/custom-region"
+            "account/quota-usage",
+            "account/upgrading",
+            "account/adding-team-members"
           ]
         },
         {
-          "group": "Analyzing content",
+          "group": "Automate Moderation",
           "pages": [
-            "content-moderation/submit-content",
-            "content-moderation/acting-on-responses"
-          ]
-        },
-        "content-moderation/optimizing-accuracy"
-      ]
-    },
-    {
-      "group": "Model Studio",
-      "pages": [
-        "model-studio/overview",
-        {
-          "group": "AI Agents",
-          "pages": [
-            "ai-agents/creating-an-agent",
-            "ai-agents/adding-guidelines",
-            "ai-agents/strictness",
-            "ai-agents/using-your-agent"
-          ]
-        },
-        {
-          "group": "Pre-built Models",
-          "pages": [
-            "models/overview",
+            "content-moderation/overview",
             {
-              "group": "Text classifiers",
+              "group": "Project setup",
               "pages": [
-                "models/classifier-overview",
-                "models/toxicity",
-                "models/nsfw",
-                "models/sentiment",
-                "models/propriety",
-                "models/language",
-                "models/spam",
-                "models/sexual",
-                "models/discrimination",
-                "models/self-harm",
-                "models/violence"
+                "content-moderation/creating-projects",
+                "content-moderation/adding-models",
+                "content-moderation/flagging-thresholds",
+                "content-moderation/manage-api-key",
+                "content-moderation/custom-region"
               ]
             },
             {
-              "group": "Entity matchers",
+              "group": "Analyzing content",
               "pages": [
-                "models/entity-matchers-overview",
-                "models/email",
-                "models/phone-number",
-                "models/url",
-                "models/address",
-                "models/name",
-                "models/username",
-                "models/profanity",
-                "models/word",
-                "models/sensitive-number"
+                "content-moderation/submit-content",
+                "content-moderation/acting-on-responses"
               ]
             },
-            "models/image-models"
+            "content-moderation/optimizing-accuracy"
           ]
         },
         {
-          "group": "Custom Classifier Models",
+          "group": "Model Studio",
           "pages": [
-            "custom-models/overview",
-            "custom-models/creating-a-model",
-            "custom-models/using",
-            "custom-models/adaptive-model-optimization"
+            "model-studio/overview",
+            {
+              "group": "AI Agents",
+              "pages": [
+                "ai-agents/creating-an-agent",
+                "ai-agents/adding-guidelines",
+                "ai-agents/strictness",
+                "ai-agents/using-your-agent"
+              ]
+            },
+            {
+              "group": "Pre-built Models",
+              "pages": [
+                "models/overview",
+                {
+                  "group": "Text classifiers",
+                  "pages": [
+                    "models/classifier-overview",
+                    "models/toxicity",
+                    "models/nsfw",
+                    "models/sentiment",
+                    "models/propriety",
+                    "models/language",
+                    "models/spam",
+                    "models/sexual",
+                    "models/discrimination",
+                    "models/self-harm",
+                    "models/violence"
+                  ]
+                },
+                {
+                  "group": "Entity matchers",
+                  "pages": [
+                    "models/entity-matchers-overview",
+                    "models/email",
+                    "models/phone-number",
+                    "models/url",
+                    "models/address",
+                    "models/name",
+                    "models/username",
+                    "models/profanity",
+                    "models/word",
+                    "models/sensitive-number"
+                  ]
+                },
+                "models/image-models"
+              ]
+            },
+            {
+              "group": "Custom Classifier Models",
+              "pages": [
+                "custom-models/overview",
+                "custom-models/creating-a-model",
+                "custom-models/using",
+                "custom-models/adaptive-model-optimization"
+              ]
+            },
+            "wordlists/overview"
           ]
         },
-
-        "wordlists/overview"
+        {
+          "group": "Review Queue",
+          "pages": [
+            "review-queues/overview",
+            "review-queues/configuration",
+            "review-queues/submit-content",
+            "review-queues/using-queues",
+            "review-queues/actions",
+            "review-queues/end-users",
+            "review-queues/webhooks",
+            "review-queues/integrations",
+            "review-queues/inviting-moderators",
+            "guides/user-flagged-content"
+          ]
+        }
       ]
     },
     {
-      "group": "Review Queue Dashboard",
-      "pages": [
-        "review-queues/overview",
-        "review-queues/configuration",
-        "review-queues/submit-content",
-        "review-queues/using-queues",
-        "review-queues/actions",
-        "review-queues/end-users",
-        "review-queues/webhooks",
-        "review-queues/integrations",
-        "review-queues/inviting-moderators",
-        "guides/user-flagged-content"
-      ]
+      "group": "Resources",
+      "pages": ["resources/SDKs", "resources/integrations"]
     },
 
     {
