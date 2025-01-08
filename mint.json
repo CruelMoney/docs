@@ -10,6 +10,10 @@
   "feedback": {
     "thumbsRating": true
   },
+  "modeToggle": {
+    "default": "light",
+    "isHidden": true
+  },
   "api": {
     "playground": {
       "mode": "show"

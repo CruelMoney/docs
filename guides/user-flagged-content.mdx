@@ -1,134 +1,279 @@
 ---
-title: "How to handle user flagged content"
-sidebarTitle: "User flagged content"
-description: "Learn how to handle user flagged content with Moderation API"
+title: "Handling User-Flagged Content"
+sidebarTitle: "User-Flagged Content"
+description: "Learn how to handle user-flagged content with the Moderation API"
 ---
 
 ## Introduction
 
-In this guide we'll enable users to report other profiles for a fictional dating application called **Wizard Dating**.
+In this guide, we'll demonstrate how to enable users to report other profiles within a fictional dating application named **Wizard Dating**.
 
-When users report a profile, we'll add it to a review queue so that an admin can review it. If the admin decides to remove the profile, we'll remove it from our application.
+### **Goals**
 
-**Goals**
+- **View an overview of reported profiles**
+- **Allow users to report profiles**
+- **Review and remove reported profiles from the application**
+- **Sort reported profiles to prioritize the most problematic ones**
 
-- Get an overview of reported profiles
-- Remove reported profiles from our application
-- Analyze reported profiles to focus on the worst offenders
-
-## Setting up the dashboard
-
-Let's prepare everything in the dashboard first. We'll need to create a project, a review queue, and a custom action.
-
-### Add a new project
-
-We'll start by creating a new project called _Flagged Profiles_ and we'll add a couple of models to it: the `toxicity`, the `nsfw`, and the `propriety` model.
+When users report a profile, we'll add it to a review queue so that an admin can assess it. If the admin decides to remove the profile, we'll eliminate it from our application.
 
 <Frame>
   <img
-    className="block  "
-    src="/guides/images/1.png"
-    alt="Creating a new project"
+    className="block"
+    src="/guides/images/report-user-flow.png"
+    alt="User Report Flow"
   />
 </Frame>
 
-We keep the flagging thresholds at their default values for now.
+---
 
-### Add a new review queue
+## Setting Up the Dashboard
 
-Next lets create a queue to review content submitted to our project. We'll call it _Reported Profiles_.
+First, let's set up the dashboard by creating the necessary components. We'll need to create:
 
-To make sure that only reported profiles show up in this queue we configure the queue to only show items submitted to the project `Flagged profiles`.
+1. A project for analyzing profiles
+2. An action for users to report profiles
+3. A review queue to display reported profiles
+4. An action for moderators to remove profiles
 
-We also make sure to configure the queue to show `all items` instead of just `flagged` items. This way we can see all the profiles that have been reported, even if they haven't been flagged by the models in our project.
+### Create a Project
 
-Lastly, we'll configure the queue to only show items from the last month to keep it focused.
+We'll start by creating a new project called _Wizard Profiles_ and adding several models to it: `toxicity`, `nsfw`, `sentiment`, `pii`, and `spam`.
+
+We will keep the flagging thresholds at their default values for now.
 
 <Frame>
   <img
-    className="block  "
-    src="/guides/images/2.png"
-    alt="Creating a new review queue"
+    className="block"
+    src="/guides/images/create-project.png"
+    alt="Creating a New Project"
   />
 </Frame>
 
-### Add a removal action to the queue
+### Create a Reporting Action
 
-Now we have prepared our dashboard to handle reporting profiles, but we also want to add an action to the queue, so that we can manually remove profiles from our application.
+Navigate to [your actions](https://moderationapi.com/app/moderation/actions) to create a new action.
 
-We call the action `Remove profile` and configure it to only show up our newly created queue.
-
-We also want the action to remove the profile from the queue once the action is executed, so we check "Action resolves items".
-
-Lastly, we configure it to call a webhook on our application servers.
+1. Create an action named `Report Profile` that will be used to report user profiles.
+2. Since this action will only be invoked by our application code, select **"Hide action from dashboard"** to prevent it from appearing in any queues.
+3. Additionally, check **"Allow text input for value"** so users can add comments to their reports.
+4. Note the action key `report_profile` for later use.
 
 <Frame>
   <img
-    className="block  "
-    src="/guides/images/3.png"
-    alt="Creating a new  queue action"
+    className="block"
+    src="/guides/images/create-action.png"
+    alt="Creating a New Action"
   />
 </Frame>
 
-## Application code
+### Create a Review Queue
 
-Next we need to write some code for our application to handle user reports and removing profiles.
+Next, we'll create a queue to review content submitted to our project. We'll name it _Reported Profiles_.
 
-### Adding report functionality to our application
+<Frame>
+  <img
+    className="block"
+    src="/guides/images/create-new-queue.png"
+    alt="Creating a New Review Queue"
+  />
+</Frame>
 
-Back in our dating app, we'll add a function in our code to handle user reports.
+Configure the queue to display **all items** instead of just **flagged** items. This ensures that we can see all reported profiles, even if they haven't been flagged by our models.
 
-In this example we are using Moderation API's Node SDK, but you can use the [REST API](/api-reference/introduction) with any language.
+To ensure that only reported profiles appear in this queue:
 
-To use Moderation API in our application we'll need to use our project's API key. The project API key can be found in the project dashboard under `integrate` in the sidebar.
+1. Set a filter for the action `Report Profile` that we created earlier.
+2. Configure the queue to display items from the last month to maintain focus.
 
-We'll call the [moderate/text endpoint](/api-reference/analyze-text) to analyze the reported profile and add it to the review queue.
+<Frame>
+  <img
+    className="block"
+    src="/guides/images/filter-reported-profiles.png"
+    alt="Filtering Reported Profiles"
+  />
+</Frame>
 
-```typescript Node.js
+### Create a Removal Action
+
+Now that the review queue is set up to display reported profiles, we'll add an action to remove profiles from our application.
+
+1. Create an action named `Remove Profile`.
+2. Configure it to appear only in the newly created _Reported Profiles_ queue.
+3. Enable **"Action resolves items"** so that the profile is removed from the queue once the action is executed.
+4. Set up a webhook to call our application servers at `https://wizard-dating.com/webhooks` to handle the removal of the profile from the application.
+
+<Frame>
+  <img
+    className="block"
+    src="/guides/images/create-removal-action.png"
+    alt="Creating a Removal Action"
+  />
+</Frame>
+
+---
+
+## Application Code
+
+Next, we'll implement the necessary code in our application to handle user reports and profile removals.
+
+We'll use the Moderation API's [Node SDK](https://www.npmjs.com/package/@moderation-api/sdk) to interact with the API from our application.
+
+### Prerequisites
+
+#### Environment Variables
+
+Create a `.env` file in your project root with your project API key:
+
+```bash
+MODERATION_API_KEY=your_project_api_key
+```
+
+#### Dependencies
+
+Install the Moderation API's Node SDK using your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install @moderation-api/sdk
+```
+
+```bash yarn
+yarn add @moderation-api/sdk
+```
+
+```bash pnpm
+pnpm add @moderation-api/sdk
+```
+
+</CodeGroup>
+
+### Instantiating the SDK
+
+To use the Moderation API in our application, we'll need to instantiate it with our project's API key.
+
+```typescript:/lib/moderation.ts
 import ModerationApi from "@moderation-api/sdk";
 
-const moderationApi = new ModerationApi({
-  key: PROJECT_API_KEY,
+export const moderationApi = new ModerationApi({
+  key: process.env.MODERATION_API_KEY,
 });
+```
 
-const handleUserReport = async (profile, reportingUser) => {
-  // Adding the user to the review queue and analyzing the profile
-  const analysis = await moderationApi.moderate.text({
-    value: profile.bio,
-    authorId: profile.id,
-    metadata: {
-      url: profile.url, // so we can quickly view the profile from the queue
-      reportingUser: reportingUser.id, // just for our own reference
+### Submitting Profiles for Analysis
+
+When a user creates or updates a profile, we'll submit it for analysis using the `/moderate/object` endpoint. This allows us to detect any issues with the profile content.
+
+#### Handling Profile Creation
+
+```typescript:/lib/profile/create.ts
+import { moderationApi } from "./lib/moderation";
+import db from "./lib/db";
+
+export const handleCreateProfile = async ({ bio, profilePicture }) => {
+  const profile = await db.profile.create({
+    data: {
+      bio,
+      profilePicture,
     },
   });
 
-  // Checking if any of the models flagged the profile
-  if (analysis.flagged) {
-    // Here we could take immediate action like hiding the profile
-  }
+  const analysis = await moderationApi.moderate.object({
+    contentId: profile.id,
+    authorId: profile.id,
+    value: {
+      type: "profile",
+      bio: {
+        type: "text",
+        value: bio,
+      },
+      profilePicture: {
+        type: "image",
+        url: profilePicture,
+      },
+    },
+    // Optional: Add the URL to quickly view the profile from the queue
+    metadata: {
+      url: profile.url,
+    },
+  });
+
+  return profile;
 };
 ```
 
-### Handling the webhook
+#### Handling Profile Updates
 
-Next we'll add a webhook handler to handle the `Remove profile` action.
+```typescript:/lib/profile/update.ts
+import { moderationApi } from "./lib/moderation";
+import db from "./lib/db";
 
-In this example we're using Next.js and Moderation API's Node SDK to verify the webhook signature. See the [webhook documentation](/review-queues/webhooks) for more information.
+export const handleUpdateProfile = async ({ id, bio, profilePicture }) => {
+  const profile = await db.profile.update({
+    where: { id },
+    data: { bio, profilePicture },
+  });
 
-```js Next.js webhook verification with Node SDK
-import ModerationApi from "@moderation-api/sdk";
+  const analysis = await moderationApi.moderate.object({
+    contentId: id,
+    authorId: id,
+    value: {
+      type: "profile",
+      bio: {
+        type: "text",
+        value: bio,
+      },
+      profilePicture: {
+        type: "image",
+        url: profilePicture,
+      },
+    },
+    // Optional: Add the URL to quickly view the profile from the queue
+    metadata: {
+      url: profile.url,
+    },
+  });
 
-const moderationApi = new ModerationApi({
-  key: PROJECT_API_KEY,
-});
+  return profile;
+};
+```
 
+_In this example, we are not acting on the analysis results, but you could use the data to hide flagged profiles or return an error to the user._
+
+### Adding Report Functionality to Our Application
+
+We'll add a function to call the `/actions/execute` endpoint to report a profile. This function should be exposed to users through your application's UI.
+
+```typescript:/lib/report.ts
+import { moderationApi } from "./lib/moderation";
+
+export const handleReportProfile = async (profile, reason) => {
+  const actionKey = "report_profile";
+
+  const { success } = await moderationApi.queueActions.execute(actionKey, {
+    contentIds: [profile.id],
+    value: reason,
+  });
+
+  return success;
+};
+```
+
+### Handling the Webhook
+
+We'll implement a webhook handler to process the `Remove Profile` action. In this example, we're using Next.js and the Moderation API's Node SDK to verify the webhook signature.
+
+```javascript:/pages/api/webhooks.js
+import { moderationApi } from "../../lib/moderation";
+import db from "../../lib/db";
 import { buffer } from "micro";
 
 const handler = async (req, res) => {
   const webhookRawBody = await buffer(req);
   const webhookSignatureHeader = req.headers["modapi-signature"];
 
-  // securely verify the webhook and get the payload
+  // Securely verify the webhook and retrieve the payload
   const payload = await moderationApi.webhooks.constructEvent(
     webhookRawBody,
     webhookSignatureHeader,
@@ -137,13 +282,11 @@ const handler = async (req, res) => {
 
   const { type, queue, item, action } = payload;
 
-  if (type === "QUEUE_ITEM_ACTION" && action.name === "Remove profile") {
-    const { authorId } = item;
-
-    // remove the user from our application
+  if (type === "QUEUE_ITEM_ACTION" && action.key === "remove_profile") {
+    // Remove the user from our application
     await db.user.update({
       where: {
-        userId: authorId,
+        userId: item.id,
       },
       data: {
         banned: true,
@@ -154,7 +297,7 @@ const handler = async (req, res) => {
   return res.status(200).send();
 };
 
-// disable body parser so we can access raw body
+// Disable body parser to access raw body
 export const config = {
   api: {
     bodyParser: false,
@@ -164,86 +307,80 @@ export const config = {
 export default handler;
 ```
 
-## Using our review queue
+For more information, refer to the [webhook documentation](/review-queues/webhooks).
 
-Now that we have everything in place we can start using our review queue.
+---
 
-I've already received a few reports from users on our wizard dating app, so now we'll go through reviewing each of them.
+## Using Our Review Queue
 
-Upon opening the queue we can see that we have 3 items waiting to be reviewed. Using the chart, we can also see we have some unresolved items under `TOXICITY` and `THREAT`, so we might want to focus on those first.
+With everything set up, we can start using our review queue to manage reported profiles.
 
-<Frame>
-  <img
-    className="block  "
-    src="/guides/images/4.png"
-    alt="The queue overview"
-  />
-</Frame>
-
-### Focusing on the worst offenders
-
-To focus on profiles flagged by our model analysis we can use the queue filter.
-
-We can do this by opening the filter and selecting the labels we want to focus on. A faster way is to press on the labels in the chart.
-
-Afte setting the filter, we see 1 item with these serious labels.
-
-<Frame>
-  <img className="block  " src="/guides/images/5.png" alt="Queue filter" />
-</Frame>
-
-### Removing a profile
-
-Upon opening the first item we see the content.
-
-> **"I hate wizards and I will curse you if you message me!"**
-
-We can see that content has been flagged correctly with the labels `THREAT` and `TOXICITY`.
+Upon opening the review queue, we'll see reports submitted by users on our Wizard Dating app. We'll review each report to decide whether to remove the profile or keep it.
 
 <Frame>
   <img
     className="block"
-    src="/guides/images/6.png"
-    alt="Queue item detail view"
+    src="/guides/images/queue-overview.png"
+    alt="Queue Overview"
   />
 </Frame>
 
-This profile is clearly not a good fit for our application, so we'll remove it by clicking on the `Remove profile` action. This will immediately call our webhook and remove the item from the queue as we've configured.
+### Focusing on the Worst Offenders
 
-### Keeping a profile
+To prioritize profiles that have also been flagged by our model analysis, we can apply a queue filter.
 
-Next, let's open the filter and press `Reset` so we can see all the remaining items again.
+1. Open the filter and select the labels you want to focus on, such as `UNSAFE`.
 
-Now we see that we have 2 items left to review.
+   > **Tip:** You can also click on the labels in the chart to apply the filter.
 
-Let's open the first one:
+<Frame>
+  <img
+    className="block"
+    src="/guides/images/queue-filter.png"
+    alt="Queue Filter"
+  />
+</Frame>
 
-> **"I'm actually a muggle but I'm looking for a something magical"**
+2. After setting the filter, you'll see items labeled as `UNSAFE`.
 
-This item has not been flagged by any of the models, but it has been reported by a user.
+<Frame>
+  <img
+    className="block"
+    src="/guides/images/queue-filter-unsafe.png"
+    alt="Filtered Queue with Unsafe Labels"
+  />
+</Frame>
 
-Notice (in the screenshot above) how we can see all the metadata we've submitted with the item. The profile URL is clickable so we can quickly view the profile to check if the profile has any other issues.
+### Removing a Profile
 
-Everything seems fine, so we just press the `Resolve` button to remove the item from the queue.
+1. Click on a queue item to open its detail view, where you can see the profile content and metadata.
+2. Review the flags and activity history, including when the profile was submitted, reported, and the reasons provided by users.
+3. If the profile violates guidelines, click the **"Remove Profile"** action. This will trigger the webhook to remove the profile from the application and resolve the item in the queue.
 
-The next item automatically opens:
+### Keeping a Profile
 
-> **"I am a wizard looking for a witch to cast a spell on me ✨"**
+1. Reset the filter to view all remaining items in the queue.
+2. Select a profile that has been reported but not flagged by the models.
 
-This item also seems fine, so we'll resolve it as well.
+   > **Example:** _"I'm actually a muggle but I'm looking for something magical."_
 
-## All done!
+3. If the profile appears appropriate, click the **"Resolve"** button to remove it from the queue without taking further action.
+4. Repeat the process for other profiles as needed.
 
-Now the queue is empty and we've successfully reviewed all the reported profiles.
+---
 
-Here's what we've accomplished:
+## All Done!
 
-- Added a way for users to report profiles
-- Added a review queue to handle these reports.
-- Added a webhook to remove profiles from our application.
+The review queue is now empty, and we've successfully handled all reported profiles.
 
-## Next steps
+### Accomplishments:
 
-- Invite moderators to your queue
-- Use the data to train a model to recognize bad profiles
-- Analyze profiles on signup
+- **Enabled users to report profiles**
+- **Set up a review queue to manage reports**
+- **Implemented a webhook to remove profiles from the application**
+
+## Next Steps
+
+- **Invite moderators to your queue:** Expand your moderation team to handle more reports efficiently.
+- **Use the data to train a model:** Enhance your models to better recognize inappropriate profiles.
+- **Implement an automated policy:** Automatically remove profiles that receive multiple flags to streamline moderation.
