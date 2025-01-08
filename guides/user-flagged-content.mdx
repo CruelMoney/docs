@@ -103,14 +103,6 @@ Now that the review queue is set up to display reported profiles, we'll add an a
 3. Enable **"Action resolves items"** so that the profile is removed from the queue once the action is executed.
 4. Set up a webhook to call our application servers at `https://wizard-dating.com/webhooks` to handle the removal of the profile from the application.
 
-<Frame>
-  <img
-    className="block"
-    src="/guides/images/create-removal-action.png"
-    alt="Creating a Removal Action"
-  />
-</Frame>
-
 ---
 
 ## Application Code
@@ -153,7 +145,7 @@ pnpm add @moderation-api/sdk
 
 To use the Moderation API in our application, we'll need to instantiate it with our project's API key.
 
-```typescript:/lib/moderation.ts
+```typescript /lib/moderation.ts
 import ModerationApi from "@moderation-api/sdk";
 
 export const moderationApi = new ModerationApi({
@@ -165,9 +157,9 @@ export const moderationApi = new ModerationApi({
 
 When a user creates or updates a profile, we'll submit it for analysis using the `/moderate/object` endpoint. This allows us to detect any issues with the profile content.
 
-#### Handling Profile Creation
+<CodeGroup>
 
-```typescript:/lib/profile/create.ts
+```typescript Create Profile
 import { moderationApi } from "./lib/moderation";
 import db from "./lib/db";
 
@@ -203,9 +195,7 @@ export const handleCreateProfile = async ({ bio, profilePicture }) => {
 };
 ```
 
-#### Handling Profile Updates
-
-```typescript:/lib/profile/update.ts
+```typescript Update Profile
 import { moderationApi } from "./lib/moderation";
 import db from "./lib/db";
 
@@ -239,13 +229,15 @@ export const handleUpdateProfile = async ({ id, bio, profilePicture }) => {
 };
 ```
 
+</CodeGroup>
+
 _In this example, we are not acting on the analysis results, but you could use the data to hide flagged profiles or return an error to the user._
 
 ### Adding Report Functionality to Our Application
 
 We'll add a function to call the `/actions/execute` endpoint to report a profile. This function should be exposed to users through your application's UI.
 
-```typescript:/lib/report.ts
+```typescript Handle Report Profile
 import { moderationApi } from "./lib/moderation";
 
 export const handleReportProfile = async (profile, reason) => {
@@ -264,7 +256,7 @@ export const handleReportProfile = async (profile, reason) => {
 
 We'll implement a webhook handler to process the `Remove Profile` action. In this example, we're using Next.js and the Moderation API's Node SDK to verify the webhook signature.
 
-```javascript:/pages/api/webhooks.js
+```javascript /pages/api/webhooks.js
 import { moderationApi } from "../../lib/moderation";
 import db from "../../lib/db";
 import { buffer } from "micro";
@@ -320,7 +312,7 @@ Upon opening the review queue, we'll see reports submitted by users on our Wizar
 <Frame>
   <img
     className="block"
-    src="/guides/images/queue-overview.png"
+    src="/guides/images/queue-profiles.png"
     alt="Queue Overview"
   />
 </Frame>
@@ -354,6 +346,15 @@ To prioritize profiles that have also been flagged by our model analysis, we can
 ### Removing a Profile
 
 1. Click on a queue item to open its detail view, where you can see the profile content and metadata.
+
+<Frame>
+  <img
+    className="block"
+    src="/guides/images/unsafe-item-detail.png"
+    alt="Unsafe Item Detail"
+  />
+</Frame>
+
 2. Review the flags and activity history, including when the profile was submitted, reported, and the reasons provided by users.
 3. If the profile violates guidelines, click the **"Remove Profile"** action. This will trigger the webhook to remove the profile from the application and resolve the item in the queue.
 
