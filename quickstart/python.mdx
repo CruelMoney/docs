@@ -1,0 +1,156 @@
+---
+title: "Quickstart Python"
+sidebarTitle: "Python"
+description: "Learn how to moderate content using Moderation API's REST endpoints with Python"
+---
+
+---
+
+<Snippet file="prerequisites.mdx" />
+
+---
+
+## 1. Install SDK
+
+We currently don't have an official SDK for Python, but you can use the [OpenAPI Generator](/resources/generate-client-openapi) to generate a Python client or simply call the API directly.
+
+## 2. Submit content
+
+Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+
+<CodeGroup>
+
+```python Text moderation
+import requests
+
+# Configure the client
+API_KEY = "your-api-key"  # Replace with your API key
+BASE_URL = "https://moderationapi.com/api/v1"
+headers = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json"
+}
+
+# Text moderation
+response = requests.post(
+    f"{BASE_URL}/moderate/text",
+    headers=headers,
+    json={
+        "value": "Hello world!",
+        "authorId": "123",
+        "contextId": "456",
+        "metadata": {
+            "customField": "value"
+        }
+    }
+)
+
+text_analysis = response.json()
+
+if text_analysis["flagged"]:
+    print("Text content flagged")
+    # Block the content, show an error, etc...
+else:
+    print("Text content is safe.")
+    # Save to database or proceed...
+```
+
+```python Image moderation
+import requests
+
+# Configure the client
+API_KEY = "your-api-key"  # Replace with your API key
+BASE_URL = "https://moderationapi.com/api/v1"
+headers = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json"
+}
+
+# Image moderation
+response = requests.post(
+    f"{BASE_URL}/moderate/image",
+    headers=headers,
+    json={
+        "url": "https://example.com/image.jpg",
+        "authorId": "123",
+        "contextId": "456",
+        "metadata": {
+            "customField": "value"
+        }
+    }
+)
+
+image_analysis = response.json()
+
+if image_analysis["flagged"]:
+    print("Image content flagged:", image_analysis["labels"])
+    # Block or require review
+else:
+    print("Image is safe.")
+    # Save to database or proceed...
+```
+
+```python Object moderation
+import requests
+
+# Configure the client
+API_KEY = "your-api-key"  # Replace with your API key
+BASE_URL = "https://moderationapi.com/api/v1"
+headers = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json"
+}
+
+# Object moderation
+response = requests.post(
+    f"{BASE_URL}/moderate/object",
+    headers=headers,
+    json={
+        "value": {
+            "type": "Profile",
+            "data": {
+                "name": {
+                    "type": "text",
+                    "value": "John Doe"
+                },
+                "email": {
+                    "type": "text",
+                    "value": "john.doe@example.com"
+                },
+                "picture": {
+                    "type": "image",
+                    "value": "https://example.com/image.jpg"
+                }
+            }
+        },
+        "authorId": "123",
+        "contextId": "456",
+        "metadata": {
+            "customField": "value"
+        }
+    }
+)
+
+object_analysis = response.json()
+
+if object_analysis["flagged"]:
+    print("Object content flagged")
+    # Block or require review
+else:
+    print("Object is safe.")
+    # Save to database or proceed...
+```
+
+</CodeGroup>
+
+---
+
+<Snippet file="dry-run.mdx" />
+
+---
+
+<Snippet file="review-flagged.mdx" />
+
+---
+
+<Snippet file="all-done.mdx" />
