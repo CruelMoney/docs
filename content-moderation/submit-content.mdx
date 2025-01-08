@@ -8,6 +8,8 @@ To analyze content, you need to send a POST request with the content to one of t
 
 Remember to [create a project](/content-moderation/creating-projects) first and configure the models you want to use to analyze your content.
 
+---
+
 <CodeGroup>
 
 ```typescript Node.js example
@@ -83,6 +85,8 @@ if (flagged) {
 
 </CodeGroup>
 
+---
+
 ## Content metadata
 
 You can add metadata to the content you are sending for moderation. Some specific metadata is used by the moderation pipeline to improve the accuracy of the moderation and some is used to improve the dashboard experience.
@@ -131,6 +135,8 @@ Metadata is shown in the [review queues](/review-queues) and included in any web
   original content from the review queues.
 </Tip>
 
+---
+
 ## Context awareness
 
 Enable `Context awareness` in your project settings, and then include `authorId` and/or `contextId` in the API request. This enables models to pull in previous messages for their analysis and increase their accuracy.
@@ -159,6 +165,8 @@ It can also help understanding messages in the context of a conversation.
 user 1 -> What's the worst thing you know?
 user 2 -> European people [FLAGGED with context awareness]
 ```
+
+---
 
 ## Content types
 
@@ -241,6 +249,8 @@ Audio moderation is available for enterprise users and involves analyzing audio 
 [/moderate/video](/api-reference/analyze-video)
 
 Video moderation, also available for enterprise users, involves analyzing video content to detect inappropriate scenes or actions. This can include identifying violence, nudity, or other objectionable content within video files.
+
+---
 
 ## Opt out of content store
 
