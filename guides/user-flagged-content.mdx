@@ -58,7 +58,7 @@ Navigate to [your actions](https://moderationapi.com/app/moderation/actions) to 
 2. Since this action will only be invoked by our application code, select **"Hide action from dashboard"** to prevent it from appearing in any queues.
 3. Additionally, check **"Allow text input for value"** so users can add comments to their reports.
 4. Note the action key `report_profile` for later use.
-5. Select queue behavior: **"Action unresolves item (re-add to queue)"**: If the profile has already been resolved by a moderator, reporting it will re-add it to the queue so that it can be reviewed again.
+5. Select queue behavior: **"Action unresolves item (re-add to queue)"**: to always re-add the profile to the queue even if a moderator has resolved it before. Otherwise leave it at **"Action does not resolve item"** to only review the profile once.
 
 <Frame>
   <img
