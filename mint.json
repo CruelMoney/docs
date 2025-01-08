@@ -210,10 +210,13 @@
       "pages": [
         "api-reference/introduction",
         "api-reference/authentication",
-        "api-reference/get-account",
         "api-reference/errors",
         "api-reference/rate-limits"
       ]
+    },
+    {
+      "group": "Account",
+      "pages": ["api-reference/get-account"]
     },
     {
       "group": "Content moderation",

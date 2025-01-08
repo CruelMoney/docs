@@ -904,14 +904,7 @@
             }
           },
           "400": { "$ref": "#/components/responses/error" }
-        },
-        "x-codeSamples": [
-          {
-            "lang": "typescript",
-            "label": "Node.js",
-            "source": "import ModerationApi from '@moderationapi/sdk';\n\nconst moderationApi = new ModerationApi({ apiKey: 'YOUR_API_KEY' });\n\nmoderationApi.actions.execute({ contentIds: ['60c9e1c0e4e7e1001c7a0e1e', '60c9e1c0e4e7e1001c7a0e1f'], actionKey: 'suspend-author', value: 'Spam' });"
-          }
-        ]
+        }
       }
     },
     "/actions/{actionId}/execute": {

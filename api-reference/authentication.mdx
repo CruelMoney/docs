@@ -1,7 +1,6 @@
 ---
 title: "Authentication"
 description: "How to authenticate with the API"
-api: "GET https://moderationapi.com/api/v1/auth"
 ---
 
 The Moderation API uses [API keys](/content-moderation/manage-api-key) to authenticate requests. Each project has its own API key. You can view and manage your API keys in the [dashboard](https://moderationapi.com/dashboard) -> Project -> Integrate.
@@ -9,16 +8,6 @@ The Moderation API uses [API keys](/content-moderation/manage-api-key) to authen
 Your API keys carry many privileges, so be sure to keep them secure. Don't share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
 
 Authentication to the API is performed with the Authorization header when making a HTTP request. Provide your API key prefixed with `Bearer` as the value of the Authorization header.
-
-<ResponseExample>
-```json
-{
-  "status": "success",
-  "message": "Valid API key",
-  "project": "My Project Name"
-}
-```
-</ResponseExample>
 
 You must make all API calls over HTTPS. Calls that you make over plain HTTP will fail. API requests without authentication will also fail.
 

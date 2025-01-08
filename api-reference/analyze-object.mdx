@@ -1,3 +1,296 @@
 ---
 openapi: post /moderate/object
+sidebarTitle: Analyze object
 ---
+
+<RequestExample>
+
+```bash cURL
+curl -X POST 'https://moderationapi.com/api/v1/moderate/object' \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "value": {
+      "type": "profile",
+      "data": {
+        "username": {
+          "type": "text",
+          "value": "johndoe123"
+        },
+        "bio": {
+          "type": "text",
+          "value": "Hello, I am John Doe!"
+        },
+        "avatar": {
+          "type": "image",
+          "value": "https://example.com/avatar.jpg"
+        }
+      }
+    },
+    "contentId": "profile-123",
+    "authorId": "user-123",
+    "metadata": {
+      "source": "registration"
+    }
+  }'
+```
+
+```javascript Node.js
+import ModerationApi from "@moderationapi/sdk";
+
+const moderationApi = new ModerationApi({
+  apiKey: "<token>",
+});
+
+const result = await moderationApi.moderate.object({
+  value: {
+    type: "profile",
+    data: {
+      username: {
+        type: "text",
+        value: "johndoe123",
+      },
+      bio: {
+        type: "text",
+        value: "Hello, I am John Doe!",
+      },
+      avatar: {
+        type: "image",
+        value: "https://example.com/avatar.jpg",
+      },
+    },
+  },
+  contentId: "profile-123",
+  authorId: "user-123",
+  metadata: {
+    source: "registration",
+  },
+});
+```
+
+```ruby Ruby
+require 'moderation_api'
+
+ModerationApi.configure do |config|
+  config.access_token = '<token>'
+end
+
+api_instance = ModerationApi::ModerateApi.new
+request = ModerationApi::ModerationObjectRequest.new({
+  value: {
+    type: 'profile',
+    data: {
+      username: {
+        type: 'text',
+        value: 'johndoe123'
+      },
+      bio: {
+        type: 'text',
+        value: 'Hello, I am John Doe!'
+      },
+      avatar: {
+        type: 'image',
+        value: 'https://example.com/avatar.jpg'
+      }
+    }
+  },
+  content_id: 'profile-123',
+  author_id: 'user-123',
+  metadata: {
+    source: 'registration'
+  }
+})
+
+begin
+  result = api_instance.moderation_object(request)
+  p result
+rescue ModerationApi::ApiError => e
+  puts "Error when calling ModerateApi->moderation_object: #{e}"
+end
+```
+
+```python Python
+import requests
+
+url = "https://moderationapi.com/api/v1/moderate/object"
+headers = {
+    "Authorization": "Bearer <token>",
+    "Content-Type": "application/json"
+}
+payload = {
+    "value": {
+        "type": "profile",
+        "data": {
+            "username": {
+                "type": "text",
+                "value": "johndoe123"
+            },
+            "bio": {
+                "type": "text",
+                "value": "Hello, I am John Doe!"
+            },
+            "avatar": {
+                "type": "image",
+                "value": "https://example.com/avatar.jpg"
+            }
+        }
+    },
+    "contentId": "profile-123",
+    "authorId": "user-123",
+    "metadata": {
+        "source": "registration"
+    }
+}
+
+response = requests.post(url, headers=headers, json=payload)
+result = response.json()
+```
+
+```php PHP
+<?php
+$url = "https://moderationapi.com/api/v1/moderate/object";
+$headers = array(
+    "Authorization: Bearer <token>",
+    "Content-Type: application/json"
+);
+$data = array(
+    "value" => array(
+        "type" => "profile",
+        "data" => array(
+            "username" => array(
+                "type" => "text",
+                "value" => "johndoe123"
+            ),
+            "bio" => array(
+                "type" => "text",
+                "value" => "Hello, I am John Doe!"
+            ),
+            "avatar" => array(
+                "type" => "image",
+                "value" => "https://example.com/avatar.jpg"
+            )
+        )
+    ),
+    "contentId" => "profile-123",
+    "authorId" => "user-123",
+    "metadata" => array(
+        "source" => "registration"
+    )
+);
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$result = json_decode($response, true);
+?>
+```
+
+```java Java
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+
+String url = "https://moderationapi.com/api/v1/moderate/object";
+String requestBody = """
+    {
+        "value": {
+            "type": "profile",
+            "data": {
+                "username": {
+                    "type": "text",
+                    "value": "johndoe123"
+                },
+                "bio": {
+                    "type": "text",
+                    "value": "Hello, I am John Doe!"
+                },
+                "avatar": {
+                    "type": "image",
+                    "value": "https://example.com/avatar.jpg"
+                }
+            }
+        },
+        "contentId": "profile-123",
+        "authorId": "user-123",
+        "metadata": {
+            "source": "registration"
+        }
+    }
+    """;
+
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create(url))
+    .header("Authorization", "Bearer <token>")
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+    .build();
+
+HttpResponse<String> response = client.send(request,
+    HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body());
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    url := "https://moderationapi.com/api/v1/moderate/object"
+    data := map[string]interface{}{
+        "value": map[string]interface{}{
+            "type": "profile",
+            "data": map[string]interface{}{
+                "username": map[string]interface{}{
+                    "type":  "text",
+                    "value": "johndoe123",
+                },
+                "bio": map[string]interface{}{
+                    "type":  "text",
+                    "value": "Hello, I am John Doe!",
+                },
+                "avatar": map[string]interface{}{
+                    "type":  "image",
+                    "value": "https://example.com/avatar.jpg",
+                },
+            },
+        },
+        "contentId": "profile-123",
+        "authorId": "user-123",
+        "metadata": map[string]interface{}{
+            "source": "registration",
+        },
+    }
+
+    jsonData, _ := json.Marshal(data)
+    req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer <token>")
+    req.Header.Set("Content-Type", "application/json")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Println(result)
+}
+```
+
+</RequestExample>

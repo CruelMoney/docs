@@ -1,3 +1,172 @@
 ---
 openapi: post /actions/execute
 ---
+
+<RequestExample>
+
+```bash cURL
+curl -X POST 'https://moderationapi.com/api/v1/actions/execute' \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "contentIds": [
+      "60c9e1c0e4e7e1001c7a0e1e",
+      "60c9e1c0e4e7e1001c7a0e1f"
+    ],
+    "actionId": "suspend-author",
+    "value": "Spam"
+  }'
+```
+
+```javascript Node.js
+import ModerationApi from "@moderationapi/sdk";
+
+const moderationApi = new ModerationApi({
+  apiKey: "<token>",
+});
+
+moderationApi.actions.execute({
+  contentIds: ["60c9e1c0e4e7e1001c7a0e1e", "60c9e1c0e4e7e1001c7a0e1f"],
+  actionId: "suspend-author",
+  value: "Spam",
+});
+```
+
+```ruby Ruby
+require 'moderation_api'
+
+ModerationApi.configure do |config|
+  config.access_token = '<token>'
+end
+
+api = ModerationApi::QueueActionsApi.new
+api.actions_execute(
+  content_ids: [
+    '60c9e1c0e4e7e1001c7a0e1e',
+    '60c9e1c0e4e7e1001c7a0e1f'
+  ],
+  action_id: 'suspend-author',
+  value: 'Spam'
+)
+```
+
+```python Python
+import requests
+
+url = "https://moderationapi.com/api/v1/actions/execute"
+headers = {
+    "Authorization": "Bearer <token>",
+    "Content-Type": "application/json"
+}
+payload = {
+    "contentIds": [
+        "60c9e1c0e4e7e1001c7a0e1e",
+        "60c9e1c0e4e7e1001c7a0e1f"
+    ],
+    "actionId": "suspend-author",
+    "value": "Spam"
+}
+
+response = requests.post(url, headers=headers, json=payload)
+```
+
+```php PHP
+<?php
+$url = "https://moderationapi.com/api/v1/actions/execute";
+$headers = array(
+    "Authorization: Bearer <token>",
+    "Content-Type: application/json"
+);
+$data = array(
+    "contentIds" => array(
+        "60c9e1c0e4e7e1001c7a0e1e",
+        "60c9e1c0e4e7e1001c7a0e1f"
+    ),
+    "actionId" => "suspend-author",
+    "value" => "Spam"
+);
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$result = json_decode($response, true);
+?>
+```
+
+```java Java
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+
+String url = "https://moderationapi.com/api/v1/actions/execute";
+String requestBody = """
+    {
+        "contentIds": [
+            "60c9e1c0e4e7e1001c7a0e1e",
+            "60c9e1c0e4e7e1001c7a0e1f"
+        ],
+        "actionId": "suspend-author",
+        "value": "Spam"
+    }
+    """;
+
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create(url))
+    .header("Authorization", "Bearer <token>")
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+    .build();
+
+HttpResponse<String> response = client.send(request,
+    HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body());
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    url := "https://moderationapi.com/api/v1/actions/execute"
+    data := map[string]interface{}{
+        "contentIds": []string{
+            "60c9e1c0e4e7e1001c7a0e1e",
+            "60c9e1c0e4e7e1001c7a0e1f",
+        },
+        "actionId": "suspend-author",
+        "value":    "Spam",
+    }
+
+    jsonData, _ := json.Marshal(data)
+    req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer <token>")
+    req.Header.Set("Content-Type", "application/json")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Println(result)
+}
+```
+
+</RequestExample>
