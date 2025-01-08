@@ -56,6 +56,17 @@
       "icon": "code",
       "url": "api-reference",
       "iconType": "solid"
+    },
+    {
+      "name": "Changelog",
+      "icon": "list",
+      "url": "https://moderationapi.com/blog/tag/updates/"
+    },
+    {
+      "name": "Email support",
+      "url": "mailto:support@moderationapi.com",
+      "icon": "envelope",
+      "iconType": "solid"
     }
   ],
 
