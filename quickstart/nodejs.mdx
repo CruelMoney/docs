@@ -1,0 +1,142 @@
+---
+title: "Quickstart Node.js"
+sidebarTitle: "Node.js"
+description: "Learn how to moderate content using Moderation API's Node.js SDK"
+---
+
+---
+
+<Snippet file="prerequisites.mdx" />
+
+---
+
+## 1. Install the SDK
+
+<CodeGroup>
+
+```bash npm
+npm install @moderation-api/sdk
+```
+
+```bash yarn
+yarn add @moderation-api/sdk
+```
+
+```bash pnpm
+pnpm add @moderation-api/sdk
+```
+
+</CodeGroup>
+
+## 2. Submit content
+
+Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+
+<CodeGroup>
+
+```typescript Text moderation
+import ModerationApi from "@moderation-api/sdk";
+
+// Configure your client using an environment variable for the API key
+const moderationApi = new ModerationApi({
+  key: process.env.API_KEY,
+});
+
+// Text moderation
+const textAnalysis = await moderationApi.moderate.text({
+  value: "Hello world!",
+  authorId: "123",
+  contextId: "456",
+  metadata: {
+    customField: "value",
+  },
+});
+
+if (textAnalysis.flagged) {
+  console.warn("Text content flagged");
+  // Block the content, show an error, etc...
+} else {
+  console.log("Text content is safe.");
+  // Save to database or proceed...
+}
+```
+
+```typescript Image moderation
+import ModerationApi from "@moderation-api/sdk";
+
+// Configure your client using an environment variable for the API key
+const moderationApi = new ModerationApi({
+  key: process.env.API_KEY,
+});
+
+const imageAnalysis = await moderationApi.moderate.image({
+  url: "https://example.com/image.jpg",
+  authorId: "123",
+  contextId: "456",
+  metadata: {
+    customField: "value",
+  },
+});
+
+if (imageAnalysis.flagged) {
+  console.warn("Image content flagged:", imageAnalysis.categories);
+  // Block or require review
+} else {
+  console.log("Image is safe.");
+  // Save to database or proceed...
+}
+```
+
+```typescript Object moderation
+import ModerationApi from "@moderation-api/sdk";
+
+// Configure your client using an environment variable for the API key
+const moderationApi = new ModerationApi({
+  key: process.env.API_KEY,
+});
+
+const object = await moderationApi.moderate.object({
+  value: {
+    type: "Profile",
+    name: {
+      type: "text",
+      value: "John Doe",
+    },
+    email: {
+      type: "text",
+      value: "john.doe@example.com",
+    },
+    picture: {
+      type: "image",
+      value: "https://example.com/image.jpg",
+    },
+  },
+  authorId: "123",
+  contextId: "456",
+  metadata: {
+    customField: "value",
+  },
+});
+
+if (object.flagged) {
+  console.warn("Object content flagged");
+  // Block or require review
+} else {
+  console.log("Object is safe.");
+  // Save to database or proceed...
+}
+```
+
+</CodeGroup>
+
+---
+
+<Snippet file="dry-run.mdx" />
+
+---
+
+<Snippet file="review-flagged.mdx" />
+
+---
+
+<Snippet file="all-done.mdx" />

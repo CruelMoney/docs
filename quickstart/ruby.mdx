@@ -1,0 +1,172 @@
+---
+title: "Quickstart Ruby"
+sidebarTitle: "Ruby"
+description: "Learn how to moderate content using Moderation API's Ruby SDK"
+---
+
+---
+
+<Snippet file="prerequisites.mdx" />
+
+---
+
+## 1. Install the SDK
+
+<CodeGroup>
+
+```bash gem
+gem install moderation_api
+```
+
+```bash bundler
+# Add this to your Gemfile
+gem 'moderation_api'
+
+# Then run
+bundle install
+```
+
+</CodeGroup>
+
+## 2. Submit content
+
+Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+
+<CodeGroup>
+
+```ruby Text moderation
+require 'moderation_api'
+
+# Configure your client using an environment variable for the API key
+ModerationApi.configure do |config|
+  config.access_token = ENV['API_KEY']
+end
+
+api = ModerationApi::ModerateApi.new
+
+# Text moderation
+text_request = ModerationApi::ModerationTextRequest.new(
+  value: "Hello world!",
+  author_id: "123",
+  context_id: "456",
+  metadata: {
+    custom_field: "value"
+  }
+)
+
+begin
+  text_analysis = api.moderation_text(text_request)
+
+  if text_analysis.flagged
+    puts "Text content flagged"
+    # Block the content, show an error, etc...
+  else
+    puts "Text content is safe."
+    # Save to database or proceed...
+  end
+rescue ModerationApi::ApiError => e
+  puts "Error when calling ModerateApi->moderation_text: #{e}"
+end
+```
+
+```ruby Image moderation
+require 'moderation_api'
+
+# Configure your client using an environment variable for the API key
+ModerationApi.configure do |config|
+  config.access_token = ENV['API_KEY']
+end
+
+api = ModerationApi::ModerateApi.new
+
+# Image moderation
+image_request = ModerationApi::ModerationImageRequest.new(
+  url: "https://example.com/image.jpg",
+  author_id: "123",
+  context_id: "456",
+  metadata: {
+    custom_field: "value"
+  }
+)
+
+begin
+  image_analysis = api.moderation_image(image_request)
+
+  if image_analysis.flagged
+    puts "Image content flagged: #{image_analysis.categories}"
+    # Block or require review
+  else
+    puts "Image is safe."
+    # Save to database or proceed...
+  end
+rescue ModerationApi::ApiError => e
+  puts "Error when calling ModerateApi->moderation_image: #{e}"
+end
+```
+
+```ruby Object moderation
+require 'moderation_api'
+
+# Configure your client using an environment variable for the API key
+ModerationApi.configure do |config|
+  config.access_token = ENV['API_KEY']
+end
+
+api = ModerationApi::ModerateApi.new
+
+# Object moderation
+object_data = {
+  type: "profile",
+  data: {
+    name: {
+      type: "text",
+      value: "John Doe"
+    },
+    email: {
+      type: "text",
+      value: "john.doe@example.com"
+    },
+    picture: {
+      type: "image",
+      value: "https://example.com/image.jpg"
+    }
+  }
+}
+
+object_request = ModerationApi::ModerationObjectRequest.new(
+  value: object_data,
+  author_id: "123",
+  context_id: "456",
+  metadata: {
+    custom_field: "value"
+  }
+)
+
+begin
+  object_analysis = api.moderation_object(object_request)
+
+  if object_analysis.flagged
+    puts "Object content flagged"
+    # Block or require review
+  else
+    puts "Object is safe."
+    # Save to database or proceed...
+  end
+rescue ModerationApi::ApiError => e
+  puts "Error when calling ModerateApi->moderation_object: #{e}"
+end
+```
+
+</CodeGroup>
+
+---
+
+<Snippet file="dry-run.mdx" />
+
+---
+
+<Snippet file="review-flagged.mdx" />
+
+---
+
+<Snippet file="all-done.mdx" />
