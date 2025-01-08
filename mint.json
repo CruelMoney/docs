@@ -72,8 +72,7 @@
         "quickstart/python",
         "quickstart/php",
         "quickstart/go",
-        "quickstart/java",
-        "quickstart/csharp"
+        "quickstart/java"
       ]
     },
     {

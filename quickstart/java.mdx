@@ -1,0 +1,201 @@
+---
+title: "Quickstart Java"
+sidebarTitle: "Java"
+description: "Learn how to moderate content using Moderation API's REST endpoints with Java"
+---
+
+---
+
+<Snippet file="prerequisites.mdx" />
+
+---
+
+## 1. Install SDK
+
+We currently don't have an official SDK for Java, but you can use the [OpenAPI Generator](/resources/generate-client-openapi) to generate a Java client or simply call the API directly using Java's built-in `HttpClient`.
+
+## 2. Submit content
+
+Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+
+<CodeGroup>
+
+```java Text moderation
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONObject;
+
+public class TextModeration {
+    public static void main(String[] args) {
+        String API_KEY = "your-api-key"; // Replace with your API key
+        String BASE_URL = "https://moderationapi.com/api/v1";
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+
+            // Create request body
+            JSONObject requestBody = new JSONObject()
+                .put("value", "Hello world!")
+                .put("authorId", "123")
+                .put("contextId", "456")
+                .put("metadata", new JSONObject()
+                    .put("customField", "value")
+                );
+
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/moderate/text"))
+                .header("Authorization", "Bearer " + API_KEY)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+                .build();
+
+            HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+            JSONObject textAnalysis = new JSONObject(response.body());
+
+            if (textAnalysis.getBoolean("flagged")) {
+                System.out.println("Text content flagged");
+                // Block the content, show an error, etc...
+            } else {
+                System.out.println("Text content is safe.");
+                // Save to database or proceed...
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```java Image moderation
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONObject;
+
+public class ImageModeration {
+    public static void main(String[] args) {
+        String API_KEY = "your-api-key"; // Replace with your API key
+        String BASE_URL = "https://moderationapi.com/api/v1";
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+
+            // Create request body
+            JSONObject requestBody = new JSONObject()
+                .put("url", "https://example.com/image.jpg")
+                .put("authorId", "123")
+                .put("contextId", "456")
+                .put("metadata", new JSONObject()
+                    .put("customField", "value")
+                );
+
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/moderate/image"))
+                .header("Authorization", "Bearer " + API_KEY)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+                .build();
+
+            HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+            JSONObject imageAnalysis = new JSONObject(response.body());
+
+            if (imageAnalysis.getBoolean("flagged")) {
+                System.out.println("Image content flagged: " +
+                    imageAnalysis.getJSONArray("labels"));
+                // Block or require review
+            } else {
+                System.out.println("Image is safe.");
+                // Save to database or proceed...
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```java Object moderation
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONObject;
+
+public class ObjectModeration {
+    public static void main(String[] args) {
+        String API_KEY = "your-api-key"; // Replace with your API key
+        String BASE_URL = "https://moderationapi.com/api/v1";
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+
+            // Create request body
+            JSONObject profileData = new JSONObject()
+                .put("name", new JSONObject()
+                    .put("type", "text")
+                    .put("value", "John Doe"))
+                .put("email", new JSONObject()
+                    .put("type", "text")
+                    .put("value", "john.doe@example.com"))
+                .put("picture", new JSONObject()
+                    .put("type", "image")
+                    .put("value", "https://example.com/image.jpg"));
+
+            JSONObject requestBody = new JSONObject()
+                .put("value", new JSONObject()
+                    .put("type", "Profile")
+                    .put("data", profileData))
+                .put("authorId", "123")
+                .put("contextId", "456")
+                .put("metadata", new JSONObject()
+                    .put("customField", "value"));
+
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/moderate/object"))
+                .header("Authorization", "Bearer " + API_KEY)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+                .build();
+
+            HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+            JSONObject objectAnalysis = new JSONObject(response.body());
+
+            if (objectAnalysis.getBoolean("flagged")) {
+                System.out.println("Object content flagged");
+                // Block or require review
+            } else {
+                System.out.println("Object is safe.");
+                // Save to database or proceed...
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+</CodeGroup>
+
+---
+
+<Snippet file="dry-run.mdx" />
+
+---
+
+<Snippet file="review-flagged.mdx" />
+
+---
+
+<Snippet file="all-done.mdx" />

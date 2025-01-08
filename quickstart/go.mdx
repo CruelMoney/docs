@@ -1,0 +1,258 @@
+---
+title: "Quickstart Go"
+sidebarTitle: "Go"
+description: "Learn how to moderate content using Moderation API's REST endpoints with Go"
+---
+
+---
+
+<Snippet file="prerequisites.mdx" />
+
+---
+
+## 1. Install SDK
+
+We currently don't have an official SDK for Go, but you can use the [OpenAPI Generator](/resources/generate-client-openapi) to generate a Go client or simply call the API directly using Go's standard `net/http` package.
+
+## 2. Submit content
+
+Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+
+<CodeGroup>
+
+```go Text moderation
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "io/ioutil"
+    "net/http"
+)
+
+func main() {
+    // Configure the client
+    apiKey := "your-api-key" // Replace with your API key
+    baseURL := "https://moderationapi.com/api/v1"
+
+    // Prepare request body
+    requestBody, err := json.Marshal(map[string]interface{}{
+        "value":     "Hello world!",
+        "authorId":  "123",
+        "contextId": "456",
+        "metadata": map[string]interface{}{
+            "customField": "value",
+        },
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    // Create request
+    req, err := http.NewRequest("POST", baseURL+"/moderate/text", bytes.NewBuffer(requestBody))
+    if err != nil {
+        panic(err)
+    }
+
+    // Set headers
+    req.Header.Set("Authorization", "Bearer "+apiKey)
+    req.Header.Set("Content-Type", "application/json")
+
+    // Send request
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    // Read response
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        panic(err)
+    }
+
+    // Parse response
+    var textAnalysis map[string]interface{}
+    if err := json.Unmarshal(body, &textAnalysis); err != nil {
+        panic(err)
+    }
+
+    if textAnalysis["flagged"].(bool) {
+        fmt.Println("Text content flagged")
+        // Block the content, show an error, etc...
+    } else {
+        fmt.Println("Text content is safe.")
+        // Save to database or proceed...
+    }
+}
+```
+
+```go Image moderation
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "io/ioutil"
+    "net/http"
+)
+
+func main() {
+    // Configure the client
+    apiKey := "your-api-key" // Replace with your API key
+    baseURL := "https://moderationapi.com/api/v1"
+
+    // Prepare request body
+    requestBody, err := json.Marshal(map[string]interface{}{
+        "url":       "https://example.com/image.jpg",
+        "authorId":  "123",
+        "contextId": "456",
+        "metadata": map[string]interface{}{
+            "customField": "value",
+        },
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    // Create request
+    req, err := http.NewRequest("POST", baseURL+"/moderate/image", bytes.NewBuffer(requestBody))
+    if err != nil {
+        panic(err)
+    }
+
+    // Set headers
+    req.Header.Set("Authorization", "Bearer "+apiKey)
+    req.Header.Set("Content-Type", "application/json")
+
+    // Send request
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    // Read response
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        panic(err)
+    }
+
+    // Parse response
+    var imageAnalysis map[string]interface{}
+    if err := json.Unmarshal(body, &imageAnalysis); err != nil {
+        panic(err)
+    }
+
+    if imageAnalysis["flagged"].(bool) {
+        fmt.Printf("Image content flagged: %v\n", imageAnalysis["labels"])
+        // Block or require review
+    } else {
+        fmt.Println("Image is safe.")
+        // Save to database or proceed...
+    }
+}
+```
+
+```go Object moderation
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "io/ioutil"
+    "net/http"
+)
+
+func main() {
+    // Configure the client
+    apiKey := "your-api-key" // Replace with your API key
+    baseURL := "https://moderationapi.com/api/v1"
+
+    // Prepare request body
+    requestBody, err := json.Marshal(map[string]interface{}{
+        "value": map[string]interface{}{
+            "type": "Profile",
+            "data": map[string]interface{}{
+                "name": map[string]interface{}{
+                    "type":  "text",
+                    "value": "John Doe",
+                },
+                "email": map[string]interface{}{
+                    "type":  "text",
+                    "value": "john.doe@example.com",
+                },
+                "picture": map[string]interface{}{
+                    "type":  "image",
+                    "value": "https://example.com/image.jpg",
+                },
+            },
+        },
+        "authorId":  "123",
+        "contextId": "456",
+        "metadata": map[string]interface{}{
+            "customField": "value",
+        },
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    // Create request
+    req, err := http.NewRequest("POST", baseURL+"/moderate/object", bytes.NewBuffer(requestBody))
+    if err != nil {
+        panic(err)
+    }
+
+    // Set headers
+    req.Header.Set("Authorization", "Bearer "+apiKey)
+    req.Header.Set("Content-Type", "application/json")
+
+    // Send request
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    // Read response
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        panic(err)
+    }
+
+    // Parse response
+    var objectAnalysis map[string]interface{}
+    if err := json.Unmarshal(body, &objectAnalysis); err != nil {
+        panic(err)
+    }
+
+    if objectAnalysis["flagged"].(bool) {
+        fmt.Println("Object content flagged")
+        // Block or require review
+    } else {
+        fmt.Println("Object is safe.")
+        // Save to database or proceed...
+    }
+}
+```
+
+</CodeGroup>
+
+---
+
+<Snippet file="dry-run.mdx" />
+
+---
+
+<Snippet file="review-flagged.mdx" />
+
+---
+
+<Snippet file="all-done.mdx" />

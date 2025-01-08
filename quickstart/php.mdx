@@ -1,0 +1,168 @@
+---
+title: "Quickstart PHP"
+sidebarTitle: "PHP"
+description: "Learn how to moderate content using Moderation API's REST endpoints with PHP"
+---
+
+---
+
+<Snippet file="prerequisites.mdx" />
+
+---
+
+## 1. Install Dependencies
+
+We currently don't have an official SDK for PHP, but you can use the [OpenAPI Generator](/resources/generate-client-openapi) to generate a PHP client or simply call the API directly using PHP's built-in cURL functions.
+
+## 2. Submit content
+
+Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+
+<CodeGroup>
+
+```php Text moderation
+<?php
+// Configure the client
+$API_KEY = "your-api-key"; // Replace with your API key
+$BASE_URL = "https://moderationapi.com/api/v1";
+
+// Text moderation
+$data = array(
+    'value' => 'Hello world!',
+    'authorId' => '123',
+    'contextId' => '456',
+    'metadata' => array(
+        'customField' => 'value'
+    )
+);
+
+$ch = curl_init($BASE_URL . "/moderate/text");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Authorization: Bearer ' . $API_KEY,
+    'Content-Type: application/json'
+));
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$text_analysis = json_decode($response, true);
+
+if ($text_analysis['flagged']) {
+    echo "Text content flagged\n";
+    // Block the content, show an error, etc...
+} else {
+    echo "Text content is safe.\n";
+    // Save to database or proceed...
+}
+```
+
+```php Image moderation
+<?php
+// Configure the client
+$API_KEY = "your-api-key"; // Replace with your API key
+$BASE_URL = "https://moderationapi.com/api/v1";
+
+// Image moderation
+$data = array(
+    'url' => 'https://example.com/image.jpg',
+    'authorId' => '123',
+    'contextId' => '456',
+    'metadata' => array(
+        'customField' => 'value'
+    )
+);
+
+$ch = curl_init($BASE_URL . "/moderate/image");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Authorization: Bearer ' . $API_KEY,
+    'Content-Type: application/json'
+));
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$image_analysis = json_decode($response, true);
+
+if ($image_analysis['flagged']) {
+    echo "Image content flagged: " . implode(', ', $image_analysis['labels']) . "\n";
+    // Block or require review
+} else {
+    echo "Image is safe.\n";
+    // Save to database or proceed...
+}
+```
+
+```php Object moderation
+<?php
+// Configure the client
+$API_KEY = "your-api-key"; // Replace with your API key
+$BASE_URL = "https://moderationapi.com/api/v1";
+
+// Object moderation
+$data = array(
+    'value' => array(
+        'type' => 'Profile',
+        'data' => array(
+            'name' => array(
+                'type' => 'text',
+                'value' => 'John Doe'
+            ),
+            'email' => array(
+                'type' => 'text',
+                'value' => 'john.doe@example.com'
+            ),
+            'picture' => array(
+                'type' => 'image',
+                'value' => 'https://example.com/image.jpg'
+            )
+        )
+    ),
+    'authorId' => '123',
+    'contextId' => '456',
+    'metadata' => array(
+        'customField' => 'value'
+    )
+);
+
+$ch = curl_init($BASE_URL . "/moderate/object");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Authorization: Bearer ' . $API_KEY,
+    'Content-Type: application/json'
+));
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$object_analysis = json_decode($response, true);
+
+if ($object_analysis['flagged']) {
+    echo "Object content flagged\n";
+    // Block or require review
+} else {
+    echo "Object is safe.\n";
+    // Save to database or proceed...
+}
+```
+
+</CodeGroup>
+
+---
+
+<Snippet file="dry-run.mdx" />
+
+---
+
+<Snippet file="review-flagged.mdx" />
+
+---
+
+<Snippet file="all-done.mdx" />
