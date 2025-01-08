@@ -203,7 +203,7 @@
     },
     {
       "group": "Resources",
-      "pages": ["resources/SDKs", "resources/integrations"]
+      "pages": ["resources/sdks", "resources/integrations"]
     },
 
     {
