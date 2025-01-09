@@ -139,7 +139,45 @@ The signature is a `HMAC SHA256` hash of the payload using your webhook secret a
 
 <CodeGroup>
 
-```js Next.js webhook verification with Node SDK
+```js Next.js SDK (app router)
+import ModerationApi from "@moderation-api/sdk";
+
+const moderationApi = new ModerationApi({
+  key: PROJECT_API_KEY,
+});
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.text();
+    const headersList = await headers();
+    const webhookSignatureHeader = headersList.get("modapi-signature");
+
+    if (!webhookSignatureHeader) {
+      return NextResponse.json(
+        { error: "No signature header" },
+        { status: 400 }
+      );
+    }
+
+    const payload = await moderationApi.webhooks.constructEvent(
+      Buffer.from(body),
+      webhookSignatureHeader,
+      process.env.MODAPI_WEBHOOK_SECRET!
+    );
+
+    return NextResponse.json({ received: true });
+  } catch (error) {
+    console.error("Error processing webhook:", error);
+    return NextResponse.json(
+      { error: "Error processing webhook" },
+      { status: 400 }
+    );
+  }
+}
+
+```
+
+```js Next.js SDK (pages router)
 import ModerationApi from "@moderation-api/sdk";
 
 const moderationApi = new ModerationApi({
