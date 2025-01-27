@@ -256,10 +256,10 @@
       ]
     },
     {
-      "group": "User Reports (Enterprise)",
+      "group": "Authors (Enterprise)",
       "pages": [
-        "api-reference/user-reports/list-authors",
-        "api-reference/user-reports/get-author-details"
+        "api-reference/author-reports/list-authors",
+        "api-reference/author-reports/get-author-details"
       ]
     },
     {
