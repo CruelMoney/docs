@@ -3,10 +3,13 @@ title: "Image moderation"
 description: "Image moderation models are used to detect inappropriate content in images."
 ---
 
-We are offering two image moderation models.
+We are offering three image moderation models.
 
 - An NSFW model that detects a range of common inappropriate content
+- A toxicity model that detects general toxic content
 - A text model that detects text inside images.
+
+Keep in mind you need to add each model to your project separately.
 
 <Note>
 
@@ -17,7 +20,9 @@ support@moderationapi.com
 
 ### Response signature
 
-<ResponseField name="flagged" type="boolean" required></ResponseField>
+<ResponseField name="flagged" type="boolean" required>
+  Whether the image was flagged by any of the models.
+</ResponseField>
 <ResponseField name="labels" type="array" required>
   An object containing all the label scores.
   <Expandable title="properties">
@@ -37,6 +42,10 @@ support@moderationapi.com
 {
   "flagged": true,
   "labels": [
+    {
+      "label": "toxicity",
+      "score": 0.996117
+    },
     {
       "label": "nudity",
       "score": 0.996117
@@ -85,6 +94,7 @@ support@moderationapi.com
 
 | Label          | Description                                                          |
 | -------------- | -------------------------------------------------------------------- |
+| **toxicity**   | Harmful content such as violence, offensive memes, hate, etc.        |
 | **nudity**     | Exposed male or female genitalia, female nipples, sexual acts.       |
 | **suggestive** | Partial nudity, kissing.                                             |
 | **gore**       | Blood, wounds, death.                                                |
