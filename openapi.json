@@ -5,24 +5,24 @@
     "description": "API for automated content moderation",
     "version": "1.0.0"
   },
-  "servers": [{ "url": "https://moderationapi.com/api/v1" }],
+  "servers": [{ "url": "http://localhost:3000/api/v1" }],
+  "tags": [
+    { "name": "Actions" },
+    { "name": "Queues" },
+    { "name": "Webhooks" },
+    { "name": "Wordlist" }
+  ],
+  "externalDocs": { "url": "https://docs.moderationapi.com" },
   "paths": {
     "/actions": {
       "get": {
         "operationId": "actions-list",
-        "summary": "List actions",
-        "description": "List actions for the current user.",
-        "tags": ["Queue actions"],
+        "summary": "List moderation actions",
+        "description": "List all available moderation actions for the authenticated organization.",
+        "tags": ["Actions"],
         "security": [{ "Authorization": [] }],
         "parameters": [
-          {
-            "name": "queueId",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "string" },
-            "description": "Only return actions available in this queue.",
-            "example": "60c9e1c0e4e7e1001c7a0e1d"
-          }
+          { "in": "query", "name": "queueId", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
@@ -45,7 +45,6 @@
                       },
                       "createdAt": {
                         "type": "string",
-                        "format": "date-time",
                         "description": "The date the action was created."
                       },
                       "name": {
@@ -85,8 +84,7 @@
                               "description": "The value of the action."
                             }
                           },
-                          "required": ["value"],
-                          "additionalProperties": false
+                          "required": ["value"]
                         },
                         "default": [],
                         "description": "The possible values of the action. The user will be prompted to select one of these values when executing the action."
@@ -100,65 +98,109 @@
                         "type": "boolean",
                         "default": false,
                         "description": "Whether the action allows any text to be entered as a value or if it must be one of the possible values."
+                      },
+                      "webhooks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "The webhook's name, used to identify it in the dashboard"
+                            },
+                            "description": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "The webhook's description"
+                            },
+                            "url": {
+                              "type": "string",
+                              "format": "uri",
+                              "description": "The webhook's URL. We'll call this URL when the event occurs."
+                            },
+                            "moderationActionId": {
+                              "type": "string",
+                              "nullable": true,
+                              "description": "The ID of the moderation action to trigger the webhook on. Only used for moderation action webhooks."
+                            },
+                            "id": {
+                              "type": "string",
+                              "description": "The ID of the webhook."
+                            }
+                          },
+                          "required": ["name", "url", "id"]
+                        },
+                        "default": [],
+                        "description": "The action's webhooks."
                       }
                     },
-                    "required": ["id", "createdAt", "name"],
-                    "additionalProperties": false
-                  }
-                },
-                "example": [
-                  {
-                    "id": "60c9e1c0e4e7e1001c7a0e1d",
-                    "createdAt": "2023-06-16T14:00:00.000Z",
-                    "name": "Suspend author",
-                    "description": "Suspend the author of this item.",
-                    "queueBehaviour": "NO_CHANGE",
-                    "valueRequired": false,
-                    "freeText": false,
-                    "possibleValues": [
-                      { "value": "Spam" },
-                      { "value": "Offensive" },
-                      { "value": "Other" }
-                    ],
-                    "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                    "position": "ALL_QUEUES"
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "name",
+                      "queueBehaviour",
+                      "filterInQueueIds",
+                      "position",
+                      "possibleValues",
+                      "valueRequired",
+                      "freeText",
+                      "webhooks"
+                    ]
                   },
-                  {
-                    "id": "60c9e1c0e4e7e1001c7a0e1e",
-                    "createdAt": "2023-06-16T14:00:00.000Z",
-                    "name": "Remove",
-                    "description": "Remove the item and remove from this queue.",
-                    "queueBehaviour": "NO_CHANGE",
-                    "valueRequired": false,
-                    "freeText": false,
-                    "possibleValues": [],
-                    "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                    "position": "ALL_QUEUES"
-                  },
-                  {
-                    "id": "60c9e1c0e4e7e1001c7a0e1f",
-                    "createdAt": "2023-06-16T14:00:00.000Z",
-                    "name": "Escalate",
-                    "description": "Escalate the item and remove from this queue.",
-                    "queueBehaviour": "NO_CHANGE",
-                    "valueRequired": false,
-                    "freeText": false,
-                    "possibleValues": [],
-                    "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                    "position": "ALL_QUEUES"
-                  }
-                ]
+                  "description": "List of moderation actions with their associated webhooks"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
         }
       },
       "post": {
         "operationId": "actions-create",
         "summary": "Create an action",
         "description": "Create an action.",
-        "tags": ["Queue actions"],
+        "tags": ["Actions"],
         "security": [{ "Authorization": [] }],
         "requestBody": {
           "required": true,
@@ -209,8 +251,7 @@
                           "description": "The value of the action."
                         }
                       },
-                      "required": ["value"],
-                      "additionalProperties": false
+                      "required": ["value"]
                     },
                     "default": [],
                     "description": "The possible values of the action. The user will be prompted to select one of these values when executing the action."
@@ -249,43 +290,20 @@
                           "description": "ID of an existing webhook or undefined if this is a new webhook."
                         }
                       },
-                      "required": ["name", "url"],
-                      "additionalProperties": false
+                      "required": ["name", "url"]
                     },
                     "default": [],
                     "description": "The action's webhooks."
                   }
                 },
-                "required": ["name"],
-                "additionalProperties": false
-              },
-              "example": {
-                "name": "Suspend author",
-                "description": "Suspend the author of this item.",
-                "queueBehaviour": "NO_CHANGE",
-                "valueRequired": false,
-                "freeText": false,
-                "possibleValues": [
-                  { "value": "Spam" },
-                  { "value": "Offensive" },
-                  { "value": "Other" }
-                ],
-                "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                "position": "ALL_QUEUES",
-                "webhooks": [
-                  {
-                    "name": "Discord webhook",
-                    "url": "https://discord.com/webhook"
-                  }
-                ]
+                "required": ["name"]
               }
             }
           }
         },
-        "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Action created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -302,7 +320,6 @@
                     },
                     "createdAt": {
                       "type": "string",
-                      "format": "date-time",
                       "description": "The date the action was created."
                     },
                     "name": {
@@ -342,8 +359,7 @@
                             "description": "The value of the action."
                           }
                         },
-                        "required": ["value"],
-                        "additionalProperties": false
+                        "required": ["value"]
                       },
                       "default": [],
                       "description": "The possible values of the action. The user will be prompted to select one of these values when executing the action."
@@ -359,29 +375,45 @@
                       "description": "Whether the action allows any text to be entered as a value or if it must be one of the possible values."
                     }
                   },
-                  "required": ["id", "createdAt", "name"],
-                  "additionalProperties": false
-                },
-                "example": {
-                  "id": "60c9e1c0e4e7e1001c7a0e1d",
-                  "createdAt": "2023-06-16T14:00:00.000Z",
-                  "name": "Suspend author",
-                  "description": "Suspend the author of this item.",
-                  "queueBehaviour": "NO_CHANGE",
-                  "valueRequired": false,
-                  "freeText": false,
-                  "possibleValues": [
-                    { "value": "Spam" },
-                    { "value": "Offensive" },
-                    { "value": "Other" }
-                  ],
-                  "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                  "position": "ALL_QUEUES"
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "name",
+                    "queueBehaviour",
+                    "filterInQueueIds",
+                    "position",
+                    "possibleValues",
+                    "valueRequired",
+                    "freeText"
+                  ]
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "409": {
+            "description": "Action with this key already exists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.CONFLICT" }
+              }
+            }
+          }
         }
       }
     },
@@ -390,21 +422,23 @@
         "operationId": "actions-get",
         "summary": "Get an action",
         "description": "Get an action by ID.",
-        "tags": ["Queue actions"],
+        "tags": ["Actions"],
         "security": [{ "Authorization": [] }],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
-            "required": true,
-            "schema": { "type": "string" },
+            "name": "id",
             "description": "The ID of the action to get.",
-            "example": "60c9e1c0e4e7e1001c7a0e1d"
+            "schema": {
+              "type": "string",
+              "description": "The ID of the action to get."
+            },
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Action retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -421,7 +455,6 @@
                     },
                     "createdAt": {
                       "type": "string",
-                      "format": "date-time",
                       "description": "The date the action was created."
                     },
                     "name": {
@@ -461,8 +494,7 @@
                             "description": "The value of the action."
                           }
                         },
-                        "required": ["value"],
-                        "additionalProperties": false
+                        "required": ["value"]
                       },
                       "default": [],
                       "description": "The possible values of the action. The user will be prompted to select one of these values when executing the action."
@@ -506,51 +538,72 @@
                             "description": "The ID of the webhook."
                           }
                         },
-                        "required": ["name", "url", "id"],
-                        "additionalProperties": false
+                        "required": ["name", "url", "id"]
                       },
                       "default": [],
                       "description": "The action's webhooks."
                     }
                   },
-                  "required": ["id", "createdAt", "name"],
-                  "additionalProperties": false
-                },
-                "example": {
-                  "id": "60c9e1c0e4e7e1001c7a0e1d",
-                  "createdAt": "2023-06-16T14:00:00.000Z",
-                  "name": "Suspend author",
-                  "description": "Suspend the author of this item.",
-                  "queueBehaviour": "NO_CHANGE",
-                  "valueRequired": false,
-                  "freeText": false,
-                  "possibleValues": [
-                    { "value": "Spam" },
-                    { "value": "Offensive" },
-                    { "value": "Other" }
-                  ],
-                  "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                  "position": "ALL_QUEUES",
-                  "webhooks": [
-                    {
-                      "id": "60c9e1c0e4e7e1001c7a0e1d",
-                      "name": "Discord webhook",
-                      "url": "https://discord.com/webhook"
-                    }
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "name",
+                    "queueBehaviour",
+                    "filterInQueueIds",
+                    "position",
+                    "possibleValues",
+                    "valueRequired",
+                    "freeText",
+                    "webhooks"
                   ]
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          }
         }
       },
       "put": {
         "operationId": "actions-update",
         "summary": "Update an action",
         "description": "Update an action.",
-        "tags": ["Queue actions"],
+        "tags": ["Actions"],
         "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The ID of the action to update.",
+            "schema": {
+              "type": "string",
+              "description": "The ID of the action to update."
+            },
+            "required": true
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -600,8 +653,7 @@
                           "description": "The value of the action."
                         }
                       },
-                      "required": ["value"],
-                      "additionalProperties": false
+                      "required": ["value"]
                     },
                     "default": [],
                     "description": "The possible values of the action. The user will be prompted to select one of these values when executing the action."
@@ -640,51 +692,19 @@
                           "description": "ID of an existing webhook or undefined if this is a new webhook."
                         }
                       },
-                      "required": ["name", "url"],
-                      "additionalProperties": false
+                      "required": ["name", "url"]
                     },
                     "default": [],
                     "description": "The action's webhooks."
                   }
-                },
-                "additionalProperties": false
-              },
-              "example": {
-                "name": "Suspend author",
-                "description": "Suspend the author of this item.",
-                "queueBehaviour": "NO_CHANGE",
-                "valueRequired": false,
-                "freeText": false,
-                "possibleValues": [
-                  { "value": "Spam" },
-                  { "value": "Offensive" },
-                  { "value": "Other" }
-                ],
-                "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                "position": "ALL_QUEUES",
-                "webhooks": [
-                  {
-                    "name": "Discord webhook",
-                    "url": "https://discord.com/webhook"
-                  }
-                ]
+                }
               }
             }
           }
         },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" },
-            "description": "The ID of the action to update.",
-            "example": "60c9e1c0e4e7e1001c7a0e1d"
-          }
-        ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Action updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -701,7 +721,6 @@
                     },
                     "createdAt": {
                       "type": "string",
-                      "format": "date-time",
                       "description": "The date the action was created."
                     },
                     "name": {
@@ -741,8 +760,7 @@
                             "description": "The value of the action."
                           }
                         },
-                        "required": ["value"],
-                        "additionalProperties": false
+                        "required": ["value"]
                       },
                       "default": [],
                       "description": "The possible values of the action. The user will be prompted to select one of these values when executing the action."
@@ -758,50 +776,76 @@
                       "description": "Whether the action allows any text to be entered as a value or if it must be one of the possible values."
                     }
                   },
-                  "required": ["id", "createdAt", "name"],
-                  "additionalProperties": false
-                },
-                "example": {
-                  "id": "60c9e1c0e4e7e1001c7a0e1d",
-                  "createdAt": "2023-06-16T14:00:00.000Z",
-                  "name": "Suspend author",
-                  "description": "Suspend the author of this item.",
-                  "queueBehaviour": "NO_CHANGE",
-                  "valueRequired": false,
-                  "freeText": false,
-                  "possibleValues": [
-                    { "value": "Spam" },
-                    { "value": "Offensive" },
-                    { "value": "Other" }
-                  ],
-                  "filterInQueueIds": ["60c9e1c0e4e7e1001c7a0e1d"],
-                  "position": "ALL_QUEUES"
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "name",
+                    "queueBehaviour",
+                    "filterInQueueIds",
+                    "position",
+                    "possibleValues",
+                    "valueRequired",
+                    "freeText"
+                  ]
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "409": {
+            "description": "Action with this key already exists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.CONFLICT" }
+              }
+            }
+          }
         }
       },
       "delete": {
         "operationId": "actions-delete",
         "summary": "Delete an action",
         "description": "Delete an action and all of its webhooks.",
-        "tags": ["Queue actions"],
+        "tags": ["Actions"],
         "security": [{ "Authorization": [] }],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
-            "required": true,
-            "schema": { "type": "string" },
+            "name": "id",
             "description": "The ID of the action to delete.",
-            "example": "60c9e1c0e4e7e1001c7a0e1d"
+            "schema": {
+              "type": "string",
+              "description": "The ID of the action to delete."
+            },
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Action deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -816,23 +860,44 @@
                       "description": "The ID of the action."
                     }
                   },
-                  "required": ["deleted", "id"],
-                  "additionalProperties": false
-                },
-                "example": { "deleted": true, "id": "60c9e1c0e4e7e1001c7a0e1d" }
+                  "required": ["deleted", "id"]
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          }
         }
       }
     },
     "/actions/execute": {
       "post": {
         "operationId": "actions-execute",
-        "summary": "Execute an action",
-        "description": "Execute an action on a set of content items in a queue.",
-        "tags": ["Queue actions"],
+        "summary": "Execute moderation action",
+        "description": "Execute a moderation action on one or more content items.",
+        "tags": ["Actions"],
         "security": [{ "Authorization": [] }],
         "requestBody": {
           "required": true,
@@ -841,42 +906,33 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "actionKey": {
+                    "type": "string",
+                    "description": "ID or key of the action to execute"
+                  },
                   "contentIds": {
                     "type": "array",
                     "items": { "type": "string" },
-                    "description": "The IDs of the content items to perform the action on."
-                  },
-                  "actionKey": {
-                    "type": "string",
-                    "description": "The ID or key of the action to execute."
-                  },
-                  "queueId": {
-                    "type": "string",
-                    "description": "The ID of the queue the action was performed from if any."
+                    "description": "IDs of the content items to apply the action to"
                   },
                   "value": {
                     "type": "string",
-                    "description": "The value of the action. Useful to set a reason for the action etc."
+                    "description": "Optional value to provide with the action"
+                  },
+                  "queueId": {
+                    "type": "string",
+                    "description": "Optional queue ID if the action is queue-specific"
                   }
                 },
-                "required": ["contentIds", "actionKey"],
-                "additionalProperties": false
-              },
-              "example": {
-                "queueId": "60c9e1c0e4e7e1001c7a0e1d",
-                "contentIds": [
-                  "60c9e1c0e4e7e1001c7a0e1e",
-                  "60c9e1c0e4e7e1001c7a0e1f"
-                ],
-                "value": "Spam"
+                "required": ["actionKey", "contentIds"],
+                "description": "Input parameters"
               }
             }
           }
         },
-        "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Action executed successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -884,26 +940,39 @@
                   "properties": {
                     "success": {
                       "type": "boolean",
-                      "description": "Action executed successfully."
-                    },
-                    "actionId": {
-                      "type": "string",
-                      "description": "The ID of the action."
-                    },
-                    "ids": {
-                      "type": "array",
-                      "items": { "type": "string" },
-                      "description": "The IDs of the content items."
+                      "description": "Whether the action was executed successfully"
                     }
                   },
-                  "required": ["success", "actionId", "ids"],
-                  "additionalProperties": false
-                },
-                "example": { "success": true }
+                  "required": ["success"],
+                  "description": "Execution result"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          }
         }
       }
     },
@@ -912,8 +981,21 @@
         "operationId": "actions-executeDeprecated",
         "summary": "Execute an action",
         "description": "Execute an action on a set of content items in a queue.",
-        "tags": ["Queue actions"],
+        "tags": ["Actions"],
         "security": [{ "Authorization": [] }],
+        "deprecated": true,
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actionId",
+            "description": "The ID or key of the action to execute.",
+            "schema": {
+              "type": "string",
+              "description": "The ID or key of the action to execute."
+            },
+            "required": true
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -935,32 +1017,14 @@
                     "description": "The value of the action. Useful to set a reason for the action etc."
                   }
                 },
-                "required": ["contentIds"],
-                "additionalProperties": false
-              },
-              "example": {
-                "queueId": "60c9e1c0e4e7e1001c7a0e1d",
-                "contentIds": [
-                  "60c9e1c0e4e7e1001c7a0e1e",
-                  "60c9e1c0e4e7e1001c7a0e1f"
-                ],
-                "value": "Spam"
+                "required": ["contentIds"]
               }
             }
           }
         },
-        "parameters": [
-          {
-            "name": "actionId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" },
-            "description": "The ID or key of the action to execute."
-          }
-        ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Action executed successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -980,23 +1044,43 @@
                       "description": "The IDs of the content items."
                     }
                   },
-                  "required": ["success", "actionId", "ids"],
-                  "additionalProperties": false
-                },
-                "example": { "success": true }
+                  "required": ["success", "actionId", "ids"]
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
-        },
-        "deprecated": true
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          }
+        }
       }
     },
     "/moderate/text": {
       "post": {
         "operationId": "moderation-text",
-        "summary": "Analyze text.",
-        "description": "Analyze text with your Moderation API project.",
+        "summary": "Analyze text content",
+        "description": "Analyze text content with your configured moderation models and filters.",
         "tags": ["Moderate"],
         "security": [{ "Authorization": [] }],
         "requestBody": {
@@ -1037,12 +1121,11 @@
                   }
                 },
                 "required": ["value"],
-                "additionalProperties": false
+                "description": "Input parameters for text moderation"
               }
             }
           }
         },
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1074,7 +1157,6 @@
                             }
                           },
                           "required": ["timestamp", "quota_usage"],
-                          "additionalProperties": false,
                           "description": "Information about the request"
                         },
                         "flagged": {
@@ -1131,13 +1213,14 @@
                                   "type": "number",
                                   "description": "Sexual, hateful, profane, and inappropriate content."
                                 },
-                                "NEUTRAL": { "type": "number" }
+                                "NEUTRAL": {
+                                  "type": "number",
+                                  "description": ""
+                                }
                               },
-                              "additionalProperties": false,
                               "description": "The confidence of all labels"
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The NSFW model output if enabled in your project. Read more at https://docs.moderationapi.com/models/nsfw"
                         },
                         "toxicity": {
@@ -1186,14 +1269,15 @@
                                   "type": "number",
                                   "description": "Content containing intention to harm or violence."
                                 },
-                                "NEUTRAL": { "type": "number" }
+                                "NEUTRAL": {
+                                  "type": "number",
+                                  "description": ""
+                                }
                               },
-                              "additionalProperties": false,
                               "description": "The confidence of all labels"
                             }
                           },
                           "required": ["label_scores"],
-                          "additionalProperties": false,
                           "description": "The toxicity model output if enabled in your project. Read more at https://docs.moderationapi.com/models/toxicity"
                         },
                         "quality": {
@@ -1230,13 +1314,14 @@
                                   "type": "number",
                                   "description": "Irrelevant and unsolicited commercial content."
                                 },
-                                "NEUTRAL": { "type": "number" }
+                                "NEUTRAL": {
+                                  "type": "number",
+                                  "description": ""
+                                }
                               },
-                              "additionalProperties": false,
                               "description": "The confidence of all labels"
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The spam model output if enabled in your project. Read more at https://docs.moderationapi.com/models/spam"
                         },
                         "sentiment": {
@@ -1269,13 +1354,14 @@
                                   "type": "number",
                                   "description": "Negative sentiment."
                                 },
-                                "NEUTRAL": { "type": "number" }
+                                "NEUTRAL": {
+                                  "type": "number",
+                                  "description": ""
+                                }
                               },
-                              "additionalProperties": false,
                               "description": "The confidence of all labels"
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The sentiment model output if enabled in your project. Read more at https://docs.moderationapi.com/models/sentiment"
                         },
                         "propriety": {
@@ -1308,13 +1394,14 @@
                                   "type": "number",
                                   "description": "References to sexual acts, body parts, etc."
                                 },
-                                "NEUTRAL": { "type": "number" }
+                                "NEUTRAL": {
+                                  "type": "number",
+                                  "description": ""
+                                }
                               },
-                              "additionalProperties": false,
                               "description": "The confidence of all labels"
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The propriety model output if enabled in your project. Read more at https://docs.moderationapi.com/models/propriety"
                         },
                         "email": {
@@ -1346,7 +1433,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The email entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/email"
                         },
                         "phone": {
@@ -1378,7 +1464,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The phone entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/phone"
                         },
                         "url": {
@@ -1410,7 +1495,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The url entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/url"
                         },
                         "address": {
@@ -1442,7 +1526,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The address entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/address"
                         },
                         "name": {
@@ -1474,7 +1557,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The name entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/name"
                         },
                         "username": {
@@ -1506,7 +1588,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The username entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/username"
                         },
                         "profanity": {
@@ -1538,7 +1619,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The profanity entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/profanity"
                         },
                         "sensitive": {
@@ -1570,7 +1650,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The sensitive numbers entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/sensitive"
                         },
                         "wordlist": {
@@ -1602,7 +1681,6 @@
                               "description": "Indicates a warning from the model, e.g. if the text is too short or long and the model might not be accurate."
                             }
                           },
-                          "additionalProperties": false,
                           "description": "The wordlist entity matcher output if enabled in your project. Read more at https://docs.moderationapi.com/models/word"
                         },
                         "wordlists": {
@@ -1658,8 +1736,7 @@
                               "name",
                               "id",
                               "score"
-                            ],
-                            "additionalProperties": false
+                            ]
                           },
                           "description": "The wordlist entity matcher outputs if enabled in your project. Read more at https://docs.moderationapi.com/models/word"
                         }
@@ -1676,12 +1753,46 @@
                       ]
                     },
                     { "type": "object", "additionalProperties": {} }
-                  ]
+                  ],
+                  "description": "Moderation analysis results including model outputs and detected patterns"
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1750,23 +1861,19 @@
                               "description": "The content to analyze"
                             }
                           },
-                          "required": ["type", "value"],
-                          "additionalProperties": false
+                          "required": ["type", "value"]
                         }
                       }
                     },
                     "required": ["type", "data"],
-                    "additionalProperties": false,
                     "description": "The object you want to analyze."
                   }
                 },
-                "required": ["value"],
-                "additionalProperties": false
+                "required": ["value"]
               }
             }
           }
         },
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -1798,7 +1905,6 @@
                             }
                           },
                           "required": ["timestamp", "quota_usage"],
-                          "additionalProperties": false,
                           "description": "Information about the request"
                         },
                         "flagged": {
@@ -1833,8 +1939,7 @@
                                 "description": "The confidence of the model"
                               }
                             },
-                            "required": ["label", "model", "score"],
-                            "additionalProperties": false
+                            "required": ["label", "model", "score"]
                           },
                           "description": "The scores of each label"
                         },
@@ -1857,8 +1962,7 @@
                                 "description": "The similarity score of the matches"
                               }
                             },
-                            "required": ["model", "matches"],
-                            "additionalProperties": false
+                            "required": ["model", "matches"]
                           },
                           "description": "The entities found in the content"
                         },
@@ -1915,8 +2019,7 @@
                               "name",
                               "id",
                               "score"
-                            ],
-                            "additionalProperties": false
+                            ]
                           },
                           "description": "The wordlist entity matcher outputs if enabled in your project. Read more at https://docs.moderationapi.com/models/word"
                         },
@@ -1939,8 +2042,7 @@
                                 "description": "The models that flagged the field"
                               }
                             },
-                            "required": ["key", "flagged", "flagged_by"],
-                            "additionalProperties": false
+                            "required": ["key", "flagged", "flagged_by"]
                           },
                           "description": "The fields in the object and their flags"
                         }
@@ -1962,7 +2064,40 @@
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -2009,13 +2144,11 @@
                     "description": "The URL of the image you want to analyze."
                   }
                 },
-                "required": ["url"],
-                "additionalProperties": false
+                "required": ["url"]
               }
             }
           }
         },
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2045,7 +2178,6 @@
                         }
                       },
                       "required": ["timestamp", "quota_usage"],
-                      "additionalProperties": false,
                       "description": "Information about the request"
                     },
                     "flagged": {
@@ -2069,7 +2201,8 @@
                               "smoking",
                               "drugs",
                               "alcohol",
-                              "text"
+                              "text",
+                              "toxic"
                             ],
                             "description": "The label of the model"
                           },
@@ -2080,8 +2213,7 @@
                             "description": "The confidence of the model"
                           }
                         },
-                        "required": ["label", "score"],
-                        "additionalProperties": false
+                        "required": ["label", "score"]
                       },
                       "description": "The scores of each label"
                     },
@@ -2091,21 +2223,53 @@
                       "description": "The texts found in the image, if the image text model is enabled"
                     }
                   },
-                  "required": ["status", "request", "flagged", "labels"],
-                  "additionalProperties": false
+                  "required": ["status", "request", "flagged", "labels"]
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/moderate/video": {
       "post": {
         "operationId": "moderation-video",
-        "summary": "Analyze video",
-        "description": "Analyze video with your Moderation API project",
+        "summary": "Analyze video content",
+        "description": "Analyze video content with your configured moderation models and filters.",
         "tags": ["Moderate"],
         "security": [{ "Authorization": [] }],
         "requestBody": {
@@ -2145,12 +2309,11 @@
                   }
                 },
                 "required": ["url"],
-                "additionalProperties": false
+                "description": "Input parameters for video moderation"
               }
             }
           }
         },
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2180,7 +2343,6 @@
                         }
                       },
                       "required": ["timestamp", "quota_usage"],
-                      "additionalProperties": false,
                       "description": "Information about the request"
                     },
                     "flagged": {
@@ -2189,20 +2351,53 @@
                     }
                   },
                   "required": ["status", "request", "flagged"],
-                  "additionalProperties": false
+                  "description": "Video moderation analysis results"
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/moderate/audio": {
       "post": {
         "operationId": "moderation-audio",
-        "summary": "Analyze audio",
-        "description": "Analyze audio with your Moderation API project",
+        "summary": "Analyze audio content",
+        "description": "Analyze audio content with your configured moderation models and filters.",
         "tags": ["Moderate"],
         "security": [{ "Authorization": [] }],
         "requestBody": {
@@ -2242,12 +2437,11 @@
                   }
                 },
                 "required": ["url"],
-                "additionalProperties": false
+                "description": "Input parameters for audio moderation"
               }
             }
           }
         },
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2277,7 +2471,6 @@
                         }
                       },
                       "required": ["timestamp", "quota_usage"],
-                      "additionalProperties": false,
                       "description": "Information about the request"
                     },
                     "flagged": {
@@ -2286,12 +2479,45 @@
                     }
                   },
                   "required": ["status", "request", "flagged"],
-                  "additionalProperties": false
+                  "description": "Audio moderation analysis results"
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -2302,7 +2528,158 @@
         "description": "Get account details",
         "tags": ["Account"],
         "security": [{ "Authorization": [] }],
-        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Account details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "ID of the account"
+                    },
+                    "paid_plan_name": {
+                      "type": "string",
+                      "description": "Name of the paid plan"
+                    },
+                    "text_api_quota": {
+                      "type": "number",
+                      "description": "Text API quota"
+                    },
+                    "remaining_quota": {
+                      "type": "number",
+                      "description": "Remaining quota"
+                    },
+                    "current_project": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "ID of the current project"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the current project"
+                        }
+                      },
+                      "required": ["id", "name"]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "paid_plan_name",
+                    "text_api_quota",
+                    "remaining_quota"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordlist": {
+      "get": {
+        "operationId": "wordlist-list",
+        "summary": "List wordlists",
+        "description": "List all wordlists for the authenticated organization",
+        "tags": ["wordlist"],
+        "security": [{ "Authorization": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the wordlist"
+                      },
+                      "name": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Name of the wordlist"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "When the wordlist was created"
+                      },
+                      "userId": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "User who created the wordlist"
+                      }
+                    },
+                    "required": ["id", "name", "createdAt", "userId"]
+                  },
+                  "description": "Array of wordlists"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordlist/{id}": {
+      "get": {
+        "operationId": "wordlist-getWordlistPublic",
+        "summary": "Get wordlist",
+        "description": "Get a specific wordlist by ID",
+        "tags": ["wordlist"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the wordlist to get",
+            "schema": {
+              "type": "string",
+              "description": "ID of the wordlist to get"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2311,39 +2688,479 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "paid_plan_name": { "type": "string" },
-                    "text_api_quota": { "type": "number" },
-                    "remaining_quota": { "type": "number" },
-                    "current_project": {
-                      "type": "object",
-                      "properties": {
-                        "id": { "type": "string" },
-                        "name": { "type": "string" }
-                      },
-                      "required": ["id", "name"],
-                      "additionalProperties": false
+                    "id": {
+                      "type": "string",
+                      "description": "ID of the wordlist"
+                    },
+                    "name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Name of the wordlist"
+                    },
+                    "words": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Words in the wordlist"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "Creation date of the wordlist"
+                    },
+                    "organizationId": {
+                      "type": "string",
+                      "description": "ID of the organization"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "ID of the user"
+                    },
+                    "strict": {
+                      "type": "boolean",
+                      "description": "Strict mode"
                     }
                   },
                   "required": [
                     "id",
-                    "paid_plan_name",
-                    "text_api_quota",
-                    "remaining_quota"
-                  ],
-                  "additionalProperties": false
-                },
-                "example": {
-                  "id": "kj123kaasd",
-                  "paid_plan_name": "Free trial",
-                  "text_api_quota": 100,
-                  "remaining_quota": 50,
-                  "current_project": { "id": "1245abc", "name": "My Project" }
+                    "name",
+                    "words",
+                    "createdAt",
+                    "organizationId",
+                    "userId",
+                    "strict"
+                  ]
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/error" }
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "wordlist-update",
+        "summary": "Update wordlist",
+        "description": "Update a wordlist",
+        "tags": ["wordlist"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the wordlist to update",
+            "schema": {
+              "type": "string",
+              "description": "ID of the wordlist to update"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "New name for the wordlist"
+                  },
+                  "words": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "New words for the wordlist. Replace the existing words with these new ones. Duplicate words will be ignored."
+                  },
+                  "strict": {
+                    "type": "boolean",
+                    "description": "Deprecated. Now using threshold in project settings."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wordlist updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "ID of the wordlist"
+                    },
+                    "name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Name of the wordlist"
+                    },
+                    "words": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Words in the wordlist"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "Creation date of the wordlist"
+                    },
+                    "organizationId": {
+                      "type": "string",
+                      "description": "ID of the organization"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "ID of the user"
+                    },
+                    "strict": {
+                      "type": "boolean",
+                      "description": "Strict mode"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "words",
+                    "createdAt",
+                    "organizationId",
+                    "userId",
+                    "strict"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordlist/{id}/embedding-status": {
+      "get": {
+        "operationId": "wordlist-wordlistEmbeddingStatus",
+        "summary": "Get embedding status",
+        "description": "Get the current embedding progress status for a wordlist",
+        "tags": ["wordlist"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the wordlist to check embedding status for",
+            "schema": {
+              "type": "string",
+              "description": "ID of the wordlist to check embedding status for"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "progress": {
+                      "type": "number",
+                      "description": "Percentage of words that have been embedded (0-100)"
+                    },
+                    "totalWords": {
+                      "type": "number",
+                      "description": "Total number of words in the wordlist"
+                    },
+                    "remainingWords": {
+                      "type": "number",
+                      "description": "Number of words still waiting to be embedded"
+                    }
+                  },
+                  "required": ["progress", "totalWords", "remainingWords"],
+                  "description": "Embedding status details"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/wordlist/{id}/words": {
+      "post": {
+        "operationId": "wordlist-addWords",
+        "summary": "Add words to wordlist",
+        "description": "Add words to an existing wordlist",
+        "tags": ["wordlist"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the wordlist to add words to",
+            "schema": {
+              "type": "string",
+              "description": "ID of the wordlist to add words to"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "words": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Array of words to add to the wordlist. Duplicate words will be ignored."
+                  }
+                },
+                "required": ["words"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Words successfully added to wordlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "addedCount": {
+                      "type": "number",
+                      "description": "Number of words added"
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "description": "Total number of words in wordlist"
+                    },
+                    "addedWords": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "List of words that were added"
+                    }
+                  },
+                  "required": ["addedCount", "totalCount", "addedWords"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "wordlist-removeWords",
+        "summary": "Remove words from wordlist",
+        "description": "Remove words from an existing wordlist",
+        "tags": ["wordlist"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the wordlist to remove words from",
+            "schema": {
+              "type": "string",
+              "description": "ID of the wordlist to remove words from"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "words",
+            "description": "Array of words to remove from the wordlist",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Array of words to remove from the wordlist"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Words successfully removed from wordlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "removedCount": {
+                      "type": "number",
+                      "description": "Number of words removed"
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "description": "Total number of words in wordlist"
+                    },
+                    "removedWords": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "List of words removed"
+                    }
+                  },
+                  "required": ["removedCount", "totalCount", "removedWords"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          }
         }
       }
     }
@@ -2352,34 +3169,201 @@
     "securitySchemes": {
       "Authorization": { "type": "http", "scheme": "bearer" }
     },
-    "responses": {
-      "error": {
-        "description": "Error response",
-        "content": {
-          "application/json": {
-            "schema": {
+    "schemas": {
+      "error.BAD_REQUEST": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Invalid input data"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "BAD_REQUEST"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
               "type": "object",
-              "properties": {
-                "message": { "type": "string" },
-                "code": { "type": "string" },
-                "issues": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": { "message": { "type": "string" } },
-                    "required": ["message"],
-                    "additionalProperties": false
-                  }
-                }
-              },
-              "required": ["message", "code"],
-              "additionalProperties": false
-            }
+              "properties": { "message": { "type": "string" } },
+              "required": ["message"]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
           }
+        },
+        "required": ["message", "code"],
+        "title": "Invalid input data error (400)",
+        "description": "The error information",
+        "example": {
+          "code": "BAD_REQUEST",
+          "message": "Invalid input data",
+          "issues": []
+        }
+      },
+      "error.UNAUTHORIZED": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Authorization not provided"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "UNAUTHORIZED"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "message": { "type": "string" } },
+              "required": ["message"]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": ["message", "code"],
+        "title": "Authorization not provided error (401)",
+        "description": "The error information",
+        "example": {
+          "code": "UNAUTHORIZED",
+          "message": "Authorization not provided",
+          "issues": []
+        }
+      },
+      "error.FORBIDDEN": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Insufficient access"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "FORBIDDEN"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "message": { "type": "string" } },
+              "required": ["message"]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": ["message", "code"],
+        "title": "Insufficient access error (403)",
+        "description": "The error information",
+        "example": {
+          "code": "FORBIDDEN",
+          "message": "Insufficient access",
+          "issues": []
+        }
+      },
+      "error.NOT_FOUND": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Not found"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "NOT_FOUND"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "message": { "type": "string" } },
+              "required": ["message"]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": ["message", "code"],
+        "title": "Not found error (404)",
+        "description": "The error information",
+        "example": { "code": "NOT_FOUND", "message": "Not found", "issues": [] }
+      },
+      "error.INTERNAL_SERVER_ERROR": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Internal server error"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "INTERNAL_SERVER_ERROR"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "message": { "type": "string" } },
+              "required": ["message"]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": ["message", "code"],
+        "title": "Internal server error error (500)",
+        "description": "The error information",
+        "example": {
+          "code": "INTERNAL_SERVER_ERROR",
+          "message": "Internal server error",
+          "issues": []
+        }
+      },
+      "error.CONFLICT": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The error message",
+            "example": "Action with this key already exists"
+          },
+          "code": {
+            "type": "string",
+            "description": "The error code",
+            "example": "CONFLICT"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "message": { "type": "string" } },
+              "required": ["message"]
+            },
+            "description": "An array of issues that were responsible for the error",
+            "example": []
+          }
+        },
+        "required": ["message", "code"],
+        "title": "Action with this key already exists error (409)",
+        "description": "The error information",
+        "example": {
+          "code": "CONFLICT",
+          "message": "Action with this key already exists",
+          "issues": []
         }
       }
     }
-  },
-  "tags": [{ "name": "Actions" }, { "name": "Queues" }, { "name": "Webhooks" }],
-  "externalDocs": { "url": "https://docs.moderationapi.com" }
+  }
 }

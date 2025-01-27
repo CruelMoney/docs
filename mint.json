@@ -221,7 +221,7 @@
     },
     {
       "group": "Account",
-      "pages": ["api-reference/get-account"]
+      "pages": ["api-reference/account/get-account-details"]
     },
     {
       "group": "Content moderation",
@@ -234,14 +234,25 @@
       ]
     },
     {
-      "group": "Queue actions",
+      "group": "Actions",
       "pages": [
-        "api-reference/create-an-action",
-        "api-reference/get-an-action",
-        "api-reference/update-an-action",
-        "api-reference/delete-an-action",
-        "api-reference/list-actions",
-        "api-reference/execute-an-action"
+        "api-reference/actions/list-moderation-actions",
+        "api-reference/actions/create-an-action",
+        "api-reference/actions/get-an-action",
+        "api-reference/actions/update-an-action",
+        "api-reference/actions/delete-an-action",
+        "api-reference/actions/execute-moderation-action"
+      ]
+    },
+    {
+      "group": "Wordlist",
+      "pages": [
+        "api-reference/wordlist/list-wordlists",
+        "api-reference/wordlist/get-wordlist",
+        "api-reference/wordlist/update-wordlist",
+        "api-reference/wordlist/get-embedding-status",
+        "api-reference/wordlist/add-words-to-wordlist",
+        "api-reference/wordlist/remove-words-from-wordlist"
       ]
     }
   ]
