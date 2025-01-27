@@ -245,7 +245,7 @@
       ]
     },
     {
-      "group": "Wordlist",
+      "group": "Wordlist (Enterprise)",
       "pages": [
         "api-reference/wordlist/list-wordlists",
         "api-reference/wordlist/get-wordlist",
@@ -253,6 +253,23 @@
         "api-reference/wordlist/get-embedding-status",
         "api-reference/wordlist/add-words-to-wordlist",
         "api-reference/wordlist/remove-words-from-wordlist"
+      ]
+    },
+    {
+      "group": "User Reports (Enterprise)",
+      "pages": [
+        "api-reference/user-reports/list-authors",
+        "api-reference/user-reports/get-author-details"
+      ]
+    },
+    {
+      "group": "Review Queue (Enterprise)",
+      "pages": [
+        "api-reference/review-queues/get-a-queue",
+        "api-reference/review-queues/get-queue-statistics",
+        "api-reference/review-queues/get-queue-items",
+        "api-reference/review-queues/resolve-a-queue-item",
+        "api-reference/review-queues/unresolve-a-queue-item"
       ]
     }
   ]

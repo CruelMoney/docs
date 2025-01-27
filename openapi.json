@@ -5,15 +5,1460 @@
     "description": "API for automated content moderation",
     "version": "1.0.0"
   },
-  "servers": [{ "url": "http://localhost:3000/api/v1" }],
+  "servers": [{ "url": "https://moderationapi.com/api/v1" }],
   "tags": [
     { "name": "Actions" },
     { "name": "Queues" },
     { "name": "Webhooks" },
-    { "name": "Wordlist" }
+    { "name": "Wordlist" },
+    { "name": "UserReports" }
   ],
   "externalDocs": { "url": "https://docs.moderationapi.com" },
   "paths": {
+    "/authors": {
+      "get": {
+        "operationId": "author-openListAuthors",
+        "summary": "List authors",
+        "description": "Get a paginated list of authors with their activity metrics and reputation",
+        "tags": ["userReports"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "Number of authors per page",
+            "schema": {
+              "type": "number",
+              "default": 20,
+              "description": "Number of authors per page"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageNumber",
+            "description": "Page number to fetch",
+            "schema": {
+              "type": "number",
+              "default": 1,
+              "description": "Page number to fetch"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "reputation",
+                "violationCount",
+                "reportCount",
+                "memberSince",
+                "lastActive",
+                "contentCount",
+                "flaggedContentRatio",
+                "averageSentiment"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortDirection",
+            "description": "Sort direction",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc",
+              "description": "Sort direction"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minReputation",
+            "schema": { "type": "number" }
+          },
+          {
+            "in": "query",
+            "name": "maxReputation",
+            "schema": { "type": "number" }
+          },
+          {
+            "in": "query",
+            "name": "memberSinceDate",
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "lastActiveDate",
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "hasViolations",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "in": "query",
+            "name": "contentTypes",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "authors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Author ID"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Author name or identifier"
+                          },
+                          "memberSince": {
+                            "type": "string",
+                            "description": "Date when author first appeared"
+                          },
+                          "lastActive": {
+                            "type": "string",
+                            "description": "Date of last activity"
+                          },
+                          "reputation": {
+                            "type": "number",
+                            "description": "Author reputation score (0-100)"
+                          },
+                          "metrics": {
+                            "type": "object",
+                            "properties": {
+                              "totalContent": {
+                                "type": "number",
+                                "description": "Total pieces of content"
+                              },
+                              "flaggedContent": {
+                                "type": "number",
+                                "description": "Number of flagged content pieces"
+                              },
+                              "violationCount": {
+                                "type": "number",
+                                "description": "Number of confirmed violations"
+                              },
+                              "reportCount": {
+                                "type": "number",
+                                "description": "Number of times reported by others"
+                              },
+                              "averageSentiment": {
+                                "type": "number",
+                                "description": "Average sentiment score of content (-1 to 1)"
+                              }
+                            },
+                            "required": [
+                              "totalContent",
+                              "flaggedContent",
+                              "violationCount",
+                              "reportCount",
+                              "averageSentiment"
+                            ]
+                          },
+                          "riskLevel": {
+                            "type": "string",
+                            "enum": ["low", "medium", "high"],
+                            "description": "Calculated risk level based on history"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "active",
+                              "suspended",
+                              "banned",
+                              "restricted"
+                            ],
+                            "description": "Current author status"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "memberSince",
+                          "lastActive",
+                          "reputation",
+                          "metrics",
+                          "riskLevel",
+                          "status"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": { "type": "number" },
+                        "pageSize": { "type": "number" },
+                        "pageNumber": { "type": "number" },
+                        "hasNextPage": { "type": "boolean" },
+                        "hasPreviousPage": { "type": "boolean" }
+                      },
+                      "required": [
+                        "total",
+                        "pageSize",
+                        "pageNumber",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ]
+                    }
+                  },
+                  "required": ["authors", "pagination"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/{authorId}": {
+      "get": {
+        "operationId": "author-openGetAuthorDetails",
+        "summary": "Get author details",
+        "description": "Get detailed information about a specific author including historical data and analysis",
+        "tags": ["userReports"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorId",
+            "description": "The ID of the author to fetch details for",
+            "schema": {
+              "type": "string",
+              "description": "The ID of the author to fetch details for"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "includeContentSamples",
+            "description": "Whether to include content samples",
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to include content samples"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "author": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string", "description": "Author ID" },
+                        "name": {
+                          "type": "string",
+                          "description": "Author name or identifier"
+                        },
+                        "memberSince": {
+                          "type": "string",
+                          "description": "Date when author first appeared"
+                        },
+                        "lastActive": {
+                          "type": "string",
+                          "description": "Date of last activity"
+                        },
+                        "reputation": {
+                          "type": "object",
+                          "properties": {
+                            "current": {
+                              "type": "number",
+                              "description": "Current reputation score (0-100)"
+                            },
+                            "history": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "date": {
+                                    "type": "string",
+                                    "description": "Date of reputation snapshot"
+                                  },
+                                  "score": {
+                                    "type": "number",
+                                    "description": "Reputation score at this date"
+                                  },
+                                  "reason": {
+                                    "type": "string",
+                                    "description": "Reason for reputation change"
+                                  }
+                                },
+                                "required": ["date", "score"]
+                              }
+                            }
+                          },
+                          "required": ["current", "history"]
+                        },
+                        "activityMetrics": {
+                          "type": "object",
+                          "properties": {
+                            "totalContent": {
+                              "type": "number",
+                              "description": "Total pieces of content"
+                            },
+                            "flaggedContent": {
+                              "type": "number",
+                              "description": "Number of flagged content pieces"
+                            },
+                            "violationCount": {
+                              "type": "number",
+                              "description": "Number of confirmed violations"
+                            },
+                            "reportCount": {
+                              "type": "number",
+                              "description": "Number of times reported by others"
+                            },
+                            "averageSentiment": {
+                              "type": "number",
+                              "description": "Average sentiment score of content (-1 to 1)"
+                            },
+                            "contentByType": {
+                              "type": "object",
+                              "additionalProperties": { "type": "number" },
+                              "description": "Breakdown of content by type"
+                            },
+                            "activityHeatmap": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "hour": {
+                                    "type": "number",
+                                    "description": "Hour of day (0-23)"
+                                  },
+                                  "day": {
+                                    "type": "number",
+                                    "description": "Day of week (0-6)"
+                                  },
+                                  "intensity": {
+                                    "type": "number",
+                                    "description": "Activity intensity"
+                                  }
+                                },
+                                "required": ["hour", "day", "intensity"]
+                              }
+                            }
+                          },
+                          "required": [
+                            "totalContent",
+                            "flaggedContent",
+                            "violationCount",
+                            "reportCount",
+                            "averageSentiment",
+                            "contentByType",
+                            "activityHeatmap"
+                          ]
+                        },
+                        "riskAnalysis": {
+                          "type": "object",
+                          "properties": {
+                            "overallRisk": {
+                              "type": "string",
+                              "enum": ["low", "medium", "high"],
+                              "description": "Overall risk assessment"
+                            },
+                            "factors": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "factor": {
+                                    "type": "string",
+                                    "description": "Risk factor name"
+                                  },
+                                  "severity": {
+                                    "type": "string",
+                                    "enum": ["low", "medium", "high"],
+                                    "description": "Severity of this factor"
+                                  },
+                                  "description": {
+                                    "type": "string",
+                                    "description": "Description of the risk factor"
+                                  }
+                                },
+                                "required": [
+                                  "factor",
+                                  "severity",
+                                  "description"
+                                ]
+                              }
+                            },
+                            "recommendations": {
+                              "type": "array",
+                              "items": { "type": "string" },
+                              "description": "Recommended actions based on risk analysis"
+                            }
+                          },
+                          "required": [
+                            "overallRisk",
+                            "factors",
+                            "recommendations"
+                          ]
+                        },
+                        "contentAnalysis": {
+                          "type": "object",
+                          "properties": {
+                            "topKeywords": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "keyword": { "type": "string" },
+                                  "frequency": { "type": "number" }
+                                },
+                                "required": ["keyword", "frequency"]
+                              },
+                              "description": "Most frequent keywords in content"
+                            },
+                            "sentimentTrend": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "date": { "type": "string" },
+                                  "sentiment": { "type": "number" }
+                                },
+                                "required": ["date", "sentiment"]
+                              },
+                              "description": "Sentiment analysis over time"
+                            },
+                            "contentSamples": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": { "type": "string" },
+                                  "content": { "type": "string" },
+                                  "type": { "type": "string" },
+                                  "flags": {
+                                    "type": "array",
+                                    "items": { "type": "string" }
+                                  },
+                                  "sentiment": { "type": "number" },
+                                  "createdAt": { "type": "string" }
+                                },
+                                "required": [
+                                  "id",
+                                  "content",
+                                  "type",
+                                  "flags",
+                                  "sentiment",
+                                  "createdAt"
+                                ]
+                              },
+                              "description": "Sample content pieces (if requested)"
+                            }
+                          },
+                          "required": ["topKeywords", "sentimentTrend"]
+                        },
+                        "moderationHistory": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string",
+                                "description": "Date of moderation action"
+                              },
+                              "action": {
+                                "type": "string",
+                                "description": "Type of action taken"
+                              },
+                              "reason": {
+                                "type": "string",
+                                "description": "Reason for the action"
+                              },
+                              "duration": {
+                                "type": "number",
+                                "description": "Duration of action if temporary"
+                              },
+                              "moderator": {
+                                "type": "string",
+                                "description": "ID of moderator who took action"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "action",
+                              "reason",
+                              "moderator"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "memberSince",
+                        "lastActive",
+                        "reputation",
+                        "activityMetrics",
+                        "riskAnalysis",
+                        "contentAnalysis",
+                        "moderationHistory"
+                      ]
+                    }
+                  },
+                  "required": ["author"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queue/{id}": {
+      "get": {
+        "operationId": "queueView-openGetQueue",
+        "summary": "Get a queue",
+        "description": "Get a queue",
+        "tags": ["queueView"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The queue ID",
+            "schema": { "type": "string", "description": "The queue ID" },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "queue": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "name": { "type": "string" },
+                        "description": { "type": "string" },
+                        "filter": {
+                          "type": "object",
+                          "properties": {
+                            "contextIDs": {
+                              "type": "array",
+                              "items": { "type": "string", "nullable": true }
+                            },
+                            "filterLabels": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "label": { "type": "string" },
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "FLAGGED",
+                                      "NOT_FLAGGED",
+                                      "THRESHOLDS"
+                                    ]
+                                  },
+                                  "minThreshold": {
+                                    "type": "number",
+                                    "nullable": true,
+                                    "minimum": 0,
+                                    "maximum": 100
+                                  },
+                                  "maxThreshold": {
+                                    "type": "number",
+                                    "nullable": true,
+                                    "minimum": 0,
+                                    "maximum": 100
+                                  }
+                                },
+                                "required": ["label", "type"]
+                              }
+                            },
+                            "labels": {
+                              "type": "array",
+                              "items": { "type": "string" }
+                            },
+                            "afterDate": { "type": "string" },
+                            "beforeDate": { "type": "string" },
+                            "showChecked": { "type": "boolean" },
+                            "authorID": { "type": "string" },
+                            "filteredActionIDs": {
+                              "type": "array",
+                              "items": { "type": "string" }
+                            }
+                          }
+                        },
+                        "unresolvedItemsCount": { "type": "number" },
+                        "resolvedItemsCount": { "type": "number" },
+                        "totalItemsCount": { "type": "number" }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "description",
+                        "filter",
+                        "unresolvedItemsCount",
+                        "resolvedItemsCount",
+                        "totalItemsCount"
+                      ]
+                    }
+                  },
+                  "required": ["queue"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queue/{id}/stats": {
+      "get": {
+        "operationId": "queueView-openGetStats",
+        "summary": "Get queue statistics",
+        "description": "Get detailed statistics about a moderation queue including review times, action counts, and trends",
+        "tags": ["queueView"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The queue ID",
+            "schema": { "type": "string", "description": "The queue ID" },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "withinDays",
+            "description": "Number of days to analyze statistics for",
+            "schema": {
+              "type": "number",
+              "default": 30,
+              "description": "Number of days to analyze statistics for"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reviewStats": {
+                      "type": "object",
+                      "properties": {
+                        "averageTimeToReview": {
+                          "type": "number",
+                          "description": "Average time in milliseconds to review an item"
+                        },
+                        "totalReviewed": {
+                          "type": "number",
+                          "description": "Total number of items reviewed"
+                        },
+                        "totalPending": {
+                          "type": "number",
+                          "description": "Total number of items pending review"
+                        }
+                      },
+                      "required": [
+                        "averageTimeToReview",
+                        "totalReviewed",
+                        "totalPending"
+                      ]
+                    },
+                    "actionStats": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "actionId": {
+                            "type": "string",
+                            "description": "ID of the moderation action"
+                          },
+                          "actionName": {
+                            "type": "string",
+                            "description": "Name of the moderation action"
+                          },
+                          "count": {
+                            "type": "number",
+                            "description": "Number of times this action was taken"
+                          },
+                          "percentageOfTotal": {
+                            "type": "number",
+                            "description": "Percentage this action represents of all actions"
+                          }
+                        },
+                        "required": [
+                          "actionId",
+                          "actionName",
+                          "count",
+                          "percentageOfTotal"
+                        ]
+                      }
+                    },
+                    "topReviewers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "userId": {
+                            "type": "string",
+                            "description": "ID of the reviewer"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Name of the reviewer"
+                          },
+                          "reviewCount": {
+                            "type": "number",
+                            "description": "Number of items reviewed"
+                          },
+                          "averageTimePerReview": {
+                            "type": "number",
+                            "description": "Average review time in milliseconds"
+                          },
+                          "accuracyScore": {
+                            "type": "number",
+                            "description": "Optional accuracy score based on review quality metrics"
+                          },
+                          "topActions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "actionId": {
+                                  "type": "string",
+                                  "description": "Most used action by this reviewer"
+                                },
+                                "actionName": {
+                                  "type": "string",
+                                  "description": "Name of the most used action"
+                                },
+                                "count": {
+                                  "type": "number",
+                                  "description": "Number of times this action was used"
+                                }
+                              },
+                              "required": ["actionId", "actionName", "count"]
+                            },
+                            "description": "Most common actions taken by this reviewer"
+                          }
+                        },
+                        "required": [
+                          "userId",
+                          "name",
+                          "reviewCount",
+                          "averageTimePerReview",
+                          "topActions"
+                        ]
+                      },
+                      "description": "List of top reviewers and their statistics"
+                    },
+                    "trends": {
+                      "type": "object",
+                      "properties": {
+                        "dailyReviewCounts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string",
+                                "description": "Date in YYYY-MM-DD format"
+                              },
+                              "count": {
+                                "type": "number",
+                                "description": "Number of reviews on this date"
+                              }
+                            },
+                            "required": ["date", "count"]
+                          }
+                        },
+                        "flaggedContentTrends": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "label": {
+                                "type": "string",
+                                "description": "Content flag/label"
+                              },
+                              "trend": {
+                                "type": "number",
+                                "description": "Trend indicator (-1 to 1) showing if this type of flagged content is increasing or decreasing"
+                              }
+                            },
+                            "required": ["label", "trend"]
+                          }
+                        }
+                      },
+                      "required": ["dailyReviewCounts", "flaggedContentTrends"]
+                    }
+                  },
+                  "required": [
+                    "reviewStats",
+                    "actionStats",
+                    "topReviewers",
+                    "trends"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queue/{id}/items": {
+      "get": {
+        "operationId": "queueView-openGetItems",
+        "summary": "Get queue items",
+        "description": "Get paginated list of items in a moderation queue with filtering options",
+        "tags": ["queueView"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The queue ID",
+            "schema": { "type": "string", "description": "The queue ID" },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "Number of items per page",
+            "schema": {
+              "type": "number",
+              "default": 20,
+              "description": "Number of items per page"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageNumber",
+            "description": "Page number to fetch",
+            "schema": {
+              "type": "number",
+              "default": 1,
+              "description": "Page number to fetch"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortField",
+            "schema": {
+              "type": "string",
+              "enum": ["createdAt", "severity", "reviewedAt"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortDirection",
+            "description": "Sort direction",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc",
+              "description": "Sort direction"
+            }
+          },
+          {
+            "in": "query",
+            "name": "contextIds",
+            "schema": { "type": "string" }
+          },
+          { "in": "query", "name": "labels", "schema": { "type": "string" } },
+          {
+            "in": "query",
+            "name": "afterDate",
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "beforeDate",
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "includeResolved",
+            "schema": { "type": "boolean" }
+          },
+          { "in": "query", "name": "authorId", "schema": { "type": "string" } },
+          {
+            "in": "query",
+            "name": "filteredActionIds",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Content ID"
+                          },
+                          "content": {
+                            "type": "string",
+                            "description": "The content to be moderated"
+                          },
+                          "language": {
+                            "type": "string",
+                            "description": "Content language"
+                          },
+                          "labels": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string",
+                                  "description": "Label name"
+                                },
+                                "score": {
+                                  "type": "number",
+                                  "description": "Confidence score of the label"
+                                },
+                                "flagged": {
+                                  "type": "boolean",
+                                  "description": "Whether this label caused a flag"
+                                }
+                              },
+                              "required": ["label", "score", "flagged"]
+                            }
+                          },
+                          "contextId": {
+                            "type": "string",
+                            "description": "Context ID"
+                          },
+                          "authorId": {
+                            "type": "string",
+                            "description": "Author ID"
+                          },
+                          "actions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "description": "Action ID"
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "description": "Action name"
+                                },
+                                "comment": {
+                                  "type": "string",
+                                  "description": "Action comment"
+                                },
+                                "timestamp": {
+                                  "type": "number",
+                                  "description": "Unix timestamp of when the action was taken"
+                                },
+                                "reviewer": {
+                                  "type": "string",
+                                  "description": "Moderator userID"
+                                }
+                              },
+                              "required": ["id", "name", "timestamp"]
+                            },
+                            "description": "Action IDs taken on this item"
+                          },
+                          "flagged": {
+                            "type": "boolean",
+                            "description": "Whether the item is flagged by any label"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": ["pending", "resolved"],
+                            "description": "Status of the item"
+                          },
+                          "timestamp": {
+                            "type": "number",
+                            "description": "Unix timestamp of when the item was created"
+                          },
+                          "objectType": {
+                            "type": "string",
+                            "description": "Type of the content object"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "content",
+                          "labels",
+                          "flagged",
+                          "status",
+                          "timestamp"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "totalItems": { "type": "number" },
+                        "totalPages": { "type": "number" },
+                        "currentPage": { "type": "number" },
+                        "hasNextPage": { "type": "boolean" },
+                        "hasPreviousPage": { "type": "boolean" }
+                      },
+                      "required": [
+                        "totalItems",
+                        "totalPages",
+                        "currentPage",
+                        "hasNextPage",
+                        "hasPreviousPage"
+                      ]
+                    }
+                  },
+                  "required": ["items", "pagination"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.NOT_FOUND" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queue/{id}/items/{itemId}/resolve": {
+      "post": {
+        "operationId": "queueView-openResolveItem",
+        "summary": "Resolve a queue item",
+        "description": "Mark a queue item as resolved with a specific moderation action",
+        "tags": ["queueView"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The queue ID",
+            "schema": { "type": "string", "description": "The queue ID" },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID to resolve",
+            "schema": {
+              "type": "string",
+              "description": "The item ID to resolve"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Optional comment"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "resolvedAt": {
+                      "type": "string",
+                      "description": "Timestamp when the item was resolved"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "description": "Optional comment"
+                    }
+                  },
+                  "required": ["success", "resolvedAt"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queue/{id}/items/{itemId}/unresolve": {
+      "post": {
+        "operationId": "queueView-openUnresolveItem",
+        "summary": "Unresolve a queue item",
+        "description": "Mark a previously resolved queue item as unresolved/pending",
+        "tags": ["queueView"],
+        "security": [{ "Authorization": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The queue ID",
+            "schema": { "type": "string", "description": "The queue ID" },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID to unresolve",
+            "schema": {
+              "type": "string",
+              "description": "The item ID to unresolve"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string",
+                    "description": "Optional reason for unresolving the item"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "status": {
+                      "type": "string",
+                      "description": "New status of the item"
+                    },
+                    "unresolvedAt": {
+                      "type": "string",
+                      "description": "Timestamp when the item was unresolved"
+                    }
+                  },
+                  "required": ["success", "status", "unresolvedAt"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.BAD_REQUEST" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.UNAUTHORIZED" }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/error.FORBIDDEN" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/actions": {
       "get": {
         "operationId": "actions-list",
