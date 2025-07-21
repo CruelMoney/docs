@@ -276,11 +276,22 @@ To prevent replay attacks, you can use the timestamp in the payload of the webho
 
 ## Cloudflare integration
 
-If your application uses Cloudflare, you may need to whitelist our webhooks to ensure that our webhook calls can reach your server successfully. Without proper whitelisting, Cloudflare may block our webhook requests, preventing your application from receiving important notifications about queue events.
+If your application uses Cloudflare with security features enabled, you may need to allow our webhooks to ensure delivery. Cloudflare may block webhook requests when the following features are active:
 
-### Whitelisting webhooks by User-Agent (Recommended)
+- **Bot Fight Mode** - May classify webhook requests as bot traffic
+- **WAF Managed Rules** - Could flag webhook payloads as suspicious
+- **DDoS Protection** - May rate-limit webhook requests
+- **Custom security rules** - Depending on your configuration
 
-The recommended approach is to whitelist our User-Agent string, as this method remains stable even if our IP addresses change:
+Without proper configuration, these security features may block our webhook requests, preventing your application from receiving important notifications about queue events.
+
+<Note>
+  **When to configure**: You only need to set up these rules if you experience webhook delivery issues or have aggressive security settings enabled in Cloudflare.
+</Note>
+
+### Allow webhooks by User-Agent (Recommended)
+
+The recommended approach is to allow our User-Agent string, as this method remains stable even if our IP addresses change:
 
 1. **Log in to your Cloudflare dashboard**
 2. **Select your domain** that will receive webhooks
@@ -301,7 +312,7 @@ If you're experiencing issues with webhook delivery while using Cloudflare:
 
 1. **Check Cloudflare logs** in the dashboard for blocked requests from our User-Agent starting with `ModAPI/`
 2. **Verify your webhook endpoint** returns a 200 status code within 5 seconds
-3. **Ensure your firewall rules** don't conflict with the whitelist
+3. **Ensure your firewall rules** don't conflict with the allow rules
 4. **Contact our support team** at [support@moderationapi.com](mailto:support@moderationapi.com) for assistance with configuration
 
 <Info>
