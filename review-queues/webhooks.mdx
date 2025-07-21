@@ -274,49 +274,83 @@ export default handler;
 
 To prevent replay attacks, you can use the timestamp in the payload of the webhook to ensure that the webhook is not older than 5 minutes. <br></br>
 
-## Cloudflare integration
+## Hosting provider and security integration
 
-If your application uses Cloudflare with security features enabled, you may need to allow our webhooks to ensure delivery. Cloudflare may block webhook requests when the following features are active:
-
-- **Bot Fight Mode** - May classify webhook requests as bot traffic
-- **WAF Managed Rules** - Could flag webhook payloads as suspicious
-- **DDoS Protection** - May rate-limit webhook requests
-- **Custom security rules** - Depending on your configuration
-
-Without proper configuration, these security features may block our webhook requests, preventing your application from receiving important notifications about queue events.
+Some hosting providers and security services may block webhook traffic, preventing important notifications from reaching your server.
 
 <Note>
-  **When to configure**: You only need to set up these rules if you experience webhook delivery issues or have aggressive security settings enabled in Cloudflare.
+  **When is this needed?** Only configure these settings if you experience webhook delivery issues or have aggressive security settings enabled.
 </Note>
 
-### Allow webhooks by User-Agent (Recommended)
+### Quick diagnosis
 
-The recommended approach is to allow our User-Agent string, as this method remains stable even if our IP addresses change:
+If webhooks aren't arriving, check for these common issues:
 
-1. **Log in to your Cloudflare dashboard**
-2. **Select your domain** that will receive webhooks
-3. **Navigate to Security → Security rules**
-4. **Create a custom rule** with the following configuration:
+1. **Missing requests in logs** - No webhook requests reaching your endpoint
+2. **Blocked requests** - Security logs showing blocked `ModAPI/` User-Agent
+3. **Timeout errors** - Requests timing out before reaching your server
 
-   - **Rule name**: "Moderation API Webhooks"
-   - **Field**: User Agent
-   - **Operator**: starts with
-   - **Value**: `ModAPI/`
-   - **Action**: Skip
+Our webhook identifier: **User-Agent starts with `ModAPI/`**
 
-5. **Deploy the rule** to skip security checks for our webhook traffic
+### Configuration by provider
 
-### Troubleshooting webhook delivery
+<Tabs>
+  <Tab title="Cloudflare">
+    **When Cloudflare blocks webhooks:**
+    - Bot Fight Mode enabled
+    - WAF Managed Rules active
+    - DDoS Protection settings
+    - Custom security rules
 
-If you're experiencing issues with webhook delivery while using Cloudflare:
+    **Steps to allow webhooks:**
+    1. Go to your Cloudflare dashboard
+    2. Select your domain
+    3. Navigate to **Security → Security rules**
+    4. Create a custom rule:
+       - **Name**: "Moderation API Webhooks"
+       - **Field**: User Agent  
+       - **Operator**: starts with
+       - **Value**: `ModAPI/`
+       - **Action**: Skip
+    5. Deploy the rule
+  </Tab>
+  
+  <Tab title="Other Providers">
+    **Common providers with security blocking:**
+    - SiteDistrict
+    - DigitalOcean App Platform  
+    - Vercel
+    - Netlify
+    - AWS CloudFront
+    - Azure Front Door
 
-1. **Check Cloudflare logs** in the dashboard for blocked requests from our User-Agent starting with `ModAPI/`
-2. **Verify your webhook endpoint** returns a 200 status code within 5 seconds
-3. **Ensure your firewall rules** don't conflict with the allow rules
-4. **Contact our support team** at [support@moderationapi.com](mailto:support@moderationapi.com) for assistance with configuration
+    **General configuration steps:**
+    1. Access your provider's security/firewall settings
+    2. Look for "allow rules", "exceptions", or "bypass rules"
+    3. Add a User-Agent rule for `ModAPI/` (preferred)
+    4. Or add our IP addresses (contact support for list)
+    5. Save and deploy the configuration
 
-<Info>
-  **Need help?** Our support team can assist you with Cloudflare configuration
-  and provide additional webhook details if needed. Contact us at
-  [support@moderationapi.com](mailto:support@moderationapi.com).
-</Info>
+    **Where to find settings:**
+    - **Vercel**: Project settings → Security
+    - **Netlify**: Site settings → Build & deploy → Post processing  
+    - **DigitalOcean**: App settings → Security section
+    - **AWS CloudFront**: WAF & Shield → Web ACLs
+    - **Azure Front Door**: Rules engine or WAF policies
+
+    <Warning>
+      Each provider uses different terminology. Look for "firewall rules", "security exceptions", or "allow rules" in your provider's documentation.
+    </Warning>
+  </Tab>
+</Tabs>
+
+### Still having issues?
+
+**Troubleshooting steps:**
+1. Check your hosting provider's security logs for blocked `ModAPI/` requests
+2. Verify your webhook endpoint returns a 200 status code within 5 seconds  
+3. Test with a simple endpoint to isolate the issue
+4. Ensure firewall rules don't conflict with allow rules
+
+**Get help:**
+Contact our support team at [support@moderationapi.com](mailto:support@moderationapi.com) for assistance with configuration and current IP addresses if needed.
