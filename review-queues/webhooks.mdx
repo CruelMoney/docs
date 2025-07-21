@@ -273,3 +273,39 @@ export default handler;
 ### Preventing replay attacks
 
 To prevent replay attacks, you can use the timestamp in the payload of the webhook to ensure that the webhook is not older than 5 minutes. <br></br>
+
+## Cloudflare integration
+
+If your application uses Cloudflare, you may need to whitelist our webhooks to ensure that our webhook calls can reach your server successfully. Without proper whitelisting, Cloudflare may block our webhook requests, preventing your application from receiving important notifications about queue events.
+
+### Whitelisting webhooks by User-Agent (Recommended)
+
+The recommended approach is to whitelist our User-Agent string, as this method remains stable even if our IP addresses change:
+
+1. **Log in to your Cloudflare dashboard**
+2. **Select your domain** that will receive webhooks
+3. **Navigate to Security → Security rules**
+4. **Create a custom rule** with the following configuration:
+
+   - **Rule name**: "Moderation API Webhooks"
+   - **Field**: User Agent
+   - **Operator**: starts with
+   - **Value**: `ModAPI/`
+   - **Action**: Skip
+
+5. **Deploy the rule** to skip security checks for our webhook traffic
+
+### Troubleshooting webhook delivery
+
+If you're experiencing issues with webhook delivery while using Cloudflare:
+
+1. **Check Cloudflare logs** in the dashboard for blocked requests from our User-Agent starting with `ModAPI/`
+2. **Verify your webhook endpoint** returns a 200 status code within 5 seconds
+3. **Ensure your firewall rules** don't conflict with the whitelist
+4. **Contact our support team** at [support@moderationapi.com](mailto:support@moderationapi.com) for assistance with configuration
+
+<Info>
+  **Need help?** Our support team can assist you with Cloudflare configuration
+  and provide additional webhook details if needed. Contact us at
+  [support@moderationapi.com](mailto:support@moderationapi.com).
+</Info>
