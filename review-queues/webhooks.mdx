@@ -276,40 +276,51 @@ To prevent replay attacks, you can use the timestamp in the payload of the webho
 
 ## Troubleshooting
 
-Some hosting providers and security services may block webhook traffic. For example Cloudflare's Bot Fight mode.
-
 ### Check events log
 
 If webhooks aren't working as expected, first check the [events log](https://moderationapi.com/app/moderation/events) in your dashboard to see detailed information about webhook delivery attempts and any failures.
 
-### Configuration by provider
+### Allow Moderation API
+
+You may find that some hosting providers and security services block webhook traffic. For example Cloudflare's Bot Fight mode will present a challenge instead of allowing the webhook.
 
 <Tabs>
   <Tab title="Cloudflare">
-    **When Cloudflare blocks webhooks:**
+    ### Common blocking scenarios
     - Bot Fight Mode / Super Bot Fight Mode is enabled 
     - WAF Managed Rules active
     - Custom security rules
 
-    **When using Super Bot Fight Mode (Pro plans and above):**
-    The Skip action in the steps below will work to bypass Super Bot Fight Mode for webhook requests. Make sure to place it before the other rules.
+    ### Choose your solution based on your plan
 
-    **When using Bot Fight Mode (Free plans):**
-    Bot Fight Mode cannot be bypassed using Skip actions in WAF custom rules or Page Rules. Skip, Bypass, and Allow actions only apply to Ruleset Engine rules. To resolve this:
-    - Consider upgrading to a Pro plan to use Super Bot Fight Mode (which can be bypassed)
-    - Or contact support at [support@moderationapi.com](mailto:support@moderationapi.com) to get our IP addresses that need to be allowlisted in your Cloudflare configuration using [IP Access Rules](https://developers.cloudflare.com/waf/tools/ip-access-rules/create/)
+    <Tabs>
+      <Tab title="Super Bot Fight Mode (Pro+)">
+        **✅ Use Security Rules (Recommended)**
 
-    **Steps to allow webhooks:**
-    1. Go to your Cloudflare dashboard
-    2. Select your domain
-    3. Navigate to **Security → Security rules**
-    4. Create a custom rule:
-       - **Name**: "Moderation API Webhooks"
-       - **Field**: User Agent
-       - **Operator**: starts with
-       - **Value**: `ModAPI/`
-       - **Action**: Skip
-    5. Deploy the rule
+        1. Go to your Cloudflare dashboard
+        2. Select your domain
+        3. Navigate to **Security → Security rules**
+        4. Create a custom rule:
+           - **Name**: "Moderation API Webhooks"
+           - **Field**: User Agent
+           - **Operator**: starts with
+           - **Value**: `ModAPI/`
+           - **Action**: Skip `All Super Bot Fight Mode Rules` and other rules that might interfere.
+        5. Make sure to place this rule before other rules
+        6. Deploy the rule
+
+      </Tab>
+
+      <Tab title="Bot Fight Mode (Free)">
+        **❌ Security Rules won't work**
+
+        Bot Fight Mode cannot be bypassed using Skip actions in WAF custom rules or Page Rules. Skip, Bypass, and Allow actions only apply to Ruleset Engine rules.
+
+        **✅ Solutions:**
+        - **Option 1**: Upgrade to a Pro plan to use Super Bot Fight Mode (which can be bypassed)
+        - **Option 2**: Create a rule to allow Moderation API's IP address - see [Cloudflare's guide here](https://developers.cloudflare.com/waf/tools/ip-access-rules/create/), and reach out to support at [support@moderationapi.com](mailto:support@moderationapi.com) to get the IP address that is used for your Moderation API account
+      </Tab>
+    </Tabs>
 
   </Tab>
   
