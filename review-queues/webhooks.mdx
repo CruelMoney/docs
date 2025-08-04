@@ -274,33 +274,30 @@ export default handler;
 
 To prevent replay attacks, you can use the timestamp in the payload of the webhook to ensure that the webhook is not older than 5 minutes. <br></br>
 
-## Hosting provider and security integration
+## Troubleshooting
 
-Some hosting providers and security services may block webhook traffic, preventing important notifications from reaching your server.
+Some hosting providers and security services may block webhook traffic. For example Cloudflare's Bot Fight mode.
 
-<Note>
-  **When is this needed?** Only configure these settings if you experience webhook delivery issues or have aggressive security settings enabled.
-</Note>
+### Check events log
 
-### Quick diagnosis
-
-If webhooks aren't arriving, check for these common issues:
-
-1. **Missing requests in logs** - No webhook requests reaching your endpoint
-2. **Blocked requests** - Security logs showing blocked `ModAPI/` User-Agent
-3. **Timeout errors** - Requests timing out before reaching your server
-
-Our webhook identifier: **User-Agent starts with `ModAPI/`**
+If webhooks aren't working as expected, first check the [events log](https://moderationapi.com/app/moderation/events) in your dashboard to see detailed information about webhook delivery attempts and any failures.
 
 ### Configuration by provider
 
 <Tabs>
   <Tab title="Cloudflare">
     **When Cloudflare blocks webhooks:**
-    - Bot Fight Mode enabled
+    - Bot Fight Mode / Super Bot Fight Mode is enabled 
     - WAF Managed Rules active
-    - DDoS Protection settings
     - Custom security rules
+
+    **When using Super Bot Fight Mode (Pro plans and above):**
+    The Skip action in the steps below will work to bypass Super Bot Fight Mode for webhook requests. Make sure to place it before the other rules.
+
+    **When using Bot Fight Mode (Free plans):**
+    Bot Fight Mode cannot be bypassed using Skip actions in WAF custom rules or Page Rules. Skip, Bypass, and Allow actions only apply to Ruleset Engine rules. To resolve this:
+    - Consider upgrading to a Pro plan to use Super Bot Fight Mode (which can be bypassed)
+    - Or contact support at [support@moderationapi.com](mailto:support@moderationapi.com) to get our IP addresses that need to be allowlisted in your Cloudflare configuration using [IP Access Rules](https://developers.cloudflare.com/waf/tools/ip-access-rules/create/)
 
     **Steps to allow webhooks:**
     1. Go to your Cloudflare dashboard
@@ -308,11 +305,12 @@ Our webhook identifier: **User-Agent starts with `ModAPI/`**
     3. Navigate to **Security → Security rules**
     4. Create a custom rule:
        - **Name**: "Moderation API Webhooks"
-       - **Field**: User Agent  
+       - **Field**: User Agent
        - **Operator**: starts with
        - **Value**: `ModAPI/`
        - **Action**: Skip
     5. Deploy the rule
+
   </Tab>
   
   <Tab title="Other Providers">
@@ -328,12 +326,12 @@ Our webhook identifier: **User-Agent starts with `ModAPI/`**
     1. Access your provider's security/firewall settings
     2. Look for "allow rules", "exceptions", or "bypass rules"
     3. Add a User-Agent rule for `ModAPI/` (preferred)
-    4. Or add our IP addresses (contact support for list)
+    4. Or contact support to get IP addresses allowlisted for your account
     5. Save and deploy the configuration
 
     **Where to find settings:**
     - **Vercel**: Project settings → Security
-    - **Netlify**: Site settings → Build & deploy → Post processing  
+    - **Netlify**: Site settings → Build & deploy → Post processing
     - **DigitalOcean**: App settings → Security section
     - **AWS CloudFront**: WAF & Shield → Web ACLs
     - **Azure Front Door**: Rules engine or WAF policies
@@ -341,16 +339,18 @@ Our webhook identifier: **User-Agent starts with `ModAPI/`**
     <Warning>
       Each provider uses different terminology. Look for "firewall rules", "security exceptions", or "allow rules" in your provider's documentation.
     </Warning>
+
   </Tab>
 </Tabs>
 
 ### Still having issues?
 
 **Troubleshooting steps:**
+
 1. Check your hosting provider's security logs for blocked `ModAPI/` requests
-2. Verify your webhook endpoint returns a 200 status code within 5 seconds  
+2. Verify your webhook endpoint returns a 200 status code within 5 seconds
 3. Test with a simple endpoint to isolate the issue
 4. Ensure firewall rules don't conflict with allow rules
 
 **Get help:**
-Contact our support team at [support@moderationapi.com](mailto:support@moderationapi.com) for assistance with configuration and current IP addresses if needed.
+Contact our support team at [support@moderationapi.com](mailto:support@moderationapi.com) for assistance with configuration or to allowlist our IP addresses for your specific account.
