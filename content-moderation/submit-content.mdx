@@ -4,7 +4,7 @@ sidebarTitle: "Submit content"
 description: "How to submit content for moderation and which content types you can analyze with Moderation API."
 ---
 
-To analyze content, you need to send a POST request with the content to one of the [moderation endpoints](/api-reference/analyze-text) and you will receive a response with the results right away.
+To analyze content, you need to send a POST request with the content to one of the [moderation endpoints](/api-reference/moderate/analyze-text) and you will receive a response with the results right away.
 
 Remember to [create a project](/content-moderation/creating-projects) first and configure the models you want to use to analyze your content.
 
@@ -174,22 +174,30 @@ We provide 5 different endpoints for analyzing content:
 
 <CardGroup cols={2}>
 
-<Card title="Text" icon="align-left" href="/api-reference/analyze-text">
+<Card
+  title="Text"
+  icon="align-left"
+  href="/api-reference/moderate/analyze-text"
+>
   /api/moderate/text
 </Card>
 
-<Card title="Image" icon="image" href="/api-reference/analyze-image">
+<Card title="Image" icon="image" href="/api-reference/moderate/analyze-image">
   /api/moderate/image
 </Card>
 
-<Card title="Object" icon="brackets-curly" href="/api-reference/analyze-object">
+<Card
+  title="Object"
+  icon="brackets-curly"
+  href="/api-reference/moderate/analyze-object"
+>
   /api/moderate/object
 </Card>
 
 <Card
   title="Video (enterprise)"
   icon="film"
-  href="/api-reference/analyze-video"
+  href="/api-reference/moderate/analyze-video"
 >
   /api/moderate/video
 </Card>
@@ -197,7 +205,7 @@ We provide 5 different endpoints for analyzing content:
 <Card
   title="Audio (enterprise)"
   icon="waveform-lines"
-  href="/api-reference/analyze-audio"
+  href="/api-reference/moderate/analyze-audio"
 >
   /api/moderate/audio
 </Card>
@@ -206,7 +214,7 @@ We provide 5 different endpoints for analyzing content:
 
 ### Text
 
-[/moderate/text](/api-reference/analyze-text)
+[/moderate/text](/api-reference/moderate/analyze-text)
 
 Text moderation is the most common type of content moderation. It's used to moderate text-based content such as:
 
@@ -221,13 +229,13 @@ If you are analyzing chat messages or other thread based content, you might bene
 
 ### Image
 
-[/moderate/image](/api-reference/analyze-image)
+[/moderate/image](/api-reference/moderate/analyze-image)
 
 Image moderation involves analyzing visual content to detect inappropriate or harmful images. This can include identifying nudity, violence, or other objectionable content. The Moderation API uses advanced image recognition techniques to provide accurate and reliable results.
 
 ### Object
 
-[/moderate/object](/api-reference/analyze-object)
+[/moderate/object](/api-reference/moderate/analyze-object)
 
 Object moderation can be used for a comprehensive content analysis across different media types, and simplifies analyzing an entire entity.
 
@@ -240,13 +248,13 @@ You can select the type of object you want to moderate. Selecting the right type
 
 ### Audio (enterprise)
 
-[/moderate/audio](/api-reference/analyze-audio)
+[/moderate/audio](/api-reference/moderate/analyze-audio)
 
 Audio moderation is available for enterprise users and involves analyzing audio content to detect inappropriate language or sounds. This can be useful for moderating podcasts, voice messages, or any other audio content.
 
 ### Video (enterprise)
 
-[/moderate/video](/api-reference/analyze-video)
+[/moderate/video](/api-reference/moderate/analyze-video)
 
 Video moderation, also available for enterprise users, involves analyzing video content to detect inappropriate scenes or actions. This can include identifying violence, nudity, or other objectionable content within video files.
 
