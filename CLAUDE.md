@@ -1,88 +1,57 @@
-# CLAUDE.md
+# Mintlify documentation
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Working relationship
 
-## Documentation Development Commands
+- You can push back on ideas-this can lead to better documentation. Cite sources and explain your reasoning when you do so
+- ALWAYS ask for clarification rather than making assumptions
+- NEVER lie, guess, or make up information
 
-### Core Development
-- `mintlify dev` - Start local development server for documentation (requires Mintlify CLI: `npm i -g mintlify`)
-- `mintlify install` - Re-install dependencies if dev server isn't working
+## Project context
 
-### Content Updates
-- `wget -O openapi.json https://moderationapi.com/api/v1/openapi.json` - Update OpenAPI spec
-- `npx @mintlify/scraping@latest openapi-file openapi.json` - Generate API reference pages from OpenAPI
+- Format: MDX files with YAML frontmatter
+- Config: docs.json for navigation, theme, settings
+- Components: Mintlify components
 
-## Architecture Overview
+## Content strategy
 
-This is a **Mintlify documentation site** for the Moderation API platform. The documentation is automatically deployed via GitHub integration.
+- Document just enough for user success - not too much, not too little
+- Prioritize accuracy and usability of information
+- Make content evergreen when possible
+- Search for existing information before adding new content. Avoid duplication unless it is done for a strategic reason
+- Check existing patterns for consistency
+- Start by making the smallest reasonable changes
 
-### Documentation Structure
+## docs.json
 
-#### Content Organization (`docs/`)
-- **Getting Started**: `get-started/` - Introduction and concepts
-- **Quickstart Guides**: `quickstart/` - Language-specific implementation examples (Node.js, Python, Ruby, PHP, Go, Java)  
-- **API Reference**: `api-reference/` - Auto-generated from OpenAPI spec
-- **Learn Sections**:
-  - `account/` - Account management (quota, upgrading, team members)
-  - `content-moderation/` - Core moderation features and setup
-  - `model-studio/` - AI agents, pre-built models, custom models
-  - `review-queues/` - Human-in-the-loop moderation workflows
-  - `wordlists/` - Custom wordlist management
-- **Resources**: `resources/` - SDKs and integrations
-- **Guides**: `guides/` - Use case specific tutorials
+- Refer to the [docs.json schema](https://mintlify.com/docs.json) when building the docs.json file and site navigation
 
-#### Configuration Files
-- **`mint.json`** - Mintlify configuration with navigation, branding, and OpenAPI integration
-- **`openapi.json`** - API specification sourced from production API
-- **Static Assets**: `images/`, `logo/`, `_snippets/` - Documentation media and reusable content
+## Frontmatter requirements for pages
 
-#### Key Features
-- **OpenAPI Integration**: API reference auto-generated from live API spec
-- **Multi-language Support**: Code examples in 6+ programming languages  
-- **Interactive API Playground**: Bearer token authentication
-- **Analytics**: Mixpanel integration for usage tracking
-- **Feedback System**: Thumbs up/down rating on pages
+- title: Clear, descriptive page title
+- description: Concise summary for SEO/navigation
 
-### Content Management
+## Writing standards
 
-#### Navigation Structure (mint.json)
-The site uses a hierarchical navigation defined in `mint.json`:
-- **Top-level groups**: Documentation, Quickstart, Learn, Resources, API
-- **Nested groups**: Organized by feature area (Account, Content Moderation, Actions, etc.)
-- **Enterprise features**: Separate sections for Wordlist, Authors, Review Queue
+- Second-person voice ("you")
+- Prerequisites at start of procedural content
+- Test all code examples before publishing
+- Match style and formatting of existing pages
+- Include both basic and advanced use cases
+- Language tags on all code blocks
+- Alt text on all images
+- Relative paths for internal links
 
-#### Branding & Styling  
-- **Colors**: Blue theme (`#2563EB` primary)
-- **White-labeled**: Custom branding without Mintlify attribution
-- **Responsive logos**: Separate dark/light mode assets
-- **Custom favicon**: `/favicon.svg`
+## Git workflow
 
-#### Content Types
-- **`.mdx` files**: Documentation pages with React component support
-- **Code snippets**: Language-specific examples in `_snippets/`
-- **Images**: Screenshots and illustrations in `images/`
-- **API schemas**: Auto-generated from OpenAPI specification
+- NEVER use --no-verify when committing
+- Ask how to handle uncommitted changes before starting
+- Create a new branch when no clear branch exists for changes
+- Commit frequently throughout development
+- NEVER skip or disable pre-commit hooks
 
-### Development Workflow
+## Do not
 
-#### Local Development
-1. Install Mintlify CLI globally
-2. Run `mintlify dev` from docs directory (where `mint.json` exists)
-3. Changes auto-reload in browser
-
-#### Content Updates
-- **Manual content**: Edit `.mdx` files directly
-- **API documentation**: Update via OpenAPI spec refresh
-- **Navigation**: Modify `mint.json` structure
-- **Assets**: Add to appropriate directories (`images/`, `logo/`, etc.)
-
-#### Deployment
-- **Automatic**: GitHub integration deploys changes on push to main branch
-- **Production URL**: Connected to custom domain
-- **Environment**: Hosted on Mintlify infrastructure
-
-### External Dependencies
-- **Main API**: `https://moderationapi.com/api/v1/openapi.json` - Source for API documentation
-- **Dashboard**: `https://moderationapi.com/app` - User dashboard links
-- **Blog/Changelog**: `https://moderationapi.com/blog/tag/updates/` - External changelog
-- **Support**: `mailto:support@moderationapi.com` - Contact integration
+- Skip frontmatter on any MDX file
+- Use absolute URLs for internal links
+- Include untested code examples
+- Make assumptions - always ask for clarification

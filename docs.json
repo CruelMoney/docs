@@ -1,0 +1,294 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Moderation API",
+  "theme": "willow",
+  "colors": {
+    "primary": "#2563EB",
+    "light": "#3b82f6",
+    "dark": "#2563EB"
+  },
+  "favicon": "/favicon.svg",
+  "styling": {
+    "codeblocks": "dark",
+    "eyebrows": "breadcrumbs"
+  },
+  "contextual": {
+    "options": ["claude", "chatgpt", "mcp", "vscode", "cursor"]
+  },
+  "navigation": {
+    "dropdowns": [
+      {
+        "dropdown": "Documentation",
+        "icon": {
+          "name": "book-open",
+          "style": "solid"
+        },
+        "groups": [
+          {
+            "group": "Documentation",
+            "pages": [
+              "get-started/introduction",
+              {
+                "group": "Quickstart",
+                "pages": [
+                  "quickstart/nodejs",
+                  "quickstart/ruby",
+                  "quickstart/python",
+                  "quickstart/php",
+                  "quickstart/go",
+                  "quickstart/java"
+                ]
+              }
+            ]
+          },
+
+          {
+            "group": "Learn",
+            "pages": [
+              {
+                "group": "Manage account",
+                "pages": [
+                  "account/quota-usage",
+                  "account/upgrading",
+                  "account/adding-team-members"
+                ]
+              },
+              {
+                "group": "Automate Moderation",
+                "pages": [
+                  "content-moderation/overview",
+                  {
+                    "group": "Project setup",
+                    "pages": [
+                      "content-moderation/creating-projects",
+                      "content-moderation/adding-models",
+                      "content-moderation/flagging-thresholds",
+                      "content-moderation/manage-api-key",
+                      "content-moderation/custom-region"
+                    ]
+                  },
+                  {
+                    "group": "Analyzing content",
+                    "pages": [
+                      "content-moderation/submit-content",
+                      "content-moderation/acting-on-responses"
+                    ]
+                  },
+                  "content-moderation/optimizing-accuracy"
+                ]
+              },
+              {
+                "group": "Model Studio",
+                "pages": [
+                  "model-studio/overview",
+                  {
+                    "group": "AI Agents",
+                    "pages": [
+                      "ai-agents/creating-an-agent",
+                      "ai-agents/adding-guidelines",
+                      "ai-agents/strictness",
+                      "ai-agents/using-your-agent"
+                    ]
+                  },
+                  {
+                    "group": "Pre-built Models",
+                    "pages": [
+                      "models/overview",
+                      {
+                        "group": "Text classifiers",
+                        "pages": [
+                          "models/classifier-overview",
+                          "models/toxicity",
+                          "models/nsfw",
+                          "models/sentiment",
+                          "models/propriety",
+                          "models/language",
+                          "models/spam",
+                          "models/sexual",
+                          "models/discrimination",
+                          "models/self-harm",
+                          "models/violence"
+                        ]
+                      },
+                      {
+                        "group": "Entity matchers",
+                        "pages": [
+                          "models/entity-matchers-overview",
+                          "models/email",
+                          "models/phone-number",
+                          "models/url",
+                          "models/address",
+                          "models/name",
+                          "models/username",
+                          "models/profanity",
+                          "models/word",
+                          "models/sensitive-number"
+                        ]
+                      },
+                      "models/image-models"
+                    ]
+                  },
+                  {
+                    "group": "Custom Classifier Models",
+                    "pages": [
+                      "custom-models/overview",
+                      "custom-models/creating-a-model",
+                      "custom-models/using",
+                      "custom-models/adaptive-model-optimization"
+                    ]
+                  },
+                  "wordlists/overview"
+                ]
+              },
+              {
+                "group": "Review Queue",
+                "pages": [
+                  "review-queues/overview",
+                  "review-queues/configuration",
+                  "review-queues/submit-content",
+                  "review-queues/using-queues",
+                  "review-queues/actions",
+                  "review-queues/end-users",
+                  "review-queues/webhooks",
+                  "review-queues/integrations",
+                  "review-queues/inviting-moderators",
+                  "guides/user-flagged-content"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": ["resources/sdks", "resources/integrations"]
+          }
+        ]
+      },
+      {
+        "dropdown": "API References",
+        "icon": {
+          "name": "code",
+          "style": "solid"
+        },
+        "groups": [
+          {
+            "group": "API",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/errors",
+              "api-reference/rate-limits"
+            ]
+          },
+          {
+            "group": "Account",
+            "pages": ["api-reference/account/get-account-details"]
+          },
+          {
+            "group": "Moderate",
+            "pages": [
+              "api-reference/moderate/analyze-text",
+              "api-reference/moderate/analyze-object",
+              "api-reference/moderate/analyze-image",
+              "api-reference/moderate/analyze-video",
+              "api-reference/moderate/analyze-audio"
+            ]
+          },
+          {
+            "group": "Authors",
+            "pages": [
+              "api-reference/author/list-authors",
+              "api-reference/author/create-a-new-author",
+              "api-reference/author/get-author-details",
+              "api-reference/author/update-author-details",
+              "api-reference/author/delete-an-author"
+            ]
+          },
+          {
+            "group": "Actions",
+            "pages": [
+              "api-reference/actions/list-moderation-actions",
+              "api-reference/actions/create-an-action",
+              "api-reference/actions/get-an-action",
+              "api-reference/actions/update-an-action",
+              "api-reference/actions/delete-an-action",
+              "api-reference/actions/execute-moderation-action"
+            ]
+          },
+          {
+            "group": "Wordlist (Enterprise)",
+            "pages": [
+              "api-reference/wordlist/list-wordlists",
+              "api-reference/wordlist/get-wordlist",
+              "api-reference/wordlist/update-wordlist",
+              "api-reference/wordlist/get-embedding-status",
+              "api-reference/wordlist/add-words-to-wordlist",
+              "api-reference/wordlist/remove-words-from-wordlist"
+            ]
+          },
+
+          {
+            "group": "Review Queue (Enterprise)",
+            "pages": [
+              "api-reference/review-queues/get-a-queue",
+              "api-reference/review-queues/get-queue-statistics",
+              "api-reference/review-queues/get-queue-items",
+              "api-reference/review-queues/resolve-a-queue-item",
+              "api-reference/review-queues/unresolve-a-queue-item"
+            ]
+          }
+        ]
+      },
+      {
+        "dropdown": "Changelog",
+        "href": "https://moderationapi.com/blog/tag/updates/",
+        "icon": "list"
+      },
+      {
+        "dropdown": "Email support",
+        "href": "mailto:support@moderationapi.com",
+        "icon": {
+          "name": "envelope",
+          "style": "solid"
+        }
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/dark.svg",
+    "dark": "/logo/light.svg",
+    "href": "https://moderationapi.com"
+  },
+  "api": {
+    "openapi": "https://moderationapi.com/api/v1/openapi.json",
+    "playground": {
+      "display": "interactive"
+    },
+    "mdx": {
+      "auth": {
+        "method": "bearer"
+      }
+    }
+  },
+  "appearance": {
+    "default": "light",
+    "strict": true
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Sign up",
+        "href": "https://moderationapi.com/app"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://moderationapi.com/app"
+    }
+  },
+  "integrations": {
+    "mixpanel": {
+      "projectToken": "b1f544f1321ffbf049e18aeb65c77391"
+    }
+  }
+}
