@@ -30,6 +30,7 @@
               "get-started/introduction",
               {
                 "group": "Quickstart",
+                "icon": "rocket",
                 "pages": [
                   "quickstart/nodejs",
                   "quickstart/ruby",
