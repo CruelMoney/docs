@@ -36,7 +36,8 @@
                   "quickstart/python",
                   "quickstart/php",
                   "quickstart/go",
-                  "quickstart/java"
+                  "quickstart/java",
+                  "quickstart/dotnet"
                 ]
               }
             ]

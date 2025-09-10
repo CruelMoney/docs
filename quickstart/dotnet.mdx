@@ -1,0 +1,259 @@
+---
+title: "Quickstart .NET"
+sidebarTitle: ".NET"
+description: "Learn how to moderate content using Moderation API's REST endpoints with .NET"
+---
+
+---
+
+<Snippet file="prerequisites.mdx" />
+
+---
+
+## 1. Install dependencies
+
+We currently don't have an official SDK for .NET, but you can use the [OpenAPI Generator](/resources/generate-client-openapi) to generate a .NET client or simply call the API directly using HttpClient.
+
+<CodeGroup>
+
+```bash .NET CLI
+dotnet add package System.Text.Json
+```
+
+```bash Package Manager
+Install-Package System.Text.Json
+```
+
+</CodeGroup>
+
+## 2. Submit content
+
+Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+
+<CodeGroup>
+
+```csharp Text moderation
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+public class ModerationClient
+{
+    private readonly HttpClient _httpClient;
+    private const string BaseUrl = "https://moderationapi.com/api/v1";
+
+    public ModerationClient(string apiKey)
+    {
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+    }
+
+    public async Task<TextModerationResult> ModerateTextAsync(string text, string authorId = "123", string contextId = "456")
+    {
+        var payload = new
+        {
+            value = text,
+            authorId = authorId,
+            contextId = contextId,
+            metadata = new { customField = "value" }
+        };
+
+        var json = JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate/text", content);
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<TextModerationResult>(responseContent);
+    }
+}
+
+public class TextModerationResult
+{
+    public bool flagged { get; set; }
+    public object[] categories { get; set; }
+}
+
+// Usage example
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new ModerationClient("your-api-key"); // Replace with your API key
+
+        var result = await client.ModerateTextAsync("Hello world!");
+
+        if (result.flagged)
+        {
+            Console.WriteLine("Text content flagged");
+            // Block the content, show an error, etc...
+        }
+        else
+        {
+            Console.WriteLine("Text content is safe.");
+            // Save to database or proceed...
+        }
+    }
+}
+```
+
+```csharp Image moderation
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+public class ModerationClient
+{
+    private readonly HttpClient _httpClient;
+    private const string BaseUrl = "https://moderationapi.com/api/v1";
+
+    public ModerationClient(string apiKey)
+    {
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+    }
+
+    public async Task<ImageModerationResult> ModerateImageAsync(string imageUrl, string authorId = "123", string contextId = "456")
+    {
+        var payload = new
+        {
+            url = imageUrl,
+            authorId = authorId,
+            contextId = contextId,
+            metadata = new { customField = "value" }
+        };
+
+        var json = JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate/image", content);
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<ImageModerationResult>(responseContent);
+    }
+}
+
+public class ImageModerationResult
+{
+    public bool flagged { get; set; }
+    public string[] labels { get; set; }
+}
+
+// Usage example
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new ModerationClient("your-api-key"); // Replace with your API key
+
+        var result = await client.ModerateImageAsync("https://example.com/image.jpg");
+
+        if (result.flagged)
+        {
+            Console.WriteLine($"Image content flagged: {string.Join(", ", result.labels)}");
+            // Block or require review
+        }
+        else
+        {
+            Console.WriteLine("Image is safe.");
+            // Save to database or proceed...
+        }
+    }
+}
+```
+
+```csharp Object moderation
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+public class ModerationClient
+{
+    private readonly HttpClient _httpClient;
+    private const string BaseUrl = "https://moderationapi.com/api/v1";
+
+    public ModerationClient(string apiKey)
+    {
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+    }
+
+    public async Task<ObjectModerationResult> ModerateObjectAsync(object objectData, string authorId = "123", string contextId = "456")
+    {
+        var payload = new
+        {
+            value = new
+            {
+                type = "Profile",
+                data = new
+                {
+                    name = new { type = "text", value = "John Doe" },
+                    email = new { type = "text", value = "john.doe@example.com" },
+                    picture = new { type = "image", value = "https://example.com/image.jpg" }
+                }
+            },
+            authorId = authorId,
+            contextId = contextId,
+            metadata = new { customField = "value" }
+        };
+
+        var json = JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate/object", content);
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<ObjectModerationResult>(responseContent);
+    }
+}
+
+public class ObjectModerationResult
+{
+    public bool flagged { get; set; }
+}
+
+// Usage example
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new ModerationClient("your-api-key"); // Replace with your API key
+
+        var result = await client.ModerateObjectAsync(new { });
+
+        if (result.flagged)
+        {
+            Console.WriteLine("Object content flagged");
+            // Block or require review
+        }
+        else
+        {
+            Console.WriteLine("Object is safe.");
+            // Save to database or proceed...
+        }
+    }
+}
+```
+
+</CodeGroup>
+
+---
+
+<Snippet file="dry-run.mdx" />
+
+---
+
+<Snippet file="review-flagged.mdx" />
+
+---
+
+<Snippet file="all-done.mdx" />
