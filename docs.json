@@ -100,7 +100,7 @@
                   },
                   {
                     "group": "Pre-built Models",
-                    "icon": "sparkles",
+                    "icon": "box",
                     "pages": [
                       "models/overview",
                       {
@@ -140,8 +140,8 @@
                     ]
                   },
                   {
-                    "group": "Custom Classifier Models",
-                    "icon": "adjustments",
+                    "group": "Custom Models",
+                    "icon": "sparkles",
                     "pages": [
                       "custom-models/overview",
                       "custom-models/creating-a-model",
