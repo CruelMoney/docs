@@ -12,8 +12,11 @@
     "codeblocks": "dark",
     "eyebrows": "breadcrumbs"
   },
+  "interaction": {
+    "drilldown": true
+  },
   "contextual": {
-    "options": ["claude", "chatgpt", "mcp", "vscode", "cursor"]
+    "options": ["copy", "view", "claude", "chatgpt", "mcp", "vscode", "cursor"]
   },
   "navigation": {
     "dropdowns": [
@@ -155,6 +158,7 @@
               {
                 "group": "Review Queue",
                 "icon": "clipboard-list",
+
                 "pages": [
                   "review-queues/overview",
                   "review-queues/configuration",
