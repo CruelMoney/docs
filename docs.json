@@ -48,6 +48,7 @@
             "pages": [
               {
                 "group": "Manage account",
+                "icon": "user",
                 "pages": [
                   "account/quota-usage",
                   "account/upgrading",
@@ -56,10 +57,12 @@
               },
               {
                 "group": "Automate Moderation",
+                "icon": "shield",
                 "pages": [
                   "content-moderation/overview",
                   {
                     "group": "Project setup",
+                    "icon": "settings",
                     "pages": [
                       "content-moderation/creating-projects",
                       "content-moderation/adding-models",
@@ -70,6 +73,7 @@
                   },
                   {
                     "group": "Analyzing content",
+                    "icon": "search",
                     "pages": [
                       "content-moderation/submit-content",
                       "content-moderation/acting-on-responses"
@@ -80,10 +84,12 @@
               },
               {
                 "group": "Model Studio",
+                "icon": "cube",
                 "pages": [
                   "model-studio/overview",
                   {
                     "group": "AI Agents",
+                    "icon": "robot",
                     "pages": [
                       "ai-agents/creating-an-agent",
                       "ai-agents/adding-guidelines",
@@ -93,10 +99,12 @@
                   },
                   {
                     "group": "Pre-built Models",
+                    "icon": "sparkles",
                     "pages": [
                       "models/overview",
                       {
                         "group": "Text classifiers",
+                        "icon": "document-text",
                         "pages": [
                           "models/classifier-overview",
                           "models/toxicity",
@@ -113,6 +121,7 @@
                       },
                       {
                         "group": "Entity matchers",
+                        "icon": "identification",
                         "pages": [
                           "models/entity-matchers-overview",
                           "models/email",
@@ -131,6 +140,7 @@
                   },
                   {
                     "group": "Custom Classifier Models",
+                    "icon": "adjustments",
                     "pages": [
                       "custom-models/overview",
                       "custom-models/creating-a-model",
@@ -143,6 +153,7 @@
               },
               {
                 "group": "Review Queue",
+                "icon": "clipboard-list",
                 "pages": [
                   "review-queues/overview",
                   "review-queues/configuration",
@@ -173,6 +184,7 @@
         "groups": [
           {
             "group": "API",
+            "icon": "terminal",
             "pages": [
               "api-reference/introduction",
               "api-reference/authentication",
