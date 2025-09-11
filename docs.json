@@ -12,18 +12,57 @@
     "codeblocks": "dark",
     "eyebrows": "breadcrumbs"
   },
+
   "interaction": {
     "drilldown": true
   },
   "contextual": {
     "options": ["copy", "view", "claude", "chatgpt", "mcp", "vscode", "cursor"]
   },
+  "logo": {
+    "light": "/logo/dark.svg",
+    "dark": "/logo/light.svg",
+    "href": "https://moderationapi.com"
+  },
+  "api": {
+    "openapi": "https://moderationapi.com/api/v1/openapi.json",
+    "playground": {
+      "display": "interactive"
+    },
+    "mdx": {
+      "auth": {
+        "method": "bearer"
+      }
+    }
+  },
+  "appearance": {
+    "default": "system",
+    "strict": false
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Sign up",
+        "href": "https://moderationapi.com/app"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://moderationapi.com/app"
+    }
+  },
+  "integrations": {
+    "mixpanel": {
+      "projectToken": "b1f544f1321ffbf049e18aeb65c77391"
+    }
+  },
   "navigation": {
     "dropdowns": [
       {
         "dropdown": "Documentation",
         "icon": {
-          "name": "book-open",
+          "name": "book",
           "style": "solid"
         },
         "groups": [
@@ -51,22 +90,12 @@
             "group": "Learn",
             "pages": [
               {
-                "group": "Manage account",
-                "icon": "user",
-                "pages": [
-                  "account/quota-usage",
-                  "account/upgrading",
-                  "account/adding-team-members"
-                ]
-              },
-              {
                 "group": "Automate Moderation",
                 "icon": "shield",
                 "pages": [
                   "content-moderation/overview",
                   {
                     "group": "Project setup",
-                    "icon": "settings",
                     "pages": [
                       "content-moderation/creating-projects",
                       "content-moderation/adding-models",
@@ -77,13 +106,40 @@
                   },
                   {
                     "group": "Analyzing content",
-                    "icon": "search",
                     "pages": [
                       "content-moderation/submit-content",
                       "content-moderation/acting-on-responses"
                     ]
                   },
                   "content-moderation/optimizing-accuracy"
+                ]
+              },
+              {
+                "group": "Users Dashboard",
+                "icon": "user",
+                "pages": [
+                  "author-dashboard/introduction",
+                  "author-dashboard/updating-authors",
+                  "author-dashboard/trust-levels",
+                  "author-dashboard/actions",
+                  "author-dashboard/fraud-detection"
+                ]
+              },
+              {
+                "group": "Review Queue",
+                "icon": "clipboard-list",
+
+                "pages": [
+                  "review-queues/overview",
+                  "review-queues/configuration",
+                  "review-queues/submit-content",
+                  "review-queues/using-queues",
+                  "review-queues/actions",
+                  "review-queues/end-users",
+                  "review-queues/webhooks",
+                  "review-queues/integrations",
+                  "review-queues/inviting-moderators",
+                  "guides/user-flagged-content"
                 ]
               },
               {
@@ -155,21 +211,14 @@
                   "wordlists/overview"
                 ]
               },
-              {
-                "group": "Review Queue",
-                "icon": "clipboard-list",
 
+              {
+                "group": "Manage account",
+                "icon": "receipt",
                 "pages": [
-                  "review-queues/overview",
-                  "review-queues/configuration",
-                  "review-queues/submit-content",
-                  "review-queues/using-queues",
-                  "review-queues/actions",
-                  "review-queues/end-users",
-                  "review-queues/webhooks",
-                  "review-queues/integrations",
-                  "review-queues/inviting-moderators",
-                  "guides/user-flagged-content"
+                  "account/quota-usage",
+                  "account/upgrading",
+                  "account/adding-team-members"
                 ]
               }
             ]
@@ -275,43 +324,5 @@
         }
       }
     ]
-  },
-  "logo": {
-    "light": "/logo/dark.svg",
-    "dark": "/logo/light.svg",
-    "href": "https://moderationapi.com"
-  },
-  "api": {
-    "openapi": "https://moderationapi.com/api/v1/openapi.json",
-    "playground": {
-      "display": "interactive"
-    },
-    "mdx": {
-      "auth": {
-        "method": "bearer"
-      }
-    }
-  },
-  "appearance": {
-    "default": "light",
-    "strict": true
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Sign up",
-        "href": "https://moderationapi.com/app"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://moderationapi.com/app"
-    }
-  },
-  "integrations": {
-    "mixpanel": {
-      "projectToken": "b1f544f1321ffbf049e18aeb65c77391"
-    }
   }
 }
