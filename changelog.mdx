@@ -1,0 +1,58 @@
+---
+title: "Product updates"
+description: "New releases and improvements"
+rss: true
+---
+
+<Update label="September 2025" tags={["API", "Dashboard"]} >
+### API improvements
+
+- You now get the author details in the [moderation response](/api-reference/moderate/analyze-object#response-author).
+- New [author endpoints](/api-reference/author/update-author-details) to update, retrieve, and list authors.
+- Update authors with data to improve trust scoring.
+
+### Dashboard features
+
+- **View Messages in Context:** You can now see moderation items with surrounding
+  conversation context for better decision-making
+- **Image & Video Blurring:** Added ability to blur sensitive images and videos in
+  content view for safer moderation
+- **Global Queue Option:** New global queue setting available. This will remove content from queues if it has been
+  reviewed in any queue.
+
+</Update>
+
+<Update label="August 2025" tags={["New release"]} >
+### New Author Dashboard
+
+We've introduced a new comprehensive author-level dashboard system to enhance end user management.
+
+- New Author Detail Pages: Comprehensive user profiles with complete activity
+  overview, trust levels, moderation history, and detailed analytics
+  - Summary Tab: Trust level management, sentiment analysis, message statistics, and
+    top violation categories
+  - Timeline Tab: Complete chronological view of user activity with context grouping
+    and advanced filtering
+  - Fraud Detection Tab: Advanced behavioral analysis including bot detection,
+    location anomalies, device fingerprinting, and risk assessment
+  - Metadata Tab: Technical user information and account details
+
+### Trust Level System
+
+A new trust level system allows you to tailor moderation actions based on user behavior and find bad actors more easily.
+
+- Automated Trust Adjustments: System automatically adjusts trust levels based on
+  user behavior and moderation history
+- Manually upgrade or downgrade trust levels as needed
+- Trust Level Impact: Trust levels can be consumed via the API or to
+  influence moderation decisions, such as auto-approving content from high-trust users
+
+### Author-Level Moderation Actions
+
+- Comprehensive User Actions: Block, suspend, and unblock users directly from their
+  profile pages
+- Duration-Based Suspensions: Flexible temporary blocks with customizable time
+  periods (1 hour to 1 year)
+- Remember to set up webhooks to handle actions taken on authors
+
+</Update>

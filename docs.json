@@ -258,7 +258,12 @@
       },
       {
         "dropdown": "Changelog",
-        "href": "https://moderationapi.com/blog/tag/updates/",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": ["changelog"]
+          }
+        ],
         "icon": "list"
       },
       {
