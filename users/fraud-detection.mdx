@@ -35,7 +35,7 @@ The system continuously analyzes user behavior and builds risk profiles using da
 Fraud detection automatically analyzes data from:
 
 - **Content submissions**: All content sent to [moderation endpoints](/api-reference/moderate/analyze-text) is analyzed for behavioral patterns
-- **User metadata**: Update users with additional context like IP addresses, device fingerprints, and location data using the [Author API](/api-reference/author/update-an-author)
+- **User metadata**: Update users with additional context like IP addresses, device fingerprints, and location data using the [Author API](/api-reference/author/update-author-details)
 - **Custom signals**: Enterprise customers can include their own fraud indicators in the analysis (contact support for integration details)
 
 Every submission generates data points including content posting patterns, login locations, network characteristics, and account metadata.
@@ -152,7 +152,7 @@ Fraud detection results are available through multiple channels:
 
 - **Review queues**: Sort and filter content by fraud risk score to prioritize high-risk users
 - **User dashboard**: View detailed fraud signals and risk assessments for individual users
-- **API access**: Consume fraud scores and signals programmatically via the [Author API](/api-reference/author/get-an-author) for custom integrations
+- **API access**: Consume fraud scores and signals programmatically via the [Author API](/api-reference/author/get-author-details) for custom integrations
 
 The unified risk score makes it easy to integrate fraud detection into existing workflows without complex signal interpretation.
 
