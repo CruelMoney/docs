@@ -1,0 +1,21 @@
+---
+title: "Updating authors"
+sidebarTitle: "Updating authors"
+description: "Update authors with data to improve trust scoring"
+openapi: put /authors/{id}
+---
+
+**outline**
+
+- Can use either API or dashboard to update authors
+
+Fields
+
+- Name, email, profile_picture (all shown in dashboard for easier management) external_link (gives a button in the dashboard)
+- Metadata,
+  - Free form JSON object
+  - Can be used for anything (limit 25 keys, 1 nesting)
+  - Is included in webhooks and author responses
+  - built in fields: email_verified, phone_verified, identity_verified, is_paying_customer (used for trust levels and fraud detection, and rendered in the dashboard)
+- manual_trust_level (overrides automatic trust level calculation, useful for permanently promoting or demoting users, can be set to null to go back to automatic trust level calculation)
+- first_seen, last_seen (timestamps, also used for trust levels and fraud detection)

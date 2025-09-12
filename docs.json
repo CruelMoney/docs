@@ -119,8 +119,8 @@
                 "icon": "user",
                 "pages": [
                   "users/overview",
-                  "users/updating-authors",
                   "users/trust-levels",
+                  "users/updating-authors",
                   "users/actions",
                   "users/fraud-detection"
                 ]
