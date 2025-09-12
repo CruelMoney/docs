@@ -15,15 +15,12 @@ You can update author information to improve trust scoring and fraud detection i
 
 ### Basic Information
 
-**Name, Email, and Profile Picture**
 These fields are displayed in the dashboard for easier author management:
 
 - `name`: The author's display name
 - `email`: Author's email address
 - `profile_picture`: URL to the author's profile image
-
-**External Link**
-The `external_link` field adds a clickable button in the dashboard, useful for linking to the author's profile on your platform or other external resources.
+- `external_link`: URL to the author's profile on your platform or other external resources. Will add a clickable link in the dashboard.
 
 ### Metadata
 
@@ -84,10 +81,39 @@ These timestamp fields help with trust scoring and fraud detection:
 - `first_seen`: When the author was first encountered in your system
 - `last_seen`: The author's most recent activity timestamp
 
-Both fields accept ISO 8601 timestamp format and contribute to the automatic trust level calculation.
+Both fields accept timestamp format and contribute to the automatic trust level calculation.
 
 ## Making Updates
 
-**API**: Use the [PUT /authors/{id} endpoint](/api-reference/authors/update) to programmatically update author information.
+#### Using API
 
-**Dashboard**: Navigate to the Authors section in your project dashboard to update author details through the web interface.
+Use the [PUT /authors/{id} endpoint](/api-reference/author/update-author-details) to programmatically update author information. If you need to create a new author, use the [POST /authors/ endpoint](/api-reference/author/create-a-new-author).
+
+Here's a complete example of updating an author with all available fields:
+
+```json
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "profile_picture": "https://example.com/avatars/johndoe.jpg",
+  "external_link": "https://myplatform.com/users/johndoe",
+  "metadata": {
+    "email_verified": true,
+    "phone_verified": true,
+    "identity_verified": false,
+    "is_paying_customer": true,
+    "account_type": "premium",
+    "signup_source": "mobile_app",
+    "preferences": {
+      "notifications": true
+    }
+  },
+  "manual_trust_level": 3,
+  "first_seen": 1577836800000,
+  "last_seen": 1672531200000
+}
+```
+
+#### Using Dashboard
+
+Navigate to the [Authors section](https://moderationapi.com/app/users) in your project dashboard to update author details through the web interface.
