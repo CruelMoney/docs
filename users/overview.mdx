@@ -1,0 +1,53 @@
+---
+title: "User moderation"
+sidebarTitle: "Overview"
+description: "Learn how to manage users to improve moderation"
+---
+
+## Overview
+
+Enabling user management in Moderation API solves some of the most common moderation challenges for community platforms.
+
+This is done by introducing the concept of authors (users) in the moderation process. Each author has a [trust level](/users/trust-levels) that is automatically adjusted based on their behavior and moderation history.
+
+User management lets you:
+
+- Tailor and improve moderation accuracy based on trust levels
+- Skip moderation for trusted users
+- Block or suspend users
+- Fraud detection using behavioral analysis
+
+<CardGroup cols={2}>
+
+<Card
+  title="User dashboard"
+  icon="users"
+  href="https://moderationapi.com/app/users"
+>
+  Access the user dashboard to view and manage your users.
+</Card>
+
+<Card
+  title="Author API"
+  icon="terminal"
+  href="/api-reference/author/create-a-new-author"
+>
+  Access endpoints to read and update author details.
+</Card>
+
+</CardGroup>
+
+## Get started
+
+Just add an `authorId` when submitting content to a [moderation
+endpoint](/api-reference).
+
+We recommend using the user ID from your system
+but any unique identifier like email or username will work.
+
+You should now see your users appear in the [user dashboard](https://moderationapi.com/app/users).
+
+<Note>
+  There might be a delay in user creation and trust level calculation. This is
+  because we process users in batches to optimize performance.
+</Note>

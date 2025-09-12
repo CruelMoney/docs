@@ -115,14 +115,14 @@
                 ]
               },
               {
-                "group": "Users Dashboard",
+                "group": "Managing Users",
                 "icon": "user",
                 "pages": [
-                  "author-dashboard/introduction",
-                  "author-dashboard/updating-authors",
-                  "author-dashboard/trust-levels",
-                  "author-dashboard/actions",
-                  "author-dashboard/fraud-detection"
+                  "users/overview",
+                  "users/updating-authors",
+                  "users/trust-levels",
+                  "users/actions",
+                  "users/fraud-detection"
                 ]
               },
               {
@@ -138,8 +138,7 @@
                   "review-queues/end-users",
                   "review-queues/webhooks",
                   "review-queues/integrations",
-                  "review-queues/inviting-moderators",
-                  "guides/user-flagged-content"
+                  "review-queues/inviting-moderators"
                 ]
               },
               {
@@ -149,7 +148,6 @@
                   "model-studio/overview",
                   {
                     "group": "AI Agents",
-                    "icon": "robot",
                     "pages": [
                       "ai-agents/creating-an-agent",
                       "ai-agents/adding-guidelines",
@@ -159,12 +157,10 @@
                   },
                   {
                     "group": "Pre-built Models",
-                    "icon": "box",
                     "pages": [
                       "models/overview",
                       {
                         "group": "Text classifiers",
-                        "icon": "document-text",
                         "pages": [
                           "models/classifier-overview",
                           "models/toxicity",
@@ -181,7 +177,6 @@
                       },
                       {
                         "group": "Entity matchers",
-                        "icon": "identification",
                         "pages": [
                           "models/entity-matchers-overview",
                           "models/email",
@@ -200,10 +195,8 @@
                   },
                   {
                     "group": "Custom Models",
-                    "icon": "sparkles",
                     "pages": [
                       "custom-models/overview",
-                      "custom-models/creating-a-model",
                       "custom-models/using",
                       "custom-models/adaptive-model-optimization"
                     ]
@@ -221,6 +214,13 @@
                   "account/adding-team-members"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/user-flagged-content",
+              "guides/creating-a-custom-model"
             ]
           },
           {
