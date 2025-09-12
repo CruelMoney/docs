@@ -105,11 +105,29 @@ Contact support to discuss customization options for your specific use case.
 
 Trust levels work best when integrated into your existing moderation workflow:
 
-### Use in filters in review queues
+### Filters in review queues
 
-<FILL THIS>
+Trust levels help you prioritize content in [review queues](/review-queues/overview) by focusing moderator attention on higher-risk users:
+
+The simplest approach is to sort review queues by trust level to handle the riskiest content first.
+
+More advanced strategies include:
+
+**Create priority queues based on trust levels:**
+
+- **High-priority queue**: Filter for content from Untrusted (-1) and New (0) users that need immediate attention
+- **Standard queue**: Content from Basic (1) and Member (2) users for regular review
+- **Low-priority queue**: Content from Regular (3) and Trusted (4) users that rarely needs intervention
+
+**Other queue configurations:**
+
+- **New User Queue**: Only show content from users with trust level 0
+- **Trusted User Escalations**: Only show flagged content from trust level 3+ users (likely false positives)
+- **Violation Pattern Queue**: Combine trust level filtering with specific violation types to catch concerning behavior early
 
 ### Automated Moderation Rules
+
+Incorporate trust levels into your application code to automate moderation decisions:
 
 ```javascript
 // Example: Apply different review thresholds based on trust level
