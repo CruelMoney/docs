@@ -273,12 +273,12 @@
           {
             "group": "Actions",
             "pages": [
-              "api-reference/actions/list-moderation-actions",
               "api-reference/actions/create-an-action",
               "api-reference/actions/get-an-action",
               "api-reference/actions/update-an-action",
               "api-reference/actions/delete-an-action",
-              "api-reference/actions/execute-moderation-action"
+              "api-reference/actions/execute-moderation-action",
+              "api-reference/actions/list-moderation-actions"
             ]
           },
           {
