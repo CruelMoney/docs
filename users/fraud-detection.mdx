@@ -1,0 +1,176 @@
+---
+title: "Fraud Detection"
+description: "Advanced behavioral analysis and fraud detection signals to identify suspicious users and prevent sophisticated attacks"
+---
+
+<Note>
+  Fraud detection is only available for enterprise accounts. Contact sales to
+  learn more about enabling advanced fraud detection capabilities.
+</Note>
+
+Fraud detection goes beyond content analysis to identify sophisticated bad actors who may bypass traditional moderation through behavioral patterns, technical indicators, and network analysis. This system helps you catch coordinated attacks, bot networks, and persistent abuse before they impact your community.
+
+## What is fraud detection and why is it useful
+
+While content moderation focuses on what users post, fraud detection analyzes how they behave. It identifies patterns that indicate:
+
+- **Bot networks and automation** - Detecting non-human behavior patterns
+- **Coordinated inauthentic behavior** - Groups working together to manipulate your platform
+- **Account takeovers** - Compromised accounts being used maliciously
+- **Sock puppet accounts** - Users creating multiple accounts to evade bans
+- **Persistent abuse** - Bad actors who adapt their content but maintain suspicious behavior patterns
+
+This enables you to:
+
+- **Catch sophisticated fraud** that evades content filters
+- **Prevent coordinated attacks** before they scale
+- **Improve moderation accuracy** by combining behavioral and content signals
+
+## Signal categories
+
+Fraud detection analyzes three main categories of signals:
+
+### Behavioral Patterns
+
+Unusual user behavior that indicates automation or coordination:
+
+**Content Similarity**
+
+- Detection of copy-paste or template-based content
+- Users posting nearly identical messages repeatedly
+- Coordinated campaigns using similar language patterns
+
+**Bot-like Behavior**
+
+- Posting on exact schedules (every hour, same time daily)
+- Inhuman response times or interaction patterns
+- Repetitive actions without natural variation
+
+**Activity Anomalies**
+
+- Sudden changes in posting frequency or style
+- Activity patterns that don't match typical human behavior
+- Coordinated timing across multiple accounts
+
+### Network & Privacy Indicators
+
+Technical signals that reveal attempts to hide identity or location:
+
+**VPN and Proxy Usage**
+
+- Access through known VPN services or proxy networks
+- Frequent changes in apparent location
+- Use of hosting provider IP addresses instead of residential
+
+**Tor Network Detection**
+
+- Access through the Tor anonymity network
+- Often indicates attempts to hide identity for malicious purposes
+
+**IP Reputation Analysis**
+
+- IP addresses associated with previous spam or abuse
+- Addresses from known botnet or compromised machine ranges
+- Residential proxies being used for automation
+
+**Device and Location Anomalies**
+
+- Multiple logins from geographically impossible locations
+- Shared device fingerprints across many accounts
+- Inconsistent timezone and language settings
+
+### Account Security Signals
+
+Indicators related to account authenticity and verification:
+
+**Email Analysis**
+
+- Use of disposable or temporary email services
+- Email domains associated with spam or abuse
+- Suspicious patterns in email address generation
+
+**Account Age and Verification**
+
+- Very new accounts engaging in high-risk behavior
+- Accounts that avoid identity verification requirements
+- Suspicious registration patterns
+
+**Identity Consistency**
+
+- Mismatches between claimed location and technical indicators
+- Inconsistent personal information across platforms
+- Generated or stolen profile information
+
+## How fraud detection works
+
+The system continuously analyzes user behavior and builds risk profiles using data from your existing moderation workflow:
+
+### Signal Collection
+
+Fraud detection automatically analyzes data from:
+
+- **Content submissions**: All content sent to [moderation endpoints](/api-reference/moderate/analyze-text) is analyzed for behavioral patterns
+- **User metadata**: Update users with additional context like IP addresses, device fingerprints, and location data using the [Author API](/api-reference/author/update-an-author)
+- **Custom signals**: Enterprise customers can include their own fraud indicators in the analysis (contact support for integration details)
+
+Every submission generates data points including:
+
+- Content posting patterns and timing
+- Login locations and device information
+- Network characteristics and IP analysis
+- Account metadata and verification status
+
+### Pattern Recognition
+
+Machine learning models identify:
+
+- Deviations from normal human behavior
+- Similarities to known fraud patterns
+- Coordinated behavior across multiple accounts
+- Technical indicators of automation or deception
+
+### Risk Scoring
+
+All fraud signals are weighted and combined into a single, easy to understand, fraud risk score from 0-100:
+
+- **Low risk (0-30)**: Normal user behavior
+- **Medium risk (31-70)**: Some suspicious indicators, worth monitoring
+- **High risk (71-100)**: Multiple fraud signals, likely malicious
+
+This single score simplifies decision-making and can be used for sorting, filtering, and automated responses.
+
+## Implementation
+
+Fraud detection results are available through multiple channels:
+
+- **Review queues**: Sort and filter content by fraud risk score to prioritize high-risk users
+- **User dashboard**: View detailed fraud signals and risk assessments for individual users
+- **API access**: Consume fraud scores and signals programmatically via the [Author API](/api-reference/author/get-an-author) for custom integrations
+
+The unified risk score makes it easy to integrate fraud detection into existing workflows without complex signal interpretation.
+
+---
+
+## Privacy and compliance considerations
+
+Fraud detection involves analyzing user data, so consider:
+
+### Data collection transparency
+
+- Clearly disclose fraud detection in privacy policies
+- Explain what data is collected and how it's used
+- Provide opt-out mechanisms where legally required
+
+### Data retention limits
+
+- Only retain fraud signal data as long as necessary
+- Implement automatic deletion of old analysis data
+- Allow users to request deletion of their data
+
+### Geographic restrictions
+
+- Some jurisdictions have strict rules on behavioral analysis
+- Ensure compliance with GDPR, CCPA, and local privacy laws
+- Consider different detection levels for different regions
+
+---
