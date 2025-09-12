@@ -23,43 +23,69 @@ We recommend adding detailed author information using the update endpoint after 
 
 These fields are displayed in the dashboard for easier author management:
 
-- `name`: The author's display name
-- `email`: Author's email address
-- `profile_picture`: URL to the author's profile image
-- `external_link`: URL to the author's profile on your platform or other external resources. Will add a clickable link in the dashboard.
+<ResponseField name="name" type="string">
+  The author's display name
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  Author's email address
+</ResponseField>
+
+<ResponseField name="profile_picture" type="string">
+  URL to the author's profile image
+</ResponseField>
+
+<ResponseField name="external_link" type="string">
+  URL to the author's profile on your platform or other external resources. Will
+  add a clickable link in the dashboard.
+</ResponseField>
 
 ### Metadata
 
-The `metadata` field is a flexible JSON object that can store any additional author information:
+<ResponseField name="metadata" type="object">
+  A flexible JSON object that can store any additional author information
+   
+   - **Limits**: Maximum 25 keys with 1 level of nesting
+    - **Usage**: Included in webhooks and author API responses
+    - **Purpose**: Store custom data relevant to your use case
 
-- **Limits**: Maximum 25 keys with 1 level of nesting
-- **Usage**: Included in webhooks and author API responses
-- **Purpose**: Store custom data relevant to your use case
-
-```json
-{
-  "metadata": {
-    "account_type": "premium",
-    "signup_source": "mobile_app",
-    "custom_tags": ["verified_creator", "high_engagement"],
-    "preferences": {
-      "notifications": true,
-      "public_profile": false
+    ```json Example
+    {
+      "metadata": {
+        "account_type": "premium",
+        "signup_source": "mobile_app",
+        "custom_tags": ["verified_creator", "high_engagement"],
+        "preferences": {
+          "notifications": true,
+          "public_profile": false
+        }
+      }
     }
-  }
-}
-```
+    ```
+
+</ResponseField>
 
 #### Built-in Metadata Fields
 
 These special metadata fields are used for trust levels and fraud detection, and are rendered in the dashboard:
 
-- `email_verified`: Boolean indicating if email is verified
-- `phone_verified`: Boolean indicating if phone number is verified
-- `identity_verified`: Boolean indicating if identity has been verified
-- `is_paying_customer`: Boolean indicating if the user is a paying customer
+<ResponseField name="email_verified" type="boolean">
+  Boolean indicating if email is verified
+</ResponseField>
 
-```json
+<ResponseField name="phone_verified" type="boolean">
+  Boolean indicating if phone number is verified
+</ResponseField>
+
+<ResponseField name="identity_verified" type="boolean">
+  Boolean indicating if identity has been verified
+</ResponseField>
+
+<ResponseField name="is_paying_customer" type="boolean">
+  Boolean indicating if the user is a paying customer
+</ResponseField>
+
+```json Built-in metadata example
 {
   "metadata": {
     "email_verified": true,
@@ -72,26 +98,37 @@ These special metadata fields are used for trust levels and fraud detection, and
 
 ### Trust Level Override
 
-The `manual_trust_level` field allows you to override automatic trust level calculations:
+<ResponseField name="manual_trust_level" type="number">
+  Override automatic trust level calculations for this author
 
-- **Use cases**: Permanently promote or demote specific users
-- **Reset**: Set to `null` to return to automatic trust level calculation
-- **Impact**: Affects moderation decisions and user permissions
+    - **Range**: -1 to 4, or `null` to reset to automatic calculation
+    - **Use cases**: Permanently promote or demote specific users
+    - **Reset**: Set to `null` to return to automatic trust level calculation
+    - **Impact**: Affects moderation decisions and user permissions
 
-Learn more about trust levels and how they work in our [Trust Levels Article](/users/trust-levels).
+    Learn more about trust levels and how they work in our [Trust Levels Article](/users/trust-levels).
+
+</ResponseField>
 
 ### Timestamps
 
 These timestamp fields help with trust scoring and fraud detection:
 
-- `first_seen`: When the author was first encountered in your system
-- `last_seen`: The author's most recent activity timestamp
+<ResponseField name="first_seen" type="number">
+  When the author was first encountered in your system (timestamp in
+  milliseconds)
+</ResponseField>
+
+<ResponseField name="last_seen" type="number">
+  The author's most recent activity timestamp (timestamp in milliseconds)
+</ResponseField>
 
 Both fields accept timestamp format and contribute to the automatic trust level calculation.
 
 ## Making Updates
 
-#### Using API
+<Tabs>
+  <Tab title="API">
 
 Use the [PUT /authors/{id} endpoint](/api-reference/author/update-author-details) to programmatically update author information. If you need to create a new author, use the [POST /authors/ endpoint](/api-reference/author/create-a-new-author).
 
@@ -120,6 +157,11 @@ Here's a complete example of updating an author with all available fields:
 }
 ```
 
-#### Using Dashboard
+</Tab>
+  <Tab title="Dashboard">
 
 Navigate to the [Authors section](https://moderationapi.com/app/users) in your project dashboard to update author details through the web interface.
+
+</Tab>
+
+</Tabs>
