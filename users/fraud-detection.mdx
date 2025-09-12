@@ -26,6 +26,46 @@ This enables you to:
 - **Prevent coordinated attacks** before they scale
 - **Improve moderation accuracy** by combining behavioral and content signals
 
+## How fraud detection works
+
+The system continuously analyzes user behavior and builds risk profiles using data from your existing moderation workflow:
+
+<Steps titleSize="h3">
+<Step title="Signal Collection" >
+Fraud detection automatically analyzes data from:
+
+- **Content submissions**: All content sent to [moderation endpoints](/api-reference/moderate/analyze-text) is analyzed for behavioral patterns
+- **User metadata**: Update users with additional context like IP addresses, device fingerprints, and location data using the [Author API](/api-reference/author/update-an-author)
+- **Custom signals**: Enterprise customers can include their own fraud indicators in the analysis (contact support for integration details)
+
+Every submission generates data points including content posting patterns, login locations, network characteristics, and account metadata.
+
+</Step>
+
+<Step title="Pattern Recognition">  
+Machine learning models identify suspicious patterns by analyzing:
+
+- Deviations from normal human behavior
+- Similarities to known fraud patterns
+- Coordinated behavior across multiple accounts
+- Technical indicators of automation or deception
+
+The system learns from millions of user interactions to detect even sophisticated fraud attempts.
+
+</Step>
+
+<Step title="Risk Scoring">
+All fraud signals are weighted and combined into a single, easy to understand, fraud risk score from 0-100:
+
+- **Low risk (0-30)**: Normal user behavior
+- **Medium risk (31-70)**: Some suspicious indicators, worth monitoring
+- **High risk (71-100)**: Multiple fraud signals, likely malicious
+
+This single score simplifies decision-making and can be used for sorting, filtering, and automated responses.
+
+</Step>
+</Steps>
+
 ## Signal categories
 
 Fraud detection analyzes three main categories of signals:
@@ -106,45 +146,7 @@ Indicators related to account authenticity and verification:
 </Accordion>
 </AccordionGroup>
 
-## How fraud detection works
-
-The system continuously analyzes user behavior and builds risk profiles using data from your existing moderation workflow:
-
-### Signal Collection
-
-Fraud detection automatically analyzes data from:
-
-- **Content submissions**: All content sent to [moderation endpoints](/api-reference/moderate/analyze-text) is analyzed for behavioral patterns
-- **User metadata**: Update users with additional context like IP addresses, device fingerprints, and location data using the [Author API](/api-reference/author/update-an-author)
-- **Custom signals**: Enterprise customers can include their own fraud indicators in the analysis (contact support for integration details)
-
-Every submission generates data points including:
-
-- Content posting patterns and timing
-- Login locations and device information
-- Network characteristics and IP analysis
-- Account metadata and verification status
-
-### Pattern Recognition
-
-Machine learning models identify:
-
-- Deviations from normal human behavior
-- Similarities to known fraud patterns
-- Coordinated behavior across multiple accounts
-- Technical indicators of automation or deception
-
-### Risk Scoring
-
-All fraud signals are weighted and combined into a single, easy to understand, fraud risk score from 0-100:
-
-- **Low risk (0-30)**: Normal user behavior
-- **Medium risk (31-70)**: Some suspicious indicators, worth monitoring
-- **High risk (71-100)**: Multiple fraud signals, likely malicious
-
-This single score simplifies decision-making and can be used for sorting, filtering, and automated responses.
-
-## Implementation
+## Implementation and usage
 
 Fraud detection results are available through multiple channels:
 
