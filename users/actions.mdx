@@ -1,34 +1,25 @@
 ---
-title: "User Actions"
+title: "User moderation actions"
+sidebarTitle: "Actions"
 description: "Block, suspend, and manage users with built-in moderation actions"
 ---
 
-User actions provide direct moderation controls for managing problematic users in your community. These tools allow you to take immediate action against users who violate community guidelines, from temporary suspensions to permanent blocks.
+Moderation actions provide direct moderation controls for managing problematic users in your community.
 
-## What are user actions and why use them
+Common scenarios for moderation actions:
 
-User actions complement content moderation by addressing the user behind problematic content. While content moderation handles individual posts, user actions target repeat offenders and persistent abuse patterns.
+- **Block persistent violators** identified through [trust levels](/users/trust-levels) or [fraud detection](/users/fraud-detection)
+- **Remove spam accounts** posting promotional content repeatedly
+- **Suspend users** to send clear signals about acceptable behavior
 
-Common scenarios for user actions:
-
-- **Persistent violators** identified through [trust levels](/users/trust-levels) or [fraud detection](/users/fraud-detection)
-- **Spam accounts** posting promotional content repeatedly
-- **Coordinated attacks** from multiple related accounts
-- **Ban evasion** attempts by previously blocked users
-- **Escalated violations** that warrant account-level consequences
-
-User actions help you:
-
-- **Stop ongoing abuse** immediately without waiting for content-level detection
-- **Send clear signals** to users about acceptable behavior
-- **Protect your community** from repeat offenders
+Actions can be executed manually from the [user dashboard](https://moderationapi.com/app/users) or programmatically via the [Author API](/api-reference/author). They complement content moderation by addressing the user behind the content, helping you stop persistent abuse and enforce community standards.
 
 ## Built-in actions
 
-The system provides three essential user actions for comprehensive account management:
+The system provides three essential moderation actions for comprehensive account management:
 
-### Block (Permanent Ban)
-
+<AccordionGroup>
+<Accordion title="Block (Permanent Ban)" icon="ban">
 Permanently prevents a user from submitting content for moderation.
 
 **When to use:**
@@ -42,11 +33,12 @@ Permanently prevents a user from submitting content for moderation.
 
 - User status set to `"blocked"`
 - All future content submissions are rejected
-- `user.block.until` field set to `null` (permanent)
-- `user.block.reason` stores the reason provided
+- `block.until` field set to `null` (permanent)
+- `block.reason` stores the reason provided
 
-### Suspend (Temporary Ban)
+</Accordion>
 
+<Accordion title="Suspend (Temporary Ban)" icon="clock">
 Temporarily prevents a user from submitting content for a specified period.
 
 **When to use:**
@@ -60,12 +52,13 @@ Temporarily prevents a user from submitting content for a specified period.
 
 - User status set to `"suspended"`
 - Content submissions rejected until suspension ends
-- `user.block.until` field set to suspension end time
-- `user.block.reason` stores the reason provided
+- `block.until` field set to suspension end time (timestamp)
+- `block.reason` stores the reason provided
 - Automatic reinstatement when period expires
 
-### Enable (Remove Block/Suspension)
+</Accordion>
 
+<Accordion title="Enable (Remove Block/Suspension)" icon="check">
 Removes existing blocks or suspensions, restoring normal access.
 
 **When to use:**
@@ -77,24 +70,75 @@ Removes existing blocks or suspensions, restoring normal access.
 
 **Technical behavior:**
 
-- User status reset to normal
+- User status reset to `"enabled"`
 - Content submission access restored
 - Block fields cleared from user record
 
-## Action execution
+</Accordion>
+</AccordionGroup>
 
-User actions can be executed through both the dashboard interface and programmatically via API.
+## Action customization
 
-### Dashboard execution
+You can customize how actions appear and behave:
+
+**Value customization:**
+
+- **Predefined values**: Add custom dropdown options like "Spam", "Harassment", "Fraud", "Policy Violation"
+- **Free text option**: Enable "Other" option that shows a text input field for custom reasons
+- **Combined approach**: Mix predefined categories with free text for flexibility
+
+### Adding custom actions
+
+Beyond built-in actions, create custom author-level actions for specialized workflows that show up alongside standard actions.
+
+**Use cases for custom actions:**
+
+- **Warning systems**: Formal warnings that don't restrict access
+- **Verification requirements**: Require additional account verification
+- **Feature restrictions**: Limit specific platform features
+- **Escalation triggers**: Automatically escalate to senior moderators
+
+To create custom actions, choose "Author level action" when creating a new action in the dashboard. These appear alongside built-in actions on user detail pages.
+
+## Executing actions
+
+<Tabs>
+  <Tab title="Dashboard">
 
 1. Navigate to the user detail page in the [user dashboard](https://moderationapi.com/app/users)
 2. Select the appropriate action (Block, Suspend, or Enable)
-3. Provide a reason and any additional details
-4. Confirm the action
+3. Choose from predefined reason options or select "Other" for free text
+4. For suspensions: select duration from dropdown or set custom end time
+5. Confirm the action
 
-### API execution
+**Reason field importance:**
 
-Execute actions programmatically using the Author API:
+- **Required for documentation** and potential appeals
+- **Visible to moderators** in user timeline
+- **Returned in API responses** for application logic
+- **Helps identify patterns** in violation types
+
+**Timeline**
+
+<Frame>
+  <img
+    className="block "
+    src="./timeline.png"
+    alt="User timeline showing content submissions and moderation actions"
+  />
+</Frame>
+
+All moderation actions are automatically tracked in the user's timeline in the dashboard:
+
+- **Action history**: Complete chronological record of all actions taken
+- **Moderator attribution**: Which team member executed each action
+- **Reason logging**: Full context for every moderation decision
+- **Audit trail**: Comprehensive record for compliance and appeals
+
+This timeline helps moderators understand user history and make informed decisions about future actions.
+
+  </Tab>
+  <Tab title="Author API">
 
 ```javascript
 // Block a user permanently
@@ -120,38 +164,12 @@ const suspendResponse = await fetch("/api/authors/{authorId}/suspend", {
 
 See the [Author API documentation](/api-reference/author) for complete endpoint details.
 
-## Action customization
-
-All user actions support customizable input to provide context and maintain moderation records:
-
-### Reason field
-
-Always provide clear reasons for actions:
-
-- **Required for documentation** and potential appeals
-- **Visible to moderators** in user timeline
-- **Returned in API responses** for application logic
-- **Helps identify patterns** in violation types
-
-### Value options
-
-Configure predefined reason options or allow free text:
-
-- **Dropdown options**: "Spam", "Harassment", "Fraud", "Policy Violation"
-- **Free text input**: Custom reasons for specific situations
-- **Combined approach**: Predefined categories with additional notes field
-
-### Duration settings (Suspend only)
-
-Flexible suspension periods:
-
-- **Predefined options**: 1 day, 3 days, 1 week, 1 month
-- **Custom duration**: Specify exact end date/time
-- **Progressive enforcement**: Longer suspensions for repeat offenders
+  </Tab>
+</Tabs>
 
 ## Technical implementation
 
-User actions modify several fields returned in API responses, allowing seamless integration with your application logic.
+Moderation actions modify several fields returned in API responses, allowing seamless integration with your application logic.
 
 ### Status fields
 
@@ -160,55 +178,21 @@ Monitor user status through API responses:
 ```javascript
 {
   "id": "user123",
-  "status": "suspended", // "active", "blocked", "suspended"
+  "status": "suspended", // "enabled", "blocked", "suspended"
   "block": {
-    "until": "2024-01-15T10:00:00Z", // null for permanent blocks
-    "reason": "Harassment of other users",
+    "until": 1705320000000, // timestamp in ms, null for permanent blocks
+    "reason": "Harassment of other users"
   }
 }
-```
-
-### Application integration
-
-Use status information in your application:
-
-```javascript
-// Check if user can post content
-if (user.status === "blocked") {
-  return { error: "Account permanently blocked" };
-}
-
-if (user.status === "suspended") {
-  const suspensionEnd = new Date(user.block.until);
-  if (suspensionEnd > new Date()) {
-    return {
-      error: `Account suspended until ${suspensionEnd.toLocaleDateString()}`,
-    };
-  }
-}
-
-// User can post normally
-return { success: true };
 ```
 
 ### Content submission integration
 
-The system automatically handles blocked/suspended users when content is submitted to [moderation endpoints](/api-reference/moderate/analyze-text), but you can also check status proactively in your application.
+The system automatically handles blocked/suspended users when content is submitted to [moderation endpoints](/api-reference/moderate/analyze-text), but you can also check status proactively in your application by querying the user in the Author API.
 
-## Custom actions
+### Webhooks
 
-Beyond built-in actions, you can create custom author-level actions for specialized moderation workflows:
-
-- **Warning systems**: Formal warnings that don't restrict access
-- **Verification requirements**: Require additional account verification
-- **Feature restrictions**: Limit specific platform features
-- **Escalation triggers**: Automatically escalate to senior moderators
-
-To create custom actions, choose "Author level action" when creating a new action in the dashboard. These appear alongside built-in actions on user detail pages.
-
-## Webhooks and notifications
-
-Receive real-time notifications when user actions are executed through [webhook integration](/review-queues/webhooks):
+Receive real-time notifications when moderation actions are executed through [webhook integration](/review-queues/webhooks):
 
 **Common webhook use cases:**
 
@@ -218,43 +202,43 @@ Receive real-time notifications when user actions are executed through [webhook 
 - **Log actions for compliance** and audit requirements
 - **Alert security teams** about fraud-related blocks
 
-Configure webhooks to receive instant notifications whenever blocks, suspensions, or other user actions are executed.
-
-## Timeline and tracking
-
-All user actions are automatically tracked in the user dashboard timeline:
-
-- **Action history**: Complete chronological record of all actions taken
-- **Moderator attribution**: Which team member executed each action
-- **Reason logging**: Full context for every moderation decision
-- **Audit trail**: Comprehensive record for compliance and appeals
-
-This timeline helps moderators understand user history and make informed decisions about future actions.
+Configure webhooks to receive instant notifications whenever blocks, suspensions, or other moderation actions are executed.
 
 ---
 
-## Frequently Asked Questions
+## FAQ
 
-### Can blocked users still view content?
+<AccordionGroup>
+<Accordion title="Can blocked users still view content?">
+  Moderation actions only prevent content submission for moderation. They don't affect content viewing unless you implement additional restrictions in your application using the status fields.
+</Accordion>
 
-User actions only prevent content submission for moderation. They don't affect content viewing unless you implement additional restrictions in your application using the status fields.
+<Accordion title="What happens to existing content when a user is blocked?">
+  Existing content remains in your system and review queues. moderation actions
+  only prevent new submissions. You may want to review existing content from
+  blocked users separately.
+</Accordion>
 
-### What happens to existing content when a user is blocked?
+<Accordion title="Can suspended users see their suspension status?">
+  The system provides the suspension information through API responses, but
+  displaying this to users depends on your application implementation. Use the
+  `user.block.until` and `user.block.reason` fields to show appropriate
+  messages.
+</Accordion>
 
-Existing content remains in your system and review queues. User actions only prevent new submissions. You may want to review existing content from blocked users separately.
+<Accordion title="How do I handle ban appeals?">
+  Use the Enable action to reinstate users after successful appeals. The action
+  history timeline maintains a record of the original block and subsequent
+  reinstatement for transparency.
+</Accordion>
 
-### Can suspended users see their suspension status?
+<Accordion title="Can I modify suspension periods after they're set?">
+  You can use the Enable action to end suspensions early, or apply a new Suspend
+  action to change the period. Each action creates a new timeline entry for full
+  audit tracking.
+</Accordion>
 
-The system provides the suspension information through API responses, but displaying this to users depends on your application implementation. Use the `user.block.until` and `user.block.reason` fields to show appropriate messages.
-
-### How do I handle ban appeals?
-
-Use the Enable action to reinstate users after successful appeals. The action history timeline maintains a record of the original block and subsequent reinstatement for transparency.
-
-### Can I modify suspension periods after they're set?
-
-You can use the Enable action to end suspensions early, or apply a new Suspend action to extend the period. Each action creates a new timeline entry for full audit tracking.
-
-### Do user actions work with trust levels and fraud detection?
-
-Yes, user actions complement these systems perfectly. High fraud risk scores or low trust levels often indicate when user actions are needed. The systems work together to provide comprehensive user management.
+<Accordion title="Do moderation actions work with trust levels and fraud detection?">
+Yes, moderation actions complement these systems perfectly. High fraud risk scores or low trust levels often indicate when moderation actions are needed. The systems work together to provide comprehensive user management.
+</Accordion>
+</AccordionGroup>
