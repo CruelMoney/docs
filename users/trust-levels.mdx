@@ -1,0 +1,192 @@
+---
+title: "Trust Levels"
+description: "Understand how trust levels work and how to use them in your moderation workflow"
+---
+
+Trust levels provide a systematic way to assess user trustworthiness based on their account history and content behavior. This system helps you implement graduated moderation policies, from strict oversight for new or problematic users to lighter moderation for established, trusted community members.
+
+## What are trust levels and what are they useful for
+
+Trust levels automatically categorize users into reliability tiers based on objective criteria like account age, content quality, and violation history. This enables you to:
+
+- **Apply targeted moderation policies** - Review content from untrusted users more carefully while fast-tracking trusted users
+- **Implement progressive restrictions** - Limit posting frequency or features for new users while giving established users more freedom
+- **Automate community management** - Let reliable users self-moderate while focusing human attention on higher-risk accounts
+- **Reduce false positives** - Use trust context to make better moderation decisions and avoid over-moderating good users
+
+## Our specific levels -1 to 4
+
+The system uses six progressive trust levels, from -1 (Untrusted) to 4 (Trusted):
+
+### Level -1: Untrusted
+
+**Accounts with high violation rates**
+
+- Applied to users with violation rates above 5%
+- Suggested permissions: Increased moderation scrutiny, limited posting frequency
+- Use case: Users who consistently violate community guidelines
+
+### Level 0: New
+
+**New accounts with limited privileges while learning community norms**
+
+- Applied to accounts under 7 days old with minimal content
+- Suggested permissions: Standard moderation review, limited posting frequency
+- Use case: Brand new users who haven't established a track record
+
+### Level 1: Basic
+
+**Proven accounts with demonstrated understanding of community guidelines**
+
+- Requirements: 7+ days old, 5+ pieces of clean content, ≤5% violation rate
+- Suggested permissions: Standard moderation policies, normal posting frequency
+- Use case: Users who've shown they understand your community rules
+
+### Level 2: Member
+
+**Established community members with consistent positive contributions**
+
+- Requirements: 30+ days old, 25+ pieces of clean content, ≤5% violation rate
+- Suggested permissions: Reduced moderation scrutiny, access to member-only features, higher posting limits
+- Use case: Regular users with a solid track record
+
+### Level 3: Regular
+
+**Trusted community members with demonstrated long-term positive engagement**
+
+- Requirements: 90+ days old, 50+ pieces of clean content, ≤5% violation rate
+- Suggested permissions: Light-touch moderation, can help with community moderation, reports prioritized by system
+- Use case: Long-term contributors who help maintain community quality
+
+### Level 4: Trusted
+
+**Exceptional community members manually promoted by staff**
+
+- Requirements: Manual promotion by staff (automatic progression not available)
+- Suggested permissions: Minimal moderation oversight, near-moderator privileges
+- Use case: Users who have earned special recognition and trust from your team
+
+## How trust levels are calculated
+
+Trust levels are calculated using three main factors:
+
+### Account Age
+
+The number of days since the user first appeared in your system. Older accounts are generally more trustworthy as they represent sustained engagement.
+
+### Clean Content Count
+
+The number of non-flagged content pieces from the user's recent activity. The system analyzes the last 100 pieces of content submitted for moderation.
+
+### Violation Rate
+
+The percentage of flagged content in the recent activity window. Users with violation rates above 5% are automatically assigned the Untrusted level (-1), regardless of other factors.
+
+### Calculation Process
+
+1. The system checks violation rate first - if above 5%, assigns Untrusted level
+2. For users with acceptable violation rates, it evaluates the highest level where all requirements are met
+3. Users progress through levels automatically as they meet criteria, except for Trusted (level 4) which requires manual promotion
+
+**Important**: Trust level calculations are subject to change as we learn more about effective community management. However, the levels themselves and their meanings will remain stable, ensuring your moderation policies won't break with algorithm updates.
+
+### Customization Options
+
+You can customize several parameters to fit your community's needs:
+
+- **New user threshold**: Adjust what constitutes a "new" user (default: under 7 days)
+- **Violation rate threshold**: Modify the 5% violation rate that triggers Untrusted status
+- **Content requirements**: Adjust the minimum clean content needed for each level
+- **Age requirements**: Modify the minimum account age for each trust level
+
+Contact support to discuss customization options for your specific use case.
+
+## Examples of how to use trust levels
+
+Trust levels work best when integrated into your existing moderation workflow:
+
+### Use in filters in review queues
+
+<FILL THIS>
+
+### Automated Moderation Rules
+
+```javascript
+// Example: Apply different review thresholds based on trust level
+if (user.trustLevel <= 0) {
+  // New/Untrusted users: Review all content
+  awaitReview(content);
+} else if (user.trustLevel >= 3) {
+  // Regular/Trusted users: Light review
+  if (severityScore > 0.5) {
+    awaitReview(content);
+  } else {
+    autoApprove(content);
+  }
+} else if (user.trustLevel >= 4) {
+  // Basic/Member users: Standard review
+  if (severityScore > 0.9) {
+    awaitReview(content);
+  } else {
+    autoApprove(content);
+  }
+}
+```
+
+### Rate Limiting
+
+Apply different posting limits based on trust level:
+
+- **Untrusted (-1)**: 1 post per hour
+- **New (0)**: 5 posts per hour
+- **Basic (1)**: 15 posts per hour
+- **Member (2)+**: No limits
+
+### Feature Access
+
+Grant access to community features progressively:
+
+- **Basic (1)+**: Can post images
+- **Member (2)+**: Can create polls, access member channels
+- **Regular (3)+**: Can report content, moderate discussions
+- **Trusted (4)**: Can pin messages, temporary mute users
+
+## How to override trust levels
+
+Sometimes you need to manually adjust a user's trust level - for example, promoting a valuable community contributor or restricting a problematic user. Manual overrides are available through both the API and dashboard interface.
+
+See the next article on [updating users](/users/updating-authors) for detailed instructions on manual overrides.
+
+---
+
+## Frequently Asked Questions
+
+### Why is my user still at level 0 (New)?
+
+The most common reasons:
+
+- **Insufficient content**: They need at least 5 pieces of clean content to reach Basic level
+- **Too young**: Account needs to be at least 7 days old for Basic level
+- **High violation rate**: Any violation rate above 5% keeps users at Untrusted (-1) level
+
+### How often are trust levels recalculated?
+
+Trust levels are calculated daily and whenever you query a user's information. The system always uses the most recent data available.
+
+### Can trust levels decrease?
+
+Yes, if a user's violation rate increases above acceptable thresholds, their trust level can drop. For example, a Member who starts posting flagged content may drop to Untrusted level.
+
+Or if a user is inactive for a long period, they may lose their established status and revert to a lower level when they return.
+
+### What happens during system updates to the algorithm?
+
+When we improve the trust level algorithm:
+
+- **Level meanings stay the same**: A "Member" will always represent the same type of user
+- **Requirements may adjust**: We might fine-tune thresholds based on data insights
+- **Your moderation logic continues working**: Since level meanings are stable, your existing code won't break
+
+### My trusted user got flagged - why are they still Trusted?
+
+Manual promotions (like Trusted level) override automatic calculations. If you've manually set someone to Trusted, they'll stay there regardless of their recent activity. You can remove manual overrides if needed.
