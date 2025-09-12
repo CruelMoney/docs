@@ -1,21 +1,93 @@
 ---
 title: "Updating authors"
 sidebarTitle: "Updating authors"
-description: "Update authors with data to improve trust scoring"
-openapi: put /authors/{id}
+description: "Update authors with data to improve trust scoring and dashboard details"
 ---
 
-**outline**
+You can update author information to improve trust scoring and fraud detection in your moderation system. Author updates can be made through either the API or the dashboard interface.
 
-- Can use either API or dashboard to update authors
+## Prerequisites
 
-Fields
+- **Dashboard**: You need the moderator role for your project
+- **API**: Any valid API key for the project
 
-- Name, email, profile_picture (all shown in dashboard for easier management) external_link (gives a button in the dashboard)
-- Metadata,
-  - Free form JSON object
-  - Can be used for anything (limit 25 keys, 1 nesting)
-  - Is included in webhooks and author responses
-  - built in fields: email_verified, phone_verified, identity_verified, is_paying_customer (used for trust levels and fraud detection, and rendered in the dashboard)
-- manual_trust_level (overrides automatic trust level calculation, useful for permanently promoting or demoting users, can be set to null to go back to automatic trust level calculation)
-- first_seen, last_seen (timestamps, also used for trust levels and fraud detection)
+## Available Fields
+
+### Basic Information
+
+**Name, Email, and Profile Picture**
+These fields are displayed in the dashboard for easier author management:
+
+- `name`: The author's display name
+- `email`: Author's email address
+- `profile_picture`: URL to the author's profile image
+
+**External Link**
+The `external_link` field adds a clickable button in the dashboard, useful for linking to the author's profile on your platform or other external resources.
+
+### Metadata
+
+The `metadata` field is a flexible JSON object that can store any additional author information:
+
+- **Limits**: Maximum 25 keys with 1 level of nesting
+- **Usage**: Included in webhooks and author API responses
+- **Purpose**: Store custom data relevant to your use case
+
+```json
+{
+  "metadata": {
+    "account_type": "premium",
+    "signup_source": "mobile_app",
+    "custom_tags": ["verified_creator", "high_engagement"],
+    "preferences": {
+      "notifications": true,
+      "public_profile": false
+    }
+  }
+}
+```
+
+#### Built-in Metadata Fields
+
+These special metadata fields are used for trust levels and fraud detection, and are rendered in the dashboard:
+
+- `email_verified`: Boolean indicating if email is verified
+- `phone_verified`: Boolean indicating if phone number is verified
+- `identity_verified`: Boolean indicating if identity has been verified
+- `is_paying_customer`: Boolean indicating if the user is a paying customer
+
+```json
+{
+  "metadata": {
+    "email_verified": true,
+    "phone_verified": false,
+    "identity_verified": true,
+    "is_paying_customer": true
+  }
+}
+```
+
+### Trust Level Override
+
+The `manual_trust_level` field allows you to override automatic trust level calculations:
+
+- **Use cases**: Permanently promote or demote specific users
+- **Reset**: Set to `null` to return to automatic trust level calculation
+- **Impact**: Affects moderation decisions and user permissions
+
+Learn more about trust levels and how they work in our [Trust Levels Guide](#) (coming soon).
+
+### Timestamps
+
+These timestamp fields help with trust scoring and fraud detection:
+
+- `first_seen`: When the author was first encountered in your system
+- `last_seen`: The author's most recent activity timestamp
+
+Both fields accept ISO 8601 timestamp format and contribute to the automatic trust level calculation.
+
+## Making Updates
+
+**API**: Use the [PUT /authors/{id} endpoint](/api-reference/authors/update) to programmatically update author information.
+
+**Dashboard**: Navigate to the Authors section in your project dashboard to update author details through the web interface.
