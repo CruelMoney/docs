@@ -142,22 +142,45 @@ This timeline helps moderators understand user history and make informed decisio
 
 ```javascript
 // Block a user permanently
-const blockResponse = await fetch("/api/authors/{authorId}/block", {
+const blockResponse = await fetch("/api/v1/actions/execute", {
   method: "POST",
-  headers: { Authorization: "Bearer YOUR_API_KEY" },
+  headers: { 
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+  },
   body: JSON.stringify({
-    reason: "Repeated spam violations",
-    permanent: true,
+    actionKey: "AUTHOR_BLOCK",
+    authorIds: ["{authorId}"],
+    value: "Repeated spam violations"
   }),
 });
 
-// Suspend a user for 7 days
-const suspendResponse = await fetch("/api/authors/{authorId}/suspend", {
-  method: "POST",
-  headers: { Authorization: "Bearer YOUR_API_KEY" },
+// Suspend a user temporarily
+const suspendResponse = await fetch("/api/v1/actions/execute", {
+  method: "POST", 
+  headers: { 
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+  },
   body: JSON.stringify({
-    reason: "Harassment of other users",
-    duration: "7d",
+    actionKey: "AUTHOR_BLOCK_TEMP", 
+    authorIds: ["{authorId}"],
+    value: "Harassment of other users",
+    duration: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+  }),
+});
+
+// Unblock a user (remove block/suspension)
+const unblockResponse = await fetch("/api/v1/actions/execute", {
+  method: "POST",
+  headers: { 
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    actionKey: "AUTHOR_UNBLOCK",
+    authorIds: ["{authorId}"],
+    value: "Appeal approved"
   }),
 });
 ```
