@@ -141,13 +141,6 @@ Metadata is shown in the [review queues](/review-queues) and included in any web
 
 Enable `Context awareness` in your project settings, and then include `authorId` and/or `contextId` in the API request. This enables models to pull in previous messages for their analysis and increase their accuracy.
 
-<Note>
-  Context awareness can increase quota usage as it requires additional
-  processing and analysis of previous messages. Each contextual message analyzed
-  counts towards your quota usage. Consider this when implementing context
-  awareness in your project, especially for high-volume applications.
-</Note>
-
 LLM models like AI agents can use the `contextId` to see the previous messages in the same context, and `authorId` to see the previous messages from the same author.
 
 Specifically this can prevent unwanted content that are spread of multiple messages.
