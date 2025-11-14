@@ -47,7 +47,10 @@ api = ModerationApi::ModerateApi.new
 
 # Text moderation
 text_request = ModerationApi::ModerationTextRequest.new(
-  value: "Hello world!",
+  content: {
+    type: "text",
+    text: "Hello world!"
+  },
   author_id: "123",
   context_id: "456",
   metadata: {
@@ -82,7 +85,10 @@ api = ModerationApi::ModerateApi.new
 
 # Image moderation
 image_request = ModerationApi::ModerationImageRequest.new(
-  url: "https://example.com/image.jpg",
+  content: {
+    type: "image",
+    url: "https://example.com/image.jpg"
+  },
   author_id: "123",
   context_id: "456",
   metadata: {
@@ -116,26 +122,24 @@ end
 api = ModerationApi::ModerateApi.new
 
 # Object moderation
-object_data = {
-  type: "profile",
-  data: {
-    name: {
-      type: "text",
-      value: "John Doe"
-    },
-    email: {
-      type: "text",
-      value: "john.doe@example.com"
-    },
-    picture: {
-      type: "image",
-      value: "https://example.com/image.jpg"
-    }
-  }
-}
-
 object_request = ModerationApi::ModerationObjectRequest.new(
-  value: object_data,
+  content: {
+    type: "object",
+    data: {
+      name: {
+        type: "text",
+        text: "John Doe"
+      },
+      email: {
+        type: "text",
+        text: "john.doe@example.com"
+      },
+      picture: {
+        type: "image",
+        url: "https://example.com/image.jpg"
+      }
+    }
+  },
   author_id: "123",
   context_id: "456",
   metadata: {

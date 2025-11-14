@@ -82,20 +82,20 @@ end
 
 api_instance = ModerationApi::ModerateApi.new
 request = ModerationApi::ModerationObjectRequest.new({
-  value: {
-    type: 'profile',
+  content: {
+    type: 'object',
     data: {
       username: {
         type: 'text',
-        value: 'johndoe123'
+        text: 'johndoe123'
       },
       bio: {
         type: 'text',
-        value: 'Hello, I am John Doe!'
+        text: 'Hello, I am John Doe!'
       },
       avatar: {
         type: 'image',
-        value: 'https://example.com/avatar.jpg'
+        url: 'https://example.com/avatar.jpg'
       }
     }
   },

@@ -37,16 +37,20 @@ public class TextModeration {
             HttpClient client = HttpClient.newHttpClient();
 
             // Create request body
+            JSONObject content = new JSONObject()
+                .put("type", "text")
+                .put("text", "Hello world!");
+
             JSONObject requestBody = new JSONObject()
-                .put("value", "Hello world!")
+                .put("content", content)
                 .put("authorId", "123")
-                .put("contextId", "456")
+                .put("conversationId", "456")
                 .put("metadata", new JSONObject()
                     .put("customField", "value")
                 );
 
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/moderate/text"))
+                .uri(URI.create(BASE_URL + "/moderate"))
                 .header("Authorization", "Bearer " + API_KEY)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
@@ -88,16 +92,20 @@ public class ImageModeration {
             HttpClient client = HttpClient.newHttpClient();
 
             // Create request body
+            JSONObject content = new JSONObject()
+                .put("type", "image")
+                .put("url", "https://example.com/image.jpg");
+
             JSONObject requestBody = new JSONObject()
-                .put("url", "https://example.com/image.jpg")
+                .put("content", content)
                 .put("authorId", "123")
-                .put("contextId", "456")
+                .put("conversationId", "456")
                 .put("metadata", new JSONObject()
                     .put("customField", "value")
                 );
 
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/moderate/image"))
+                .uri(URI.create(BASE_URL + "/moderate"))
                 .header("Authorization", "Bearer " + API_KEY)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
@@ -143,25 +151,27 @@ public class ObjectModeration {
             JSONObject profileData = new JSONObject()
                 .put("name", new JSONObject()
                     .put("type", "text")
-                    .put("value", "John Doe"))
+                    .put("text", "John Doe"))
                 .put("email", new JSONObject()
                     .put("type", "text")
-                    .put("value", "john.doe@example.com"))
+                    .put("text", "john.doe@example.com"))
                 .put("picture", new JSONObject()
                     .put("type", "image")
-                    .put("value", "https://example.com/image.jpg"));
+                    .put("url", "https://example.com/image.jpg"));
+
+            JSONObject content = new JSONObject()
+                .put("type", "object")
+                .put("data", profileData);
 
             JSONObject requestBody = new JSONObject()
-                .put("value", new JSONObject()
-                    .put("type", "Profile")
-                    .put("data", profileData))
+                .put("content", content)
                 .put("authorId", "123")
-                .put("contextId", "456")
+                .put("conversationId", "456")
                 .put("metadata", new JSONObject()
                     .put("customField", "value"));
 
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/moderate/object"))
+                .uri(URI.create(BASE_URL + "/moderate"))
                 .header("Authorization", "Bearer " + API_KEY)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
