@@ -139,53 +139,7 @@
                 "icon": "cube",
                 "pages": [
                   "model-studio/overview",
-                  {
-                    "group": "AI Agents",
-                    "pages": [
-                      "ai-agents/creating-an-agent",
-                      "ai-agents/adding-guidelines",
-                      "ai-agents/strictness",
-                      "ai-agents/using-your-agent"
-                    ]
-                  },
-                  {
-                    "group": "Pre-built Models",
-                    "pages": [
-                      "models/overview",
-                      {
-                        "group": "Text classifiers",
-                        "pages": [
-                          "models/classifier-overview",
-                          "models/toxicity",
-                          "models/nsfw",
-                          "models/sentiment",
-                          "models/propriety",
-                          "models/language",
-                          "models/spam",
-                          "models/sexual",
-                          "models/discrimination",
-                          "models/self-harm",
-                          "models/violence"
-                        ]
-                      },
-                      {
-                        "group": "Entity matchers",
-                        "pages": [
-                          "models/entity-matchers-overview",
-                          "models/email",
-                          "models/phone-number",
-                          "models/url",
-                          "models/address",
-                          "models/name",
-                          "models/username",
-                          "models/profanity",
-                          "models/word",
-                          "models/sensitive-number"
-                        ]
-                      },
-                      "models/image-models"
-                    ]
-                  },
+
                   {
                     "group": "Custom Models",
                     "pages": [
