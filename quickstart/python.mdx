@@ -34,12 +34,15 @@ headers = {
 
 # Text moderation
 response = requests.post(
-    f"{BASE_URL}/moderate/text",
+    f"{BASE_URL}/moderate",
     headers=headers,
     json={
-        "value": "Hello world!",
+        "content": {
+            "type": "text",
+            "text": "Hello world!"
+        },
         "authorId": "123",
-        "contextId": "456",
+        "conversationId": "456",
         "metadata": {
             "customField": "value"
         }
@@ -69,12 +72,15 @@ headers = {
 
 # Image moderation
 response = requests.post(
-    f"{BASE_URL}/moderate/image",
+    f"{BASE_URL}/moderate",
     headers=headers,
     json={
-        "url": "https://example.com/image.jpg",
+        "content": {
+            "type": "image",
+            "url": "https://example.com/image.jpg"
+        },
         "authorId": "123",
-        "contextId": "456",
+        "conversationId": "456",
         "metadata": {
             "customField": "value"
         }
@@ -104,28 +110,28 @@ headers = {
 
 # Object moderation
 response = requests.post(
-    f"{BASE_URL}/moderate/object",
+    f"{BASE_URL}/moderate",
     headers=headers,
     json={
-        "value": {
-            "type": "Profile",
+        "content": {
+            "type": "object",
             "data": {
                 "name": {
                     "type": "text",
-                    "value": "John Doe"
+                    "text": "John Doe"
                 },
                 "email": {
                     "type": "text",
-                    "value": "john.doe@example.com"
+                    "text": "john.doe@example.com"
                 },
                 "picture": {
                     "type": "image",
-                    "value": "https://example.com/image.jpg"
+                    "url": "https://example.com/image.jpg"
                 }
             }
         },
         "authorId": "123",
-        "contextId": "456",
+        "conversationId": "456",
         "metadata": {
             "customField": "value"
         }
