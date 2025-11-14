@@ -39,9 +39,11 @@ curl -X POST 'https://api.moderationapi.com/v1/moderate' \
 ```javascript Node.js
 import ModerationAPI from "@moderation-api/sdk";
 
-const moderationApi = new ModerationAPI({
-  key: "<token>",
-});
+// Uses environment variable MODAPI_SECRET_KEY
+const moderationApi = new ModerationAPI();
+
+// Or pass key explicitly
+// const moderationApi = new ModerationAPI({ key: '<token>' });
 
 const result = await moderationApi.content.submit({
   content: {
