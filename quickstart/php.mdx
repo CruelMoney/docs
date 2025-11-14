@@ -29,15 +29,18 @@ $BASE_URL = "https://api.moderationapi.com/v1";
 
 // Text moderation
 $data = array(
-    'value' => 'Hello world!',
+    'content' => array(
+        'type' => 'text',
+        'text' => 'Hello world!'
+    ),
     'authorId' => '123',
-    'contextId' => '456',
+    'conversationId' => '456',
     'metadata' => array(
         'customField' => 'value'
     )
 );
 
-$ch = curl_init($BASE_URL . "/moderate/text");
+$ch = curl_init($BASE_URL . "/moderate");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
@@ -68,15 +71,18 @@ $BASE_URL = "https://api.moderationapi.com/v1";
 
 // Image moderation
 $data = array(
-    'url' => 'https://example.com/image.jpg',
+    'content' => array(
+        'type' => 'image',
+        'url' => 'https://example.com/image.jpg'
+    ),
     'authorId' => '123',
-    'contextId' => '456',
+    'conversationId' => '456',
     'metadata' => array(
         'customField' => 'value'
     )
 );
 
-$ch = curl_init($BASE_URL . "/moderate/image");
+$ch = curl_init($BASE_URL . "/moderate");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
@@ -107,31 +113,31 @@ $BASE_URL = "https://api.moderationapi.com/v1";
 
 // Object moderation
 $data = array(
-    'value' => array(
-        'type' => 'Profile',
+    'content' => array(
+        'type' => 'object',
         'data' => array(
             'name' => array(
                 'type' => 'text',
-                'value' => 'John Doe'
+                'text' => 'John Doe'
             ),
             'email' => array(
                 'type' => 'text',
-                'value' => 'john.doe@example.com'
+                'text' => 'john.doe@example.com'
             ),
             'picture' => array(
                 'type' => 'image',
-                'value' => 'https://example.com/image.jpg'
+                'url' => 'https://example.com/image.jpg'
             )
         )
     ),
     'authorId' => '123',
-    'contextId' => '456',
+    'conversationId' => '456',
     'metadata' => array(
         'customField' => 'value'
     )
 );
 
-$ch = curl_init($BASE_URL . "/moderate/object");
+$ch = curl_init($BASE_URL . "/moderate");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
