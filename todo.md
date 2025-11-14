@@ -1,0 +1,8 @@
+- update contextId to conversationId everywhere
+- Update "understanding API response"
+- Remove AI agents information
+- Remove info about pre built models
+- Add info about authentication (inferring environment variables)
+- Remove manage project api key
+- Add info about channels
+- Add info about rate limit headers

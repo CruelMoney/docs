@@ -96,16 +96,7 @@
                 "icon": "shield",
                 "pages": [
                   "content-moderation/overview",
-                  {
-                    "group": "Project setup",
-                    "pages": [
-                      "content-moderation/creating-projects",
-                      "content-moderation/adding-models",
-                      "content-moderation/flagging-thresholds",
-                      "content-moderation/manage-api-key",
-                      "content-moderation/custom-region"
-                    ]
-                  },
+
                   {
                     "group": "Analyzing content",
                     "pages": [
