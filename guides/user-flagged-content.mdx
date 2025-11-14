@@ -159,16 +159,20 @@ pnpm add @moderation-api/sdk
 To use the Moderation API in our application, we'll need to instantiate it with our project's API key.
 
 ```typescript /lib/moderation.ts
-import ModerationApi from "@moderation-api/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-export const moderationApi = new ModerationApi({
-  key: process.env.MODERATION_API_KEY,
-});
+// Use environment variable MODAPI_SECRET_KEY
+export const moderationApi = new ModerationAPI();
+
+// Or pass key explicitly
+// export const moderationApi = new ModerationAPI({
+//   key: process.env.MODERATION_API_KEY,
+// });
 ```
 
 ### Submitting Profiles for Analysis
 
-When a user creates or updates a profile, we'll submit it for analysis using the `/moderate/object` endpoint. This allows us to detect any issues with the profile content.
+When a user creates or updates a profile, we'll submit it for analysis using the `/moderate` endpoint. This allows us to detect any issues with the profile content.
 
 <CodeGroup>
 
@@ -184,25 +188,32 @@ export const handleCreateProfile = async ({ bio, profilePicture }) => {
     },
   });
 
-  const analysis = await moderationApi.moderate.object({
-    contentId: profile.id,
-    authorId: profile.id,
-    value: {
-      type: "profile",
-      bio: {
-        type: "text",
-        value: bio,
-      },
-      profilePicture: {
-        type: "image",
-        url: profilePicture,
+  const result = await moderationApi.content.submit({
+    content: {
+      type: "object",
+      data: {
+        bio: {
+          type: "text",
+          text: bio,
+        },
+        profilePicture: {
+          type: "image",
+          url: profilePicture,
+        },
       },
     },
+    contentId: profile.id,
+    authorId: profile.id,
     // Optional: Add the URL to quickly view the profile from the queue
     metadata: {
       url: profile.url,
     },
   });
+
+  // Check if profile was flagged
+  if (result.evaluation.flagged) {
+    // Handle flagged profile (e.g., require review)
+  }
 
   return profile;
 };
@@ -218,25 +229,32 @@ export const handleUpdateProfile = async ({ id, bio, profilePicture }) => {
     data: { bio, profilePicture },
   });
 
-  const analysis = await moderationApi.moderate.object({
-    contentId: id,
-    authorId: id,
-    value: {
-      type: "profile",
-      bio: {
-        type: "text",
-        value: bio,
-      },
-      profilePicture: {
-        type: "image",
-        url: profilePicture,
+  const result = await moderationApi.content.submit({
+    content: {
+      type: "object",
+      data: {
+        bio: {
+          type: "text",
+          text: bio,
+        },
+        profilePicture: {
+          type: "image",
+          url: profilePicture,
+        },
       },
     },
+    contentId: id,
+    authorId: id,
     // Optional: Add the URL to quickly view the profile from the queue
     metadata: {
       url: profile.url,
     },
   });
+
+  // Check if profile was flagged
+  if (result.evaluation.flagged) {
+    // Handle flagged profile (e.g., require review)
+  }
 
   return profile;
 };
@@ -281,11 +299,18 @@ const handler = async (req, res) => {
   const webhookSignatureHeader = req.headers["modapi-signature"];
 
   // Securely verify the webhook and retrieve the payload
+  // Option 1: Use environment variable MODAPI_WEBHOOK_SECRET
   const payload = await moderationApi.webhooks.constructEvent(
     webhookRawBody,
-    webhookSignatureHeader,
-    process.env.MODAPI_WEBHOOK_SECRET
+    webhookSignatureHeader
   );
+
+  // Option 2: Pass secret explicitly
+  // const payload = await moderationApi.webhooks.constructEvent(
+  //   webhookRawBody,
+  //   webhookSignatureHeader,
+  //   'whsec_...'
+  // );
 
   const { type, queue, item, action } = payload;
 

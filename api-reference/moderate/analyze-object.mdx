@@ -7,24 +7,24 @@ title: "Moderate Objects"
 <RequestExample>
 
 ```bash cURL
-curl -X POST 'https://api.moderationapi.com/v1/moderate/object' \
+curl -X POST 'https://api.moderationapi.com/v1/moderate' \
   -H 'Authorization: Bearer <token>' \
   -H 'Content-Type: application/json' \
   -d '{
-    "value": {
-      "type": "profile",
+    "content": {
+      "type": "object",
       "data": {
         "username": {
           "type": "text",
-          "value": "johndoe123"
+          "text": "johndoe123"
         },
         "bio": {
           "type": "text",
-          "value": "Hello, I am John Doe!"
+          "text": "Hello, I am John Doe!"
         },
         "avatar": {
           "type": "image",
-          "value": "https://example.com/avatar.jpg"
+          "url": "https://example.com/avatar.jpg"
         }
       }
     },
@@ -37,27 +37,27 @@ curl -X POST 'https://api.moderationapi.com/v1/moderate/object' \
 ```
 
 ```javascript Node.js
-import ModerationApi from "@moderationapi/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-const moderationApi = new ModerationApi({
-  apiKey: "<token>",
+const moderationApi = new ModerationAPI({
+  key: "<token>",
 });
 
-const result = await moderationApi.moderate.object({
-  value: {
-    type: "profile",
+const result = await moderationApi.content.submit({
+  content: {
+    type: "object",
     data: {
       username: {
         type: "text",
-        value: "johndoe123",
+        text: "johndoe123",
       },
       bio: {
         type: "text",
-        value: "Hello, I am John Doe!",
+        text: "Hello, I am John Doe!",
       },
       avatar: {
         type: "image",
-        value: "https://example.com/avatar.jpg",
+        url: "https://example.com/avatar.jpg",
       },
     },
   },
@@ -67,6 +67,10 @@ const result = await moderationApi.moderate.object({
     source: "registration",
   },
 });
+
+// Check result
+console.log(result.evaluation.flagged); // boolean
+console.log(result.recommendation.action); // 'allow', 'review', or 'reject'
 ```
 
 ```ruby Ruby
@@ -113,26 +117,26 @@ end
 ```python Python
 import requests
 
-url = "https://api.moderationapi.com/v1/moderate/object"
+url = "https://api.moderationapi.com/v1/moderate"
 headers = {
     "Authorization": "Bearer <token>",
     "Content-Type": "application/json"
 }
 payload = {
-    "value": {
-        "type": "profile",
+    "content": {
+        "type": "object",
         "data": {
             "username": {
                 "type": "text",
-                "value": "johndoe123"
+                "text": "johndoe123"
             },
             "bio": {
                 "type": "text",
-                "value": "Hello, I am John Doe!"
+                "text": "Hello, I am John Doe!"
             },
             "avatar": {
                 "type": "image",
-                "value": "https://example.com/avatar.jpg"
+                "url": "https://example.com/avatar.jpg"
             }
         }
     },
@@ -149,26 +153,26 @@ result = response.json()
 
 ```php PHP
 <?php
-$url = "https://api.moderationapi.com/v1/moderate/object";
+$url = "https://api.moderationapi.com/v1/moderate";
 $headers = array(
     "Authorization: Bearer <token>",
     "Content-Type: application/json"
 );
 $data = array(
-    "value" => array(
-        "type" => "profile",
+    "content" => array(
+        "type" => "object",
         "data" => array(
             "username" => array(
                 "type" => "text",
-                "value" => "johndoe123"
+                "text" => "johndoe123"
             ),
             "bio" => array(
                 "type" => "text",
-                "value" => "Hello, I am John Doe!"
+                "text" => "Hello, I am John Doe!"
             ),
             "avatar" => array(
                 "type" => "image",
-                "value" => "https://example.com/avatar.jpg"
+                "url" => "https://example.com/avatar.jpg"
             )
         )
     ),
@@ -198,23 +202,23 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 
-String url = "https://api.moderationapi.com/v1/moderate/object";
+String url = "https://api.moderationapi.com/v1/moderate";
 String requestBody = """
     {
-        "value": {
-            "type": "profile",
+        "content": {
+            "type": "object",
             "data": {
                 "username": {
                     "type": "text",
-                    "value": "johndoe123"
+                    "text": "johndoe123"
                 },
                 "bio": {
                     "type": "text",
-                    "value": "Hello, I am John Doe!"
+                    "text": "Hello, I am John Doe!"
                 },
                 "avatar": {
                     "type": "image",
-                    "value": "https://example.com/avatar.jpg"
+                    "url": "https://example.com/avatar.jpg"
                 }
             }
         },
@@ -250,22 +254,22 @@ import (
 )
 
 func main() {
-    url := "https://api.moderationapi.com/v1/moderate/object"
+    url := "https://api.moderationapi.com/v1/moderate"
     data := map[string]interface{}{
-        "value": map[string]interface{}{
-            "type": "profile",
+        "content": map[string]interface{}{
+            "type": "object",
             "data": map[string]interface{}{
                 "username": map[string]interface{}{
-                    "type":  "text",
-                    "value": "johndoe123",
+                    "type": "text",
+                    "text": "johndoe123",
                 },
                 "bio": map[string]interface{}{
-                    "type":  "text",
-                    "value": "Hello, I am John Doe!",
+                    "type": "text",
+                    "text": "Hello, I am John Doe!",
                 },
                 "avatar": map[string]interface{}{
-                    "type":  "image",
-                    "value": "https://example.com/avatar.jpg",
+                    "type": "image",
+                    "url":  "https://example.com/avatar.jpg",
                 },
             },
         },

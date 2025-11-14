@@ -39,9 +39,12 @@ func main() {
 
     // Prepare request body
     requestBody, err := json.Marshal(map[string]interface{}{
-        "value":     "Hello world!",
-        "authorId":  "123",
-        "contextId": "456",
+        "content": map[string]interface{}{
+            "type": "text",
+            "text": "Hello world!",
+        },
+        "authorId":       "user-123",
+        "conversationId": "room-456",
         "metadata": map[string]interface{}{
             "customField": "value",
         },
@@ -51,7 +54,7 @@ func main() {
     }
 
     // Create request
-    req, err := http.NewRequest("POST", baseURL+"/moderate/text", bytes.NewBuffer(requestBody))
+    req, err := http.NewRequest("POST", baseURL+"/moderate", bytes.NewBuffer(requestBody))
     if err != nil {
         panic(err)
     }
@@ -80,7 +83,8 @@ func main() {
         panic(err)
     }
 
-    if textAnalysis["flagged"].(bool) {
+    evaluation := textAnalysis["evaluation"].(map[string]interface{})
+    if evaluation["flagged"].(bool) {
         fmt.Println("Text content flagged")
         // Block the content, show an error, etc...
     } else {
@@ -108,9 +112,11 @@ func main() {
 
     // Prepare request body
     requestBody, err := json.Marshal(map[string]interface{}{
-        "url":       "https://example.com/image.jpg",
-        "authorId":  "123",
-        "contextId": "456",
+        "content": map[string]interface{}{
+            "type": "image",
+            "url":  "https://example.com/image.jpg",
+        },
+        "authorId": "user-123",
         "metadata": map[string]interface{}{
             "customField": "value",
         },
@@ -120,7 +126,7 @@ func main() {
     }
 
     // Create request
-    req, err := http.NewRequest("POST", baseURL+"/moderate/image", bytes.NewBuffer(requestBody))
+    req, err := http.NewRequest("POST", baseURL+"/moderate", bytes.NewBuffer(requestBody))
     if err != nil {
         panic(err)
     }
@@ -149,8 +155,9 @@ func main() {
         panic(err)
     }
 
-    if imageAnalysis["flagged"].(bool) {
-        fmt.Printf("Image content flagged: %v\n", imageAnalysis["labels"])
+    evaluation := imageAnalysis["evaluation"].(map[string]interface{})
+    if evaluation["flagged"].(bool) {
+        fmt.Println("Image content flagged")
         // Block or require review
     } else {
         fmt.Println("Image is safe.")
@@ -177,25 +184,24 @@ func main() {
 
     // Prepare request body
     requestBody, err := json.Marshal(map[string]interface{}{
-        "value": map[string]interface{}{
-            "type": "Profile",
+        "content": map[string]interface{}{
+            "type": "object",
             "data": map[string]interface{}{
                 "name": map[string]interface{}{
-                    "type":  "text",
-                    "value": "John Doe",
+                    "type": "text",
+                    "text": "John Doe",
                 },
                 "email": map[string]interface{}{
-                    "type":  "text",
-                    "value": "john.doe@example.com",
+                    "type": "text",
+                    "text": "john.doe@example.com",
                 },
                 "picture": map[string]interface{}{
-                    "type":  "image",
-                    "value": "https://example.com/image.jpg",
+                    "type": "image",
+                    "url":  "https://example.com/image.jpg",
                 },
             },
         },
-        "authorId":  "123",
-        "contextId": "456",
+        "authorId": "user-123",
         "metadata": map[string]interface{}{
             "customField": "value",
         },
@@ -205,7 +211,7 @@ func main() {
     }
 
     // Create request
-    req, err := http.NewRequest("POST", baseURL+"/moderate/object", bytes.NewBuffer(requestBody))
+    req, err := http.NewRequest("POST", baseURL+"/moderate", bytes.NewBuffer(requestBody))
     if err != nil {
         panic(err)
     }
@@ -234,7 +240,8 @@ func main() {
         panic(err)
     }
 
-    if objectAnalysis["flagged"].(bool) {
+    evaluation := objectAnalysis["evaluation"].(map[string]interface{})
+    if evaluation["flagged"].(bool) {
         fmt.Println("Object content flagged")
         // Block or require review
     } else {

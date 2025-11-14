@@ -7,14 +7,17 @@ title: "Moderate Images"
 <RequestExample>
 
 ```javascript Node.js
-import ModerationApi from "@moderationapi/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-const moderationApi = new ModerationApi({
-  apiKey: "<token>",
+const moderationApi = new ModerationAPI({
+  key: "<token>",
 });
 
-const result = await moderationApi.moderate({
-  content: { type: "image", url: "https://example.com/image.jpg" },
+const result = await moderationApi.content.submit({
+  content: {
+    type: "image",
+    url: "https://example.com/image.jpg",
+  },
   contentId: "image-123",
   authorId: "user-123",
   conversationId: "post-123",
@@ -22,6 +25,10 @@ const result = await moderationApi.moderate({
     source: "user_upload",
   },
 });
+
+// Check result
+console.log(result.evaluation.flagged); // boolean
+console.log(result.recommendation.action); // 'allow', 'review', or 'reject'
 ```
 
 ```ruby Ruby

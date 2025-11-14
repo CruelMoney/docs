@@ -19,13 +19,13 @@ curl -X POST 'https://api.moderationapi.com/v1/actions/execute' \
 ```
 
 ```javascript Node.js
-import ModerationApi from "@moderationapi/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-const moderationApi = new ModerationApi({
-  apiKey: "<token>",
+const moderationApi = new ModerationAPI({
+  key: "<token>",
 });
 
-moderationApi.actions.execute({
+await moderationApi.actions.execute({
   contentIds: ["60c9e1c0e4e7e1001c7a0e1e", "60c9e1c0e4e7e1001c7a0e1f"],
   actionId: "suspend-author",
   value: "Spam",

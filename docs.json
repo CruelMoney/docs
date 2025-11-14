@@ -9,7 +9,9 @@
   },
   "favicon": "/favicon.svg",
   "styling": {
-    "codeblocks": "dark",
+    "codeblocks": {
+      "theme": "nord"
+    },
     "eyebrows": "breadcrumbs"
   },
 

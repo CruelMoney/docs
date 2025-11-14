@@ -36,95 +36,123 @@ Grab the API key from your [project](https://dash.moderationapi.com) and begin s
 <CodeGroup>
 
 ```typescript Text moderation
-import ModerationApi from "@moderation-api/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-// Configure your client using an environment variable for the API key
-const moderationApi = new ModerationApi({
-  key: process.env.API_KEY,
-});
+// Option 1: Use environment variable MODAPI_SECRET_KEY
+const moderationApi = new ModerationAPI();
 
-// Text moderation
-const textAnalysis = await moderationApi.moderate.text({
-  value: "Hello world!",
-  authorId: "123",
-  contextId: "456",
+// Option 2: Pass key explicitly
+// const moderationApi = new ModerationAPI({ key: 'proj_...' });
+
+// Submit text for moderation
+const result = await moderationApi.content.submit({
+  content: {
+    type: "text",
+    text: "Hello world!",
+  },
+  contentId: "message-123",
+  authorId: "user-123",
+  conversationId: "room-456",
   metadata: {
     customField: "value",
   },
 });
 
-if (textAnalysis.flagged) {
+// Simple boolean check
+if (result.evaluation.flagged) {
   console.warn("Text content flagged");
   // Block the content, show an error, etc...
-} else {
-  console.log("Text content is safe.");
-  // Save to database or proceed...
+}
+
+// Use the API's recommendation (considers severity, thresholds, and more)
+switch (result.recommendation.action) {
+  case "reject":
+    console.log("Content should be rejected");
+    break;
+  case "review":
+    console.log("Content needs manual review");
+    break;
+  case "allow":
+    console.log("Content is approved");
+    break;
 }
 ```
 
 ```typescript Image moderation
-import ModerationApi from "@moderation-api/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-// Configure your client using an environment variable for the API key
-const moderationApi = new ModerationApi({
-  key: process.env.API_KEY,
-});
+// Configure your client using environment variable MODAPI_SECRET_KEY
+const moderationApi = new ModerationAPI();
 
-const imageAnalysis = await moderationApi.moderate.image({
-  url: "https://example.com/image.jpg",
-  authorId: "123",
-  contextId: "456",
+// Submit image for moderation
+const result = await moderationApi.content.submit({
+  content: {
+    type: "image",
+    url: "https://example.com/image.jpg",
+  },
+  contentId: "image-456",
+  authorId: "user-123",
   metadata: {
     customField: "value",
   },
 });
 
-if (imageAnalysis.flagged) {
-  console.warn("Image content flagged:", imageAnalysis.categories);
+// Check if content was flagged
+if (result.evaluation.flagged) {
+  console.warn("Image content flagged");
   // Block or require review
+}
+
+// Use the API's recommendation
+if (result.recommendation.action === "reject") {
+  console.log("Image should be blocked");
+} else if (result.recommendation.action === "review") {
+  console.log("Image needs manual review");
 } else {
-  console.log("Image is safe.");
-  // Save to database or proceed...
+  console.log("Image is approved");
 }
 ```
 
 ```typescript Object moderation
-import ModerationApi from "@moderation-api/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-// Configure your client using an environment variable for the API key
-const moderationApi = new ModerationApi({
-  key: process.env.API_KEY,
-});
+// Configure your client using environment variable MODAPI_SECRET_KEY
+const moderationApi = new ModerationAPI();
 
-const object = await moderationApi.moderate.object({
-  value: {
-    type: "Profile",
-    name: {
-      type: "text",
-      value: "John Doe",
-    },
-    email: {
-      type: "text",
-      value: "john.doe@example.com",
-    },
-    picture: {
-      type: "image",
-      value: "https://example.com/image.jpg",
+// Submit object (complex data) for moderation
+const result = await moderationApi.content.submit({
+  content: {
+    type: "object",
+    data: {
+      title: { type: "text", text: "Post title" },
+      body: { type: "text", text: "Post content" },
+      thumbnail: { type: "image", url: "https://example.com/thumb.jpg" },
     },
   },
-  authorId: "123",
-  contextId: "456",
+  contentId: "post-789",
+  authorId: "user-123",
   metadata: {
     customField: "value",
   },
 });
 
-if (object.flagged) {
+// Check if content was flagged
+if (result.evaluation.flagged) {
   console.warn("Object content flagged");
   // Block or require review
-} else {
-  console.log("Object is safe.");
-  // Save to database or proceed...
+}
+
+// Use the API's recommendation
+switch (result.recommendation.action) {
+  case "reject":
+    console.log("Object should be rejected");
+    break;
+  case "review":
+    console.log("Object needs manual review");
+    break;
+  case "allow":
+    console.log("Object is approved");
+    break;
 }
 ```
 

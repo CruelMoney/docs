@@ -140,11 +140,13 @@ The signature is a `HMAC SHA256` hash of the payload using your webhook secret a
 <CodeGroup>
 
 ```js Next.js SDK (app router)
-import ModerationApi from "@moderation-api/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-const moderationApi = new ModerationApi({
-  key: PROJECT_API_KEY,
-});
+// Option 1: Use environment variable MODAPI_SECRET_KEY
+const moderationApi = new ModerationAPI();
+
+// Option 2: Pass key explicitly
+// const moderationApi = new ModerationAPI({ key: 'proj_...' });
 
 export async function POST(request: Request) {
   try {
@@ -159,11 +161,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // Option 1: Use environment variable MODAPI_WEBHOOK_SECRET
     const payload = await moderationApi.webhooks.constructEvent(
       Buffer.from(body),
-      webhookSignatureHeader,
-      process.env.MODAPI_WEBHOOK_SECRET!
+      webhookSignatureHeader
     );
+
+    // Option 2: Pass secret explicitly (overrides environment variable)
+    // const payload = await moderationApi.webhooks.constructEvent(
+    //   Buffer.from(body),
+    //   webhookSignatureHeader,
+    //   'whsec_...'
+    // );
 
     return NextResponse.json({ received: true });
   } catch (error) {
@@ -178,23 +187,30 @@ export async function POST(request: Request) {
 ```
 
 ```js Next.js SDK (pages router)
-import ModerationApi from "@moderation-api/sdk";
-
-const moderationApi = new ModerationApi({
-  key: PROJECT_API_KEY,
-});
-
+import ModerationAPI from "@moderation-api/sdk";
 import { buffer } from "micro";
+
+// Use environment variable MODAPI_SECRET_KEY
+const moderationApi = new ModerationAPI();
 
 const handler = async (req, res) => {
   const webhookRawBody = await buffer(req);
   const webhookSignatureHeader = req.headers["modapi-signature"];
 
+  // Option 1: Use environment variable MODAPI_WEBHOOK_SECRET
   const payload = await moderationApi.webhooks.constructEvent(
     webhookRawBody,
-    webhookSignatureHeader,
-    process.env.MODAPI_WEBHOOK_SECRET
+    webhookSignatureHeader
   );
+
+  // Option 2: Pass secret explicitly (overrides environment variable)
+  // const payload = await moderationApi.webhooks.constructEvent(
+  //   webhookRawBody,
+  //   webhookSignatureHeader,
+  //   'whsec_...'
+  // );
+
+  res.json({ received: true });
 };
 
 // disable body parser so we can access raw body

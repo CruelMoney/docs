@@ -13,43 +13,51 @@ Remember to [create a project](/content-moderation/creating-projects) first and 
 <CodeGroup>
 
 ```typescript Node.js example
-import ModerationApi from "@moderation-api/sdk";
+import ModerationAPI from "@moderation-api/sdk";
 
-const moderationApi = new ModerationApi({
-  key: process.env.API_KEY,
-});
+// Configure with environment variable MODAPI_SECRET_KEY
+const moderationApi = new ModerationAPI();
 
 // Text moderation
-const textAnalysis = await moderationApi.moderate.text({
-  value: "Hello world!",
+const textResult = await moderationApi.content.submit({
+  content: {
+    type: "text",
+    text: "Hello world!",
+  },
   // Optional content data
   contentId: "text-1",
-  authorId: "123",
-  contextId: "456",
+  authorId: "user-123",
+  conversationId: "room-456",
   metadata: {
     customField: "value",
   },
 });
 
-if (textAnalysis.flagged) {
-  // Return error to user etc.
+// Use the API's recommendation
+if (textResult.recommendation.action === "reject") {
+  // Block the content
+} else if (textResult.recommendation.action === "review") {
+  // Send to moderation queue
 } else {
-  // Add to database etc.
+  // Content approved - add to database
 }
 
 // Image moderation
-const imageAnalysis = await moderationApi.moderate.image({
-  url: "https://example.com/image.jpg",
+const imageResult = await moderationApi.content.submit({
+  content: {
+    type: "image",
+    url: "https://example.com/image.jpg",
+  },
   // Optional content data
   contentId: "image-1",
-  authorId: "123",
-  contextId: "456",
+  authorId: "user-123",
   metadata: {
     customField: "value",
   },
 });
 
-if (imageAnalysis.flagged) {
+// Simple flagged check
+if (imageResult.evaluation.flagged) {
   // Return error to user etc.
 } else {
   // Add to database etc.
@@ -57,26 +65,30 @@ if (imageAnalysis.flagged) {
 ```
 
 ```javascript Fetch example
-const data = await fetch("https://api.moderationapi.com/v1/moderate/text", {
+const data = await fetch("https://api.moderationapi.com/v1/moderate", {
   method: "POST",
   headers: {
     Authorization: `Bearer ${API_KEY}`,
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    value: "Hello world!",
+    content: {
+      type: "text",
+      text: "Hello world!",
+    },
     // Optional content data
     contentId: "text-1",
-    authorId: "123",
-    contextId: "456",
+    authorId: "user-123",
+    conversationId: "room-456",
     metadata: {
       customField: "value",
     },
   }),
 });
 
-const { flagged } = await data.json();
+const response = await data.json();
 
-if (flagged) {
+if (response.evaluation.flagged) {
   // Return error to user etc.
 } else {
   // Add to database etc.
@@ -172,11 +184,11 @@ We provide 5 different endpoints for analyzing content:
   icon="align-left"
   href="/api-reference/moderate/analyze-text"
 >
-  /api/moderate/text
+  /api/moderate
 </Card>
 
 <Card title="Image" icon="image" href="/api-reference/moderate/analyze-image">
-  /api/moderate/image
+  /api/moderate
 </Card>
 
 <Card
@@ -184,7 +196,7 @@ We provide 5 different endpoints for analyzing content:
   icon="brackets-curly"
   href="/api-reference/moderate/analyze-object"
 >
-  /api/moderate/object
+  /api/moderate
 </Card>
 
 <Card
@@ -192,7 +204,7 @@ We provide 5 different endpoints for analyzing content:
   icon="film"
   href="/api-reference/moderate/analyze-video"
 >
-  /api/moderate/video
+  /api/moderate
 </Card>
 
 <Card
@@ -200,14 +212,14 @@ We provide 5 different endpoints for analyzing content:
   icon="waveform-lines"
   href="/api-reference/moderate/analyze-audio"
 >
-  /api/moderate/audio
+  /api/moderate
 </Card>
 
 </CardGroup>
 
 ### Text
 
-[/moderate/text](/api-reference/moderate/analyze-text)
+[/moderate](/api-reference/moderate/analyze-text)
 
 Text moderation is the most common type of content moderation. It's used to moderate text-based content such as:
 
@@ -222,13 +234,13 @@ If you are analyzing chat messages or other thread based content, you might bene
 
 ### Image
 
-[/moderate/image](/api-reference/moderate/analyze-image)
+[/moderate](/api-reference/moderate/analyze-image)
 
 Image moderation involves analyzing visual content to detect inappropriate or harmful images. This can include identifying nudity, violence, or other objectionable content. The Moderation API uses advanced image recognition techniques to provide accurate and reliable results.
 
 ### Object
 
-[/moderate/object](/api-reference/moderate/analyze-object)
+[/moderate](/api-reference/moderate/analyze-object)
 
 Object moderation can be used for a comprehensive content analysis across different media types, and simplifies analyzing an entire entity.
 
@@ -241,13 +253,13 @@ You can select the type of object you want to moderate. Selecting the right type
 
 ### Audio (enterprise)
 
-[/moderate/audio](/api-reference/moderate/analyze-audio)
+[/moderate](/api-reference/moderate/analyze-audio)
 
 Audio moderation is available for enterprise users and involves analyzing audio content to detect inappropriate language or sounds. This can be useful for moderating podcasts, voice messages, or any other audio content.
 
 ### Video (enterprise)
 
-[/moderate/video](/api-reference/moderate/analyze-video)
+[/moderate](/api-reference/moderate/analyze-video)
 
 Video moderation, also available for enterprise users, involves analyzing video content to detect inappropriate scenes or actions. This can include identifying violence, nudity, or other objectionable content within video files.
 
