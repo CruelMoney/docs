@@ -3,16 +3,47 @@ title: "Rate limits"
 description: "Learn about API rate limits and how to work with them."
 ---
 
-The default API rate limit is **60 requests per minute**.
+Different plans have different rate limit tiers based on your subscription plan. You can view your organization's current rate limit tier in your [dashboard](https://dash.moderationapi.com/usage).
 
-We may reduce limits to prevent abuse, or increase limits to enable high-traffic applications. To request an increased rate limit, please contact support.
+To request an increased rate limit, please [contact our sales team](https://moderationapi.com/sales).
 
-## Handling rate limts
+## Rate limit headers
+
+The API returns rate limit information in the response headers for every request:
+
+| Header                  | Description                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| `X-RateLimit-Limit`     | The maximum number of requests you can make in the current time window                |
+| `X-RateLimit-Remaining` | The number of requests remaining in the current time window                           |
+| `X-RateLimit-Reset`     | Unix timestamp (in seconds) when your rate limit will reset                           |
+| `Retry-After`           | Number of seconds to wait before retrying (only included when rate limit is exceeded) |
+
+### Example response headers
+
+```
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 45
+X-RateLimit-Reset: 1699564800
+```
+
+## Handling rate limits
 
 A basic technique for integrations to gracefully handle limiting is to watch for `429` status codes and build in a retry mechanism. The retry mechanism should follow an exponential backoff schedule to reduce request volume when necessary.
+
+When you exceed your rate limit, the API will return a `429` error with a message indicating how long to wait before retrying. Use the `Retry-After` header to determine when to make your next request.
+
+### Example error response
+
+When rate limited, you'll receive a response like:
+
+```json
+{
+  "error": "Rate limit exceeded. Try again in 10 seconds."
+}
+```
+
+The response will include the `Retry-After` header indicating how many seconds to wait.
 
 ## Checking your rate limit
 
 You can check your current rate limit in your [dashboard under usage](https://dash.moderationapi.com/usage).
-
-You might also want to check what your peak usage is for a given time period. You can do in the [analytics page](https://dash.moderationapi.com/analytics) in your dashboard. Check the Peak RPM chart. This is useful to see if you are close to hitting your rate limit.
