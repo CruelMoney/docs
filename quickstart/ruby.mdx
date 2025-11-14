@@ -52,7 +52,7 @@ text_request = ModerationApi::ModerationTextRequest.new(
     text: "Hello world!"
   },
   author_id: "123",
-  context_id: "456",
+  conversation_id: "456",
   metadata: {
     custom_field: "value"
   }
@@ -90,7 +90,7 @@ image_request = ModerationApi::ModerationImageRequest.new(
     url: "https://example.com/image.jpg"
   },
   author_id: "123",
-  context_id: "456",
+  conversation_id: "456",
   metadata: {
     custom_field: "value"
   }
@@ -141,7 +141,7 @@ object_request = ModerationApi::ModerationObjectRequest.new(
     }
   },
   author_id: "123",
-  context_id: "456",
+  conversation_id: "456",
   metadata: {
     custom_field: "value"
   }
