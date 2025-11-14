@@ -50,9 +50,9 @@ The webhooks require your server to respond with a 200 status code within 5 seco
       The metadata of the content item. Specified by you when sending the
       content for [moderation](/api-reference).
     </ResponseField>
-    <ResponseField name="contextId" type="string">
-      The context id of the content item. Specified by you when sending the
-      content for [moderation](/api-reference).
+    <ResponseField name="conversationId" type="string">
+      The conversation id of the content item. Specified by you when sending the
+      content for [moderation](/api-reference). _(Formerly `contextId`)_
     </ResponseField>
     <ResponseField name="authorId" type="string">
       The author id of the content item. Specified by you when sending the
@@ -126,7 +126,7 @@ The webhooks require your server to respond with a 200 status code within 5 seco
     "name": "Remove content",
     "value": "spam"
   },
-  "contextId": "demo-context",
+  "conversationId": "demo-context",
   "authorId": "author-123"
 }
 ```

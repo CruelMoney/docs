@@ -113,15 +113,15 @@ When including a `contentId` Moderation API will know that submitting the same `
 
 The contentId can also be used to excute actions in the reviiew queue programmatically. For example you can allow users to report content on your platform and then add it to a review queue.
 
-### ContextId
+### ConversationId
 
-The [text moderation endpoint](/api-reference) allows for `contextId` in the request body.<br></br>
+The [text moderation endpoint](/api-reference) allows for `conversationId` in the request body. _(Formerly `contextId`)_<br></br>
 
 This could be the ID of a chatroom or a post thread.<br></br>
 
-If you are using [review queues](/review-queues) the `contextId` can also be used to filter the review queue to only show content from a specific context.
+If you are using [review queues](/review-queues) the `conversationId` can also be used to filter the review queue to only show content from a specific context.
 
-Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the contextId.
+Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the conversationId.
 
 ### AuthorId
 
@@ -151,9 +151,9 @@ Metadata is shown in the [review queues](/review-queues) and included in any web
 
 ## Context awareness
 
-Enable `Context awareness` in your project settings, and then include `authorId` and/or `contextId` in the API request. This enables models to pull in previous messages for their analysis and increase their accuracy.
+Enable `Context awareness` in your project settings, and then include `authorId` and/or `conversationId` in the API request. This enables models to pull in previous messages for their analysis and increase their accuracy.
 
-LLM models like AI agents can use the `contextId` to see the previous messages in the same context, and `authorId` to see the previous messages from the same author.
+LLM models like AI agents can use the `conversationId` to see the previous messages in the same context, and `authorId` to see the previous messages from the same author.
 
 Specifically this can prevent unwanted content that are spread of multiple messages.
 

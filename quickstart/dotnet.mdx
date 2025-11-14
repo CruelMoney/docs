@@ -51,20 +51,24 @@ public class ModerationClient
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
     }
 
-    public async Task<TextModerationResult> ModerateTextAsync(string text, string authorId = "123", string contextId = "456")
+    public async Task<TextModerationResult> ModerateTextAsync(string text, string authorId = "123", string conversationId = "456")
     {
         var payload = new
         {
-            value = text,
+            content = new
+            {
+                type = "text",
+                text = text
+            },
             authorId = authorId,
-            contextId = contextId,
+            conversationId = conversationId,
             metadata = new { customField = "value" }
         };
 
         var json = JsonSerializer.Serialize(payload);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate/text", content);
+        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate", content);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -119,20 +123,24 @@ public class ModerationClient
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
     }
 
-    public async Task<ImageModerationResult> ModerateImageAsync(string imageUrl, string authorId = "123", string contextId = "456")
+    public async Task<ImageModerationResult> ModerateImageAsync(string imageUrl, string authorId = "123", string conversationId = "456")
     {
         var payload = new
         {
-            url = imageUrl,
+            content = new
+            {
+                type = "image",
+                url = imageUrl
+            },
             authorId = authorId,
-            contextId = contextId,
+            conversationId = conversationId,
             metadata = new { customField = "value" }
         };
 
         var json = JsonSerializer.Serialize(payload);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate/image", content);
+        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate", content);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -187,29 +195,29 @@ public class ModerationClient
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
     }
 
-    public async Task<ObjectModerationResult> ModerateObjectAsync(object objectData, string authorId = "123", string contextId = "456")
+    public async Task<ObjectModerationResult> ModerateObjectAsync(object objectData, string authorId = "123", string conversationId = "456")
     {
         var payload = new
         {
-            value = new
+            content = new
             {
-                type = "Profile",
+                type = "object",
                 data = new
                 {
-                    name = new { type = "text", value = "John Doe" },
-                    email = new { type = "text", value = "john.doe@example.com" },
-                    picture = new { type = "image", value = "https://example.com/image.jpg" }
+                    name = new { type = "text", text = "John Doe" },
+                    email = new { type = "text", text = "john.doe@example.com" },
+                    picture = new { type = "image", url = "https://example.com/image.jpg" }
                 }
             },
             authorId = authorId,
-            contextId = contextId,
+            conversationId = conversationId,
             metadata = new { customField = "value" }
         };
 
         var json = JsonSerializer.Serialize(payload);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate/object", content);
+        var response = await _httpClient.PostAsync($"{BaseUrl}/moderate", content);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
