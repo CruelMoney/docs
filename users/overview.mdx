@@ -22,7 +22,7 @@ User management lets you:
 <Card
   title="User dashboard"
   icon="users"
-  href="https://moderationapi.com/app/users"
+  href="https://dash.moderationapi.com/users"
 >
   Access the user dashboard to view and manage your users.
 </Card>
@@ -45,7 +45,7 @@ endpoint](/api-reference/moderate/analyze-text).
 We recommend using the user ID from your system
 but any unique identifier like email or username will work.
 
-You should now see your users appear in the [user dashboard](https://moderationapi.com/app/users).
+You should now see your users appear in the [user dashboard](https://dash.moderationapi.com/users).
 
 <Note>
   There might be a delay in user creation and trust level calculation. This is
@@ -61,7 +61,7 @@ Here's a common workflow for implementing user management in your moderation sys
 Start by including an `authorId` when submitting content for moderation:
 
 ```javascript
-const response = await fetch("/api/v1/moderate/text", {
+const response = await fetch("https://api.moderationapi.com/v1/moderate/text", {
   method: "POST",
   headers: { Authorization: "Bearer YOUR_API_KEY" },
   body: JSON.stringify({
@@ -79,7 +79,7 @@ Authors are automatically created on first submission.
 [Add additional author information](/users/updating-authors) to improve trust scoring and enable fraud detection:
 
 ```javascript
-await fetch("/api/v1/authors/user_123", {
+await fetch("https://api.moderationapi.com/v1/authors/user_123", {
   method: "PUT",
   headers: { Authorization: "Bearer YOUR_API_KEY" },
   body: JSON.stringify({
@@ -115,7 +115,7 @@ Check the user dashboard or use the API to monitor [trust levels](/users/trust-l
   />
 </Frame>
 
-When you identify problematic users, take action from the [user dashboard](https://moderationapi.com/app/users):
+When you identify problematic users, take action from the [user dashboard](https://dash.moderationapi.com/users):
 
 The user's status will be updated and your application can respond accordingly.
 

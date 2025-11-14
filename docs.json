@@ -25,7 +25,7 @@
     "href": "https://moderationapi.com"
   },
   "api": {
-    "openapi": "https://moderationapi.com/api/v1/openapi.json",
+    "openapi": "https://api.moderationapi.com/v1/openapi.json",
     "playground": {
       "display": "interactive"
     },
@@ -43,13 +43,13 @@
     "links": [
       {
         "label": "Sign up",
-        "href": "https://moderationapi.com/app"
+        "href": "https://dash.moderationapi.com"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://moderationapi.com/app"
+      "href": "https://dash.moderationapi.com"
     }
   },
   "integrations": {

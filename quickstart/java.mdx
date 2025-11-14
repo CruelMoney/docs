@@ -17,7 +17,7 @@ We currently don't have an official SDK for Java, but you can use the [OpenAPI G
 
 ## 2. Submit content
 
-Grab the API key from your [project](https://moderationapi.com/app) and begin submitting text, images, or other media to your project for moderation.
+Grab the API key from your [project](https://dash.moderationapi.com) and begin submitting text, images, or other media to your project for moderation.
 
 <CodeGroup>
 
@@ -31,7 +31,7 @@ import org.json.JSONObject;
 public class TextModeration {
     public static void main(String[] args) {
         String API_KEY = "your-api-key"; // Replace with your API key
-        String BASE_URL = "https://moderationapi.com/api/v1";
+        String BASE_URL = "https://api.moderationapi.com/v1";
 
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -82,7 +82,7 @@ import org.json.JSONObject;
 public class ImageModeration {
     public static void main(String[] args) {
         String API_KEY = "your-api-key"; // Replace with your API key
-        String BASE_URL = "https://moderationapi.com/api/v1";
+        String BASE_URL = "https://api.moderationapi.com/v1";
 
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -134,7 +134,7 @@ import org.json.JSONObject;
 public class ObjectModeration {
     public static void main(String[] args) {
         String API_KEY = "your-api-key"; // Replace with your API key
-        String BASE_URL = "https://moderationapi.com/api/v1";
+        String BASE_URL = "https://api.moderationapi.com/v1";
 
         try {
             HttpClient client = HttpClient.newHttpClient();

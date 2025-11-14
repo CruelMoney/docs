@@ -5,7 +5,7 @@ openapi: post /actions/execute
 <RequestExample>
 
 ```bash cURL
-curl -X POST 'https://moderationapi.com/api/v1/actions/execute' \
+curl -X POST 'https://api.moderationapi.com/v1/actions/execute' \
   -H 'Authorization: Bearer <token>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -53,7 +53,7 @@ api.actions_execute(
 ```python Python
 import requests
 
-url = "https://moderationapi.com/api/v1/actions/execute"
+url = "https://api.moderationapi.com/v1/actions/execute"
 headers = {
     "Authorization": "Bearer <token>",
     "Content-Type": "application/json"
@@ -72,7 +72,7 @@ response = requests.post(url, headers=headers, json=payload)
 
 ```php PHP
 <?php
-$url = "https://moderationapi.com/api/v1/actions/execute";
+$url = "https://api.moderationapi.com/v1/actions/execute";
 $headers = array(
     "Authorization: Bearer <token>",
     "Content-Type: application/json"
@@ -105,7 +105,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 
-String url = "https://moderationapi.com/api/v1/actions/execute";
+String url = "https://api.moderationapi.com/v1/actions/execute";
 String requestBody = """
     {
         "contentIds": [
@@ -141,7 +141,7 @@ import (
 )
 
 func main() {
-    url := "https://moderationapi.com/api/v1/actions/execute"
+    url := "https://api.moderationapi.com/v1/actions/execute"
     data := map[string]interface{}{
         "contentIds": []string{
             "60c9e1c0e4e7e1001c7a0e1e",

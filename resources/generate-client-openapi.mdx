@@ -12,7 +12,7 @@ OpenAPI (formerly known as Swagger) is a widely adopted framework for describing
 You can find our OpenAPI specification at the following URL:
 
 ```bash
-https://moderationapi.com/api/v1/openapi.json
+https://api.moderationapi.com/v1/openapi.json
 ```
 
 Feel free to download the specification file or use the URL directly with any OpenAPI-compatible tool.
@@ -45,19 +45,19 @@ With the CLI installed, you can generate a client library by specifying the inpu
 ```bash
 # Python
 openapi-generator generate \
-  -i https://moderationapi.com/api/v1/openapi.json \
+  -i https://api.moderationapi.com/v1/openapi.json \
   -g python \
   -o ./client-python
 
 # TypeScript (Axios)
 openapi-generator generate \
-  -i https://moderationapi.com/api/v1/openapi.json \
+  -i https://api.moderationapi.com/v1/openapi.json \
   -g typescript-axios \
   -o ./client-typescript
 
 # Java
 openapi-generator generate \
-  -i https://moderationapi.com/api/v1/openapi.json \
+  -i https://api.moderationapi.com/v1/openapi.json \
   -g java \
   -o ./client-java
 ```
@@ -86,7 +86,7 @@ You can generate a client similarly by specifying the specification URL or a loc
 
 ```bash
 swagger-codegen generate \
-  -i https://moderationapi.com/api/v1/openapi.json \
+  -i https://api.moderationapi.com/v1/openapi.json \
   -l python \
   -o ./client-python
 ```
@@ -104,7 +104,7 @@ If you prefer a Python-first approach, consider [openapi-python-client](https://
 ```bash
 pip install openapi-python-client
 openapi-python-client generate \
-  --url https://moderationapi.com/api/v1/openapi.json
+  --url https://api.moderationapi.com/v1/openapi.json
 ```
 
 By default, this creates a new folder with a Python package ready to install and use.
@@ -115,7 +115,7 @@ For projects that primarily use TypeScript, [openapi-typescript](https://github.
 
 ```bash
 npm install openapi-typescript
-npx openapi-typescript https://moderationapi.com/api/v1/openapi.json -o types.ts
+npx openapi-typescript https://api.moderationapi.com/v1/openapi.json -o types.ts
 ```
 
 This approach focuses on generating TypeScript type definitions rather than a fully featured client library, enabling you to write custom service logic while still benefiting from type safety.

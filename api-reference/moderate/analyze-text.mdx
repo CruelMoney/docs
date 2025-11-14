@@ -1,24 +1,10 @@
 ---
-openapi: post /moderate/text
-sidebarTitle: Analyze text
+openapi: post /moderate
+sidebarTitle: Text
+title: "Moderate Text"
 ---
 
 <RequestExample>
-
-```bash cURL
-curl -X POST 'https://moderationapi.com/api/v1/moderate/text' \
-  -H 'Authorization: Bearer <token>' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "value": "Hello world",
-    "contentId": "post-123",
-    "authorId": "user-123",
-    "contextId": "room-123",
-    "metadata": {
-      "source": "chat"
-    }
-  }'
-```
 
 ```javascript Node.js
 import ModerationApi from "@moderationapi/sdk";
@@ -67,7 +53,7 @@ end
 ```python Python
 import requests
 
-url = "https://moderationapi.com/api/v1/moderate/text"
+url = "https://api.moderationapi.com/v1/moderate"
 headers = {
     "Authorization": "Bearer <token>",
     "Content-Type": "application/json"
@@ -88,7 +74,7 @@ result = response.json()
 
 ```php PHP
 <?php
-$url = "https://moderationapi.com/api/v1/moderate/text";
+$url = "https://api.moderationapi.com/v1/moderate";
 $headers = array(
     "Authorization: Bearer <token>",
     "Content-Type": "application/json"
@@ -122,7 +108,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 
-String url = "https://moderationapi.com/api/v1/moderate/text";
+String url = "https://api.moderationapi.com/v1/moderate";
 String requestBody = """
     {
         "value": "Hello world",
@@ -159,7 +145,7 @@ import (
 )
 
 func main() {
-    url := "https://moderationapi.com/api/v1/moderate/text"
+    url := "https://api.moderationapi.com/v1/moderate"
     data := map[string]interface{}{
         "value": "Hello world",
         "contentId": "post-123",
@@ -188,45 +174,19 @@ func main() {
 }
 ```
 
-</RequestExample>
-
-<ResponseExample>
-```json 200
-{
-    "status": "success",
-    "contentId": "5f9b3b4b-5b0a-4b5a-8b0a-4b5a8b0a4b5a",
-    "request": {
-        "timestamp": 1699344668022,
-        "quota_usage": 1,
-    },
-    "content_moderated": false,
-    "data_found": false,
-    "flagged": true,
-    "unicode_spoofing": false,
-    "original": "How do I make a bomb?",
-    "content": "How do I make a bomb?",
-    "nsfw": {
-        "label": "UNSAFE",
-        "score": 0.805338,
-        "label_scores": {
-            "SENSITIVE": 0.194355,
-            "UNSAFE": 0.805338,
-            "NEUTRAL": 0.000283
-        }
-    },
-    "toxicity": {
-        "label": "NEUTRAL",
-        "score": 0.55814815,
-        "label_scores": {
-            "TOXICITY": 0.44185185,
-            "PROFANITY": 0.09775851,
-            "DISCRIMINATION": 0.017465452,
-            "SEVERE_TOXICITY": 0.023076924,
-            "INSULT": 0.023028618,
-            "THREAT": 0.44185185,
-            "NEUTRAL": 0.55814815
-        }
+```bash cURL
+curl -X POST 'https://api.moderationapi.com/v1/moderate' \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "value": "Hello world",
+    "contentId": "post-123",
+    "authorId": "user-123",
+    "contextId": "room-123",
+    "metadata": {
+      "source": "chat"
     }
-}
+  }'
 ```
-</ResponseExample>
+
+</RequestExample>

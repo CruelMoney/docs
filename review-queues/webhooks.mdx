@@ -3,7 +3,7 @@ title: "Webhooks"
 sidebarTitle: "Webhooks"
 ---
 
-You can set up webhooks for common events and actions from the [moderation queue](/review-queues/overview). This is useful if you want to integrate the queue with your own systems. Webhooks are configured under [integrations in your dashboard](https://moderationapi.com/app/moderation/integrations)<br></br>
+You can set up webhooks for common events and actions from the [moderation queue](/review-queues/overview). This is useful if you want to integrate the queue with your own systems. Webhooks are configured under [integrations in your dashboard](https://dash.moderationapi.com/moderation/integrations)<br></br>
 
 The webhook payload will be sent as a `POST` request to the URL you specify. <br></br>
 
@@ -135,7 +135,7 @@ The webhooks require your server to respond with a 200 status code within 5 seco
 
 You can verify that the webhook is coming from us by comparing the signature of the payload with the signature provided in the `modapi-signature` header. <br></br>
 
-The signature is a `HMAC SHA256` hash of the payload using your webhook secret as the key. Find you webhook secret under [integrations in your dashboard](https://moderationapi.com/app/moderation/integrations).
+The signature is a `HMAC SHA256` hash of the payload using your webhook secret as the key. Find you webhook secret under [integrations in your dashboard](https://dash.moderationapi.com/moderation/integrations).
 
 <CodeGroup>
 
@@ -278,7 +278,7 @@ To prevent replay attacks, you can use the timestamp in the payload of the webho
 
 ### Check events log
 
-If webhooks aren't working as expected, first check the [events log](https://moderationapi.com/app/moderation/events) in your dashboard to see detailed information about webhook delivery attempts and any failures.
+If webhooks aren't working as expected, first check the [events log](https://dash.moderationapi.com/moderation/events) in your dashboard to see detailed information about webhook delivery attempts and any failures.
 
 ### Allow Moderation API
 

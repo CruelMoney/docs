@@ -25,7 +25,7 @@ mint dev
 Update docs from OpenAPI
 
 ```
-wget -O openapi.json https://moderationapi.com/api/v1/openapi.json
+wget -O openapi.json https://api.moderationapi.com/v1/openapi.json
 npx @mintlify/scraping@latest openapi-file openapi.json -o api-reference
 ```
 

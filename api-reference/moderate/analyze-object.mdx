@@ -1,12 +1,13 @@
 ---
-openapi: post /moderate/object
-sidebarTitle: Analyze object
+openapi: post /moderate
+sidebarTitle: Objects
+title: "Moderate Objects"
 ---
 
 <RequestExample>
 
 ```bash cURL
-curl -X POST 'https://moderationapi.com/api/v1/moderate/object' \
+curl -X POST 'https://api.moderationapi.com/v1/moderate/object' \
   -H 'Authorization: Bearer <token>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -112,7 +113,7 @@ end
 ```python Python
 import requests
 
-url = "https://moderationapi.com/api/v1/moderate/object"
+url = "https://api.moderationapi.com/v1/moderate/object"
 headers = {
     "Authorization": "Bearer <token>",
     "Content-Type": "application/json"
@@ -148,7 +149,7 @@ result = response.json()
 
 ```php PHP
 <?php
-$url = "https://moderationapi.com/api/v1/moderate/object";
+$url = "https://api.moderationapi.com/v1/moderate/object";
 $headers = array(
     "Authorization: Bearer <token>",
     "Content-Type: application/json"
@@ -197,7 +198,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 
-String url = "https://moderationapi.com/api/v1/moderate/object";
+String url = "https://api.moderationapi.com/v1/moderate/object";
 String requestBody = """
     {
         "value": {
@@ -249,7 +250,7 @@ import (
 )
 
 func main() {
-    url := "https://moderationapi.com/api/v1/moderate/object"
+    url := "https://api.moderationapi.com/v1/moderate/object"
     data := map[string]interface{}{
         "value": map[string]interface{}{
             "type": "profile",

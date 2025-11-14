@@ -1,23 +1,10 @@
 ---
-openapi: post /moderate/image
+openapi: post /moderate
+sidebarTitle: Images
+title: "Moderate Images"
 ---
 
 <RequestExample>
-
-```bash cURL
-curl -X POST 'https://moderationapi.com/api/v1/moderate/image' \
-  -H 'Authorization: Bearer <token>' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "url": "https://example.com/image.jpg",
-    "contentId": "image-123",
-    "authorId": "user-123",
-    "contextId": "post-123",
-    "metadata": {
-      "source": "user_upload"
-    }
-  }'
-```
 
 ```javascript Node.js
 import ModerationApi from "@moderationapi/sdk";
@@ -26,11 +13,11 @@ const moderationApi = new ModerationApi({
   apiKey: "<token>",
 });
 
-const result = await moderationApi.moderate.image({
-  url: "https://example.com/image.jpg",
+const result = await moderationApi.moderate({
+  content: { type: "image", url: "https://example.com/image.jpg" },
   contentId: "image-123",
   authorId: "user-123",
-  contextId: "post-123",
+  conversationId: "post-123",
   metadata: {
     source: "user_upload",
   },
@@ -46,7 +33,10 @@ end
 
 api_instance = ModerationApi::ModerateApi.new
 request = ModerationApi::ModerationImageRequest.new({
-  url: 'https://example.com/image.jpg',
+  content: {
+    type: 'image',
+    url: 'https://example.com/image.jpg'
+  },
   content_id: 'image-123',
   author_id: 'user-123',
   context_id: 'post-123',
@@ -66,16 +56,19 @@ end
 ```python Python
 import requests
 
-url = "https://moderationapi.com/api/v1/moderate/image"
+url = "https://api.moderationapi.com/v1/moderate"
 headers = {
     "Authorization": "Bearer <token>",
     "Content-Type": "application/json"
 }
 payload = {
-    "url": "https://example.com/image.jpg",
+    "content": {
+        "type": "image",
+        "url": "https://example.com/image.jpg"
+    },
     "contentId": "image-123",
     "authorId": "user-123",
-    "contextId": "post-123",
+    "conversationId": "post-123",
     "metadata": {
         "source": "user_upload"
     }
@@ -87,16 +80,19 @@ result = response.json()
 
 ```php PHP
 <?php
-$url = "https://moderationapi.com/api/v1/moderate/image";
+$url = "https://api.moderationapi.com/v1/moderate";
 $headers = array(
     "Authorization: Bearer <token>",
     "Content-Type: application/json"
 );
 $data = array(
-    "url" => "https://example.com/image.jpg",
+    "content" => array(
+        "type" => "image",
+        "url" => "https://example.com/image.jpg"
+    ),
     "contentId" => "image-123",
     "authorId" => "user-123",
-    "contextId" => "post-123",
+    "conversationId" => "post-123",
     "metadata" => array(
         "source" => "user_upload"
     )
@@ -121,13 +117,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
 
-String url = "https://moderationapi.com/api/v1/moderate/image";
+String url = "https://api.moderationapi.com/v1/moderate";
 String requestBody = """
     {
-        "url": "https://example.com/image.jpg",
+        "content": {
+            "type": "image",
+            "url": "https://example.com/image.jpg"
+        },
         "contentId": "image-123",
         "authorId": "user-123",
-        "contextId": "post-123",
+        "conversationId": "post-123",
         "metadata": {
             "source": "user_upload"
         }
@@ -158,12 +157,15 @@ import (
 )
 
 func main() {
-    url := "https://moderationapi.com/api/v1/moderate/image"
+    url := "https://api.moderationapi.com/v1/moderate"
     data := map[string]interface{}{
-        "url": "https://example.com/image.jpg",
+        "content": map[string]interface{}{
+            "type": "image",
+            "url": "https://example.com/image.jpg"
+        },
         "contentId": "image-123",
         "authorId": "user-123",
-        "contextId": "post-123",
+        "conversationId": "post-123",
         "metadata": map[string]interface{}{
             "source": "user_upload",
         },
@@ -187,41 +189,22 @@ func main() {
 }
 ```
 
-</RequestExample>
-
-<ResponseExample>
-```json 200
-{
-    "status": "success",
-    "contentId": "image-123",
-    "request": {
-        "timestamp": 1699344668022,
-        "quota_usage": 1
+```bash cURL
+curl -X POST 'https://api.moderationapi.com/v1/moderate' \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "content": {
+      "type": "image",
+      "url": "https://example.com/image.jpg"
     },
-    "flagged": false,
-    "labels": [
-        {
-            "label": "nudity",
-            "score": 0.001
-        },
-        {
-            "label": "suggestive",
-            "score": 0.002
-        },
-        {
-            "label": "gore",
-            "score": 0.001
-        },
-        {
-            "label": "hate",
-            "score": 0.001
-        },
-        {
-            "label": "violence",
-            "score": 0.001
-        }
-    ],
-    "texts": ["Sample text found in image"]
-}
+    "contentId": "image-123",
+    "authorId": "user-123",
+    "conversationId": "post-123",
+    "metadata": {
+      "source": "user_upload"
+    }
+  }'
 ```
-</ResponseExample>
+
+</RequestExample>
