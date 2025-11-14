@@ -40,7 +40,10 @@ end
 
 api_instance = ModerationApi::ModerateApi.new
 request = ModerationApi::ModerationTextRequest.new({
-  value: 'Hello world',
+  content: {
+    type: 'text',
+    text: 'Hello world'
+  },
   content_id: 'post-123',
   author_id: 'user-123',
   context_id: 'room-123',
@@ -66,10 +69,13 @@ headers = {
     "Content-Type": "application/json"
 }
 payload = {
-    "value": "Hello world",
+    "content": {
+        "type": "text",
+        "text": "Hello world"
+    },
     "contentId": "post-123",
     "authorId": "user-123",
-    "contextId": "room-123",
+    "conversationId": "room-123",
     "metadata": {
         "source": "chat"
     }
@@ -87,10 +93,13 @@ $headers = array(
     "Content-Type": "application/json"
 );
 $data = array(
-    "value" => "Hello world",
+    "content" => array(
+        "type" => "text",
+        "text" => "Hello world"
+    ),
     "contentId" => "post-123",
     "authorId" => "user-123",
-    "contextId" => "room-123",
+    "conversationId" => "room-123",
     "metadata" => array(
         "source" => "chat"
     )
@@ -118,10 +127,13 @@ import java.net.URI;
 String url = "https://api.moderationapi.com/v1/moderate";
 String requestBody = """
     {
-        "value": "Hello world",
+        "content": {
+            "type": "text",
+            "text": "Hello world"
+        },
         "contentId": "post-123",
         "authorId": "user-123",
-        "contextId": "room-123",
+        "conversationId": "room-123",
         "metadata": {
             "source": "chat"
         }
@@ -154,13 +166,16 @@ import (
 func main() {
     url := "https://api.moderationapi.com/v1/moderate"
     data := map[string]interface{}{
-        "value": "Hello world",
+        "content": map[string]interface{}{
+            "type": "text",
+            "text": "Hello world",
+        },
         "contentId": "post-123",
         "authorId": "user-123",
-        "contextId": "room-123",
+        "conversationId": "room-123",
         "metadata": map[string]interface{}{
-            "source": "chat"
-        }
+            "source": "chat",
+        },
     }
 
     jsonData, _ := json.Marshal(data)
@@ -186,10 +201,13 @@ curl -X POST 'https://api.moderationapi.com/v1/moderate' \
   -H 'Authorization: Bearer <token>' \
   -H 'Content-Type: application/json' \
   -d '{
-    "value": "Hello world",
+    "content": {
+      "type": "text",
+      "text": "Hello world"
+    },
     "contentId": "post-123",
     "authorId": "user-123",
-    "contextId": "room-123",
+    "conversationId": "room-123",
     "metadata": {
       "source": "chat"
     }
