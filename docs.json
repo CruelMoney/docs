@@ -27,9 +27,9 @@
     "href": "https://moderationapi.com"
   },
   "api": {
-    "openapi": "https://api.moderationapi.com/v1/openapi.json",
+    "openapi": "https://app.stainless.com/api/spec/documented/moderation-api/openapi.documented.yml",
     "playground": {
-      "display": "interactive"
+      "display": "none"
     },
     "mdx": {
       "auth": {
