@@ -26,6 +26,12 @@
     "dark": "/logo/light.svg",
     "href": "https://moderationapi.com"
   },
+  "redirects": [
+    {
+      "source": "/quickstart/nodejs",
+      "destination": "/quickstart/typescript"
+    }
+  ],
   "api": {
     "openapi": "https://app.stainless.com/api/spec/documented/moderation-api/openapi.documented.yml",
     "playground": {
@@ -76,7 +82,7 @@
                 "group": "Quickstart",
                 "icon": "rocket",
                 "pages": [
-                  "quickstart/nodejs",
+                  "quickstart/typescript",
                   "quickstart/ruby",
                   "quickstart/python",
                   "quickstart/php",
