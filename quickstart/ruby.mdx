@@ -21,13 +21,17 @@ gem install moderation_api
 
 ```bash bundler
 # Add this to your Gemfile
-gem 'moderation_api'
+gem 'moderation_api', '~> 2.0.0'
 
 # Then run
 bundle install
 ```
 
 </CodeGroup>
+
+<Note>
+  Requires Ruby 3.2.0 or higher.
+</Note>
 
 ## 2. Submit content
 
@@ -36,17 +40,15 @@ Grab the API key from your [project](https://dash.moderationapi.com) and begin s
 <CodeGroup>
 
 ```ruby Text moderation
-require 'moderation_api'
+require "moderation_api"
 
-# Configure your client using an environment variable for the API key
-ModerationApi.configure do |config|
-  config.access_token = ENV['API_KEY']
-end
+# Initialize the client with your secret key
+moderation_api = ModerationAPI::Client.new(
+  secret_key: ENV["MODAPI_SECRET_KEY"] || "your-api-key"
+)
 
-api = ModerationApi::ModerateApi.new
-
-# Text moderation
-text_request = ModerationApi::ModerationTextRequest.new(
+# Submit text for moderation
+response = moderation_api.content.submit(
   content: {
     type: "text",
     text: "Hello world!"
@@ -58,33 +60,35 @@ text_request = ModerationApi::ModerationTextRequest.new(
   }
 )
 
-begin
-  text_analysis = api.moderation_text(text_request)
+# Check if content was flagged
+if response.evaluation.flagged
+  puts "Content was flagged"
+end
 
-  if text_analysis.flagged
-    puts "Text content flagged"
-    # Block the content, show an error, etc...
-  else
-    puts "Text content is safe."
-    # Save to database or proceed...
-  end
-rescue ModerationApi::ApiError => e
-  puts "Error when calling ModerateApi->moderation_text: #{e}"
+# Act on the recommendation
+case response.recommendation.action
+when :allow
+  puts "Text content is safe."
+  # Save to database or proceed...
+when :review
+  puts "Text content needs review"
+  # Send to review queue
+when :reject
+  puts "Text content rejected"
+  # Block the content, show an error, etc...
 end
 ```
 
 ```ruby Image moderation
-require 'moderation_api'
+require "moderation_api"
 
-# Configure your client using an environment variable for the API key
-ModerationApi.configure do |config|
-  config.access_token = ENV['API_KEY']
-end
+# Initialize the client with your secret key
+moderation_api = ModerationAPI::Client.new(
+  secret_key: ENV["MODAPI_SECRET_KEY"] || "your-api-key"
+)
 
-api = ModerationApi::ModerateApi.new
-
-# Image moderation
-image_request = ModerationApi::ModerationImageRequest.new(
+# Submit image for moderation
+response = moderation_api.content.submit(
   content: {
     type: "image",
     url: "https://example.com/image.jpg"
@@ -96,33 +100,35 @@ image_request = ModerationApi::ModerationImageRequest.new(
   }
 )
 
-begin
-  image_analysis = api.moderation_image(image_request)
+# Check if content was flagged
+if response.evaluation.flagged
+  puts "Image was flagged"
+end
 
-  if image_analysis.flagged
-    puts "Image content flagged: #{image_analysis.categories}"
-    # Block or require review
-  else
-    puts "Image is safe."
-    # Save to database or proceed...
-  end
-rescue ModerationApi::ApiError => e
-  puts "Error when calling ModerateApi->moderation_image: #{e}"
+# Act on the recommendation
+case response.recommendation.action
+when :allow
+  puts "Image is safe."
+  # Save to database or proceed...
+when :review
+  puts "Image needs review"
+  # Send to review queue
+when :reject
+  puts "Image rejected"
+  # Block or require review
 end
 ```
 
 ```ruby Object moderation
-require 'moderation_api'
+require "moderation_api"
 
-# Configure your client using an environment variable for the API key
-ModerationApi.configure do |config|
-  config.access_token = ENV['API_KEY']
-end
+# Initialize the client with your secret key
+moderation_api = ModerationAPI::Client.new(
+  secret_key: ENV["MODAPI_SECRET_KEY"] || "your-api-key"
+)
 
-api = ModerationApi::ModerateApi.new
-
-# Object moderation
-object_request = ModerationApi::ModerationObjectRequest.new(
+# Submit object for moderation
+response = moderation_api.content.submit(
   content: {
     type: "object",
     data: {
@@ -147,22 +153,66 @@ object_request = ModerationApi::ModerationObjectRequest.new(
   }
 )
 
-begin
-  object_analysis = api.moderation_object(object_request)
+# Check if content was flagged
+if response.evaluation.flagged
+  puts "Object was flagged"
+end
 
-  if object_analysis.flagged
-    puts "Object content flagged"
-    # Block or require review
-  else
-    puts "Object is safe."
-    # Save to database or proceed...
-  end
-rescue ModerationApi::ApiError => e
-  puts "Error when calling ModerateApi->moderation_object: #{e}"
+# Act on the recommendation
+case response.recommendation.action
+when :allow
+  puts "Object is safe."
+  # Save to database or proceed...
+when :review
+  puts "Object needs review"
+  # Send to review queue
+when :reject
+  puts "Object rejected"
+  # Block or require review
 end
 ```
 
 </CodeGroup>
+
+## 3. Handle errors
+
+The SDK throws specific error types for different scenarios:
+
+```ruby
+require "moderation_api"
+
+moderation_api = ModerationAPI::Client.new(
+  secret_key: ENV["MODAPI_SECRET_KEY"] || "your-api-key"
+)
+
+begin
+  response = moderation_api.content.submit(
+    content: {
+      type: "text",
+      text: "Hello world!"
+    }
+  )
+
+  puts "Recommendation: #{response.recommendation.action}"
+
+rescue ModerationAPI::Errors::BadRequestError => e
+  puts "Invalid request: #{e.message}"
+rescue ModerationAPI::Errors::AuthenticationError => e
+  puts "Authentication failed: #{e.message}"
+rescue ModerationAPI::Errors::RateLimitError => e
+  puts "Rate limit exceeded: #{e.message}"
+rescue ModerationAPI::Errors::APIConnectionError => e
+  puts "Connection error: #{e.message}"
+rescue ModerationAPI::Errors::APITimeoutError => e
+  puts "Request timed out: #{e.message}"
+rescue ModerationAPI::Errors::InternalServerError => e
+  puts "Server error: #{e.message}"
+end
+```
+
+<Note>
+  The SDK automatically retries failed requests up to 2 times by default. Configure retries globally with `max_retries: 0` when initializing the client, or per-request using `request_options: {max_retries: 5}`. Timeouts default to 60 seconds and can be customized similarly.
+</Note>
 
 ---
 
