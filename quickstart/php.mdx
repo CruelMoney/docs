@@ -1,7 +1,7 @@
 ---
 title: "Content moderation with PHP"
 sidebarTitle: "PHP"
-description: "Learn how to moderate content using Moderation API's REST endpoints with PHP"
+description: "Learn how to moderate content using Moderation API's PHP SDK"
 icon: php
 ---
 
@@ -11,9 +11,17 @@ icon: php
 
 ---
 
-## 1. Install Dependencies
+## 1. Install the SDK
 
-We currently don't have an official SDK for PHP, but you can use the [OpenAPI Generator](/resources/generate-client-openapi) to generate a PHP client or simply call the API directly using PHP's built-in cURL functions.
+Install the official PHP SDK via Composer:
+
+```bash
+composer require moderation-api/sdk-php
+```
+
+<Note>
+  Requires PHP 8.1.0 or higher. The SDK is currently in beta.
+</Note>
 
 ## 2. Submit content
 
@@ -23,38 +31,25 @@ Grab the API key from your [project](https://dash.moderationapi.com) and begin s
 
 ```php Text moderation
 <?php
-// Configure the client
-$API_KEY = "your-api-key"; // Replace with your API key
-$BASE_URL = "https://api.moderationapi.com/v1";
+use ModerationAPI\Client;
 
-// Text moderation
-$data = array(
-    'content' => array(
+// Initialize the client with your secret key
+$client = new Client(secretKey: getenv('MODAPI_SECRET_KEY') ?: 'your-api-key');
+
+// Submit text for moderation
+$response = $client->content->submit([
+    'content' => [
         'type' => 'text',
         'text' => 'Hello world!'
-    ),
+    ],
     'authorId' => '123',
     'conversationId' => '456',
-    'metadata' => array(
+    'metadata' => [
         'customField' => 'value'
-    )
-);
+    ]
+]);
 
-$ch = curl_init($BASE_URL . "/moderate");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Authorization: Bearer ' . $API_KEY,
-    'Content-Type: application/json'
-));
-
-$response = curl_exec($ch);
-curl_close($ch);
-
-$text_analysis = json_decode($response, true);
-
-if ($text_analysis['flagged']) {
+if ($response->flagged) {
     echo "Text content flagged\n";
     // Block the content, show an error, etc...
 } else {
@@ -65,39 +60,26 @@ if ($text_analysis['flagged']) {
 
 ```php Image moderation
 <?php
-// Configure the client
-$API_KEY = "your-api-key"; // Replace with your API key
-$BASE_URL = "https://api.moderationapi.com/v1";
+use ModerationAPI\Client;
 
-// Image moderation
-$data = array(
-    'content' => array(
+// Initialize the client with your secret key
+$client = new Client(secretKey: getenv('MODAPI_SECRET_KEY') ?: 'your-api-key');
+
+// Submit image for moderation
+$response = $client->content->submit([
+    'content' => [
         'type' => 'image',
         'url' => 'https://example.com/image.jpg'
-    ),
+    ],
     'authorId' => '123',
     'conversationId' => '456',
-    'metadata' => array(
+    'metadata' => [
         'customField' => 'value'
-    )
-);
+    ]
+]);
 
-$ch = curl_init($BASE_URL . "/moderate");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Authorization: Bearer ' . $API_KEY,
-    'Content-Type: application/json'
-));
-
-$response = curl_exec($ch);
-curl_close($ch);
-
-$image_analysis = json_decode($response, true);
-
-if ($image_analysis['flagged']) {
-    echo "Image content flagged: " . implode(', ', $image_analysis['labels']) . "\n";
+if ($response->flagged) {
+    echo "Image content flagged: " . implode(', ', $response->labels) . "\n";
     // Block or require review
 } else {
     echo "Image is safe.\n";
@@ -107,51 +89,38 @@ if ($image_analysis['flagged']) {
 
 ```php Object moderation
 <?php
-// Configure the client
-$API_KEY = "your-api-key"; // Replace with your API key
-$BASE_URL = "https://api.moderationapi.com/v1";
+use ModerationAPI\Client;
 
-// Object moderation
-$data = array(
-    'content' => array(
+// Initialize the client with your secret key
+$client = new Client(secretKey: getenv('MODAPI_SECRET_KEY') ?: 'your-api-key');
+
+// Submit object for moderation
+$response = $client->content->submit([
+    'content' => [
         'type' => 'object',
-        'data' => array(
-            'name' => array(
+        'data' => [
+            'name' => [
                 'type' => 'text',
                 'text' => 'John Doe'
-            ),
-            'email' => array(
+            ],
+            'email' => [
                 'type' => 'text',
                 'text' => 'john.doe@example.com'
-            ),
-            'picture' => array(
+            ],
+            'picture' => [
                 'type' => 'image',
                 'url' => 'https://example.com/image.jpg'
-            )
-        )
-    ),
+            ]
+        ]
+    ],
     'authorId' => '123',
     'conversationId' => '456',
-    'metadata' => array(
+    'metadata' => [
         'customField' => 'value'
-    )
-);
+    ]
+]);
 
-$ch = curl_init($BASE_URL . "/moderate");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Authorization: Bearer ' . $API_KEY,
-    'Content-Type: application/json'
-));
-
-$response = curl_exec($ch);
-curl_close($ch);
-
-$object_analysis = json_decode($response, true);
-
-if ($object_analysis['flagged']) {
+if ($response->flagged) {
     echo "Object content flagged\n";
     // Block or require review
 } else {
@@ -161,6 +130,45 @@ if ($object_analysis['flagged']) {
 ```
 
 </CodeGroup>
+
+## 3. Handle errors
+
+The SDK throws specific exception types for different error scenarios:
+
+```php
+<?php
+use ModerationAPI\Client;
+use ModerationAPI\Core\Exceptions\APIConnectionException;
+use ModerationAPI\Core\Exceptions\BadRequestException;
+use ModerationAPI\Core\Exceptions\AuthenticationException;
+use ModerationAPI\Core\Exceptions\RateLimitException;
+
+$client = new Client(secretKey: getenv('MODAPI_SECRET_KEY') ?: 'your-api-key');
+
+try {
+    $response = $client->content->submit([
+        'content' => [
+            'type' => 'text',
+            'text' => 'Hello world!'
+        ]
+    ]);
+
+    echo $response->flagged ? "Content flagged\n" : "Content is safe\n";
+
+} catch (BadRequestException $e) {
+    echo "Invalid request: " . $e->getMessage();
+} catch (AuthenticationException $e) {
+    echo "Authentication failed: " . $e->getMessage();
+} catch (RateLimitException $e) {
+    echo "Rate limit exceeded: " . $e->getMessage();
+} catch (APIConnectionException $e) {
+    echo "Connection error: " . $e->getMessage();
+}
+```
+
+<Note>
+  The SDK automatically retries failed requests up to 2 times by default. You can configure retries globally when initializing the client with `maxRetries: 0` or per-request using `RequestOptions::with(maxRetries: 5)`.
+</Note>
 
 ---
 
