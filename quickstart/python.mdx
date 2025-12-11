@@ -1,7 +1,7 @@
 ---
 title: "Content moderation with Python"
 sidebarTitle: "Python"
-description: "Learn how to moderate content using Moderation API's REST endpoints with Python"
+description: "Learn how to moderate content using Moderation API's Python SDK"
 icon: python
 ---
 
@@ -11,9 +11,15 @@ icon: python
 
 ---
 
-## 1. Install SDK
+## 1. Install the SDK
 
-We currently don't have an official SDK for Python, but you can use the [OpenAPI Generator](/resources/generate-client-openapi) to generate a Python client or simply call the API directly.
+```bash
+pip install moderation_api
+```
+
+<Note>
+  Requires Python 3.9 or higher. For improved async performance, install with `pip install moderation_api[aiohttp]`.
+</Note>
 
 ## 2. Submit content
 
@@ -22,133 +28,166 @@ Grab the API key from your [project](https://dash.moderationapi.com) and begin s
 <CodeGroup>
 
 ```python Text moderation
-import requests
+import os
+from moderation_api import ModerationAPI
 
-# Configure the client
-API_KEY = "your-api-key"  # Replace with your API key
-BASE_URL = "https://api.moderationapi.com/v1"
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+# Initialize the client with your secret key
+client = ModerationAPI(
+    secret_key=os.environ.get("MODAPI_SECRET_KEY")
+)
 
-# Text moderation
-response = requests.post(
-    f"{BASE_URL}/moderate",
-    headers=headers,
-    json={
-        "content": {
-            "type": "text",
-            "text": "Hello world!"
-        },
-        "authorId": "123",
-        "conversationId": "456",
-        "metadata": {
-            "customField": "value"
-        }
+# Submit text for moderation
+response = client.content.submit(
+    content={
+        "type": "text",
+        "text": "Hello world!"
+    },
+    author_id="123",
+    conversation_id="456",
+    metadata={
+        "custom_field": "value"
     }
 )
 
-text_analysis = response.json()
+# Check if content was flagged
+if response.evaluation.flagged:
+    print("Content was flagged")
 
-if text_analysis["flagged"]:
-    print("Text content flagged")
-    # Block the content, show an error, etc...
-else:
+# Act on the recommendation
+if response.recommendation.action == "allow":
     print("Text content is safe.")
     # Save to database or proceed...
+elif response.recommendation.action == "review":
+    print("Text content needs review")
+    # Send to review queue
+elif response.recommendation.action == "reject":
+    print("Text content rejected")
+    # Block the content, show an error, etc...
 ```
 
 ```python Image moderation
-import requests
+import os
+from moderation_api import ModerationAPI
 
-# Configure the client
-API_KEY = "your-api-key"  # Replace with your API key
-BASE_URL = "https://api.moderationapi.com/v1"
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+# Initialize the client with your secret key
+client = ModerationAPI(
+    secret_key=os.environ.get("MODAPI_SECRET_KEY")
+)
 
-# Image moderation
-response = requests.post(
-    f"{BASE_URL}/moderate",
-    headers=headers,
-    json={
-        "content": {
-            "type": "image",
-            "url": "https://example.com/image.jpg"
-        },
-        "authorId": "123",
-        "conversationId": "456",
-        "metadata": {
-            "customField": "value"
-        }
+# Submit image for moderation
+response = client.content.submit(
+    content={
+        "type": "image",
+        "url": "https://example.com/image.jpg"
+    },
+    author_id="123",
+    conversation_id="456",
+    metadata={
+        "custom_field": "value"
     }
 )
 
-image_analysis = response.json()
+# Check if content was flagged
+if response.evaluation.flagged:
+    print("Image was flagged")
 
-if image_analysis["flagged"]:
-    print("Image content flagged:", image_analysis["labels"])
-    # Block or require review
-else:
+# Act on the recommendation
+if response.recommendation.action == "allow":
     print("Image is safe.")
     # Save to database or proceed...
+elif response.recommendation.action == "review":
+    print("Image needs review")
+    # Send to review queue
+elif response.recommendation.action == "reject":
+    print("Image rejected")
+    # Block or require review
 ```
 
 ```python Object moderation
-import requests
+import os
+from moderation_api import ModerationAPI
 
-# Configure the client
-API_KEY = "your-api-key"  # Replace with your API key
-BASE_URL = "https://api.moderationapi.com/v1"
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+# Initialize the client with your secret key
+client = ModerationAPI(
+    secret_key=os.environ.get("MODAPI_SECRET_KEY")
+)
 
-# Object moderation
-response = requests.post(
-    f"{BASE_URL}/moderate",
-    headers=headers,
-    json={
-        "content": {
-            "type": "object",
-            "data": {
-                "name": {
-                    "type": "text",
-                    "text": "John Doe"
-                },
-                "email": {
-                    "type": "text",
-                    "text": "john.doe@example.com"
-                },
-                "picture": {
-                    "type": "image",
-                    "url": "https://example.com/image.jpg"
-                }
+# Submit object for moderation
+response = client.content.submit(
+    content={
+        "type": "object",
+        "data": {
+            "name": {
+                "type": "text",
+                "text": "John Doe"
+            },
+            "email": {
+                "type": "text",
+                "text": "john.doe@example.com"
+            },
+            "picture": {
+                "type": "image",
+                "url": "https://example.com/image.jpg"
             }
-        },
-        "authorId": "123",
-        "conversationId": "456",
-        "metadata": {
-            "customField": "value"
         }
+    },
+    author_id="123",
+    conversation_id="456",
+    metadata={
+        "custom_field": "value"
     }
 )
 
-object_analysis = response.json()
+# Check if content was flagged
+if response.evaluation.flagged:
+    print("Object was flagged")
 
-if object_analysis["flagged"]:
-    print("Object content flagged")
-    # Block or require review
-else:
+# Act on the recommendation
+if response.recommendation.action == "allow":
     print("Object is safe.")
     # Save to database or proceed...
+elif response.recommendation.action == "review":
+    print("Object needs review")
+    # Send to review queue
+elif response.recommendation.action == "reject":
+    print("Object rejected")
+    # Block or require review
 ```
 
 </CodeGroup>
+
+## 3. Handle errors
+
+The SDK raises specific exception types for different error scenarios:
+
+```python
+import os
+from moderation_api import ModerationAPI
+from moderation_api import APIConnectionError, APIStatusError
+
+client = ModerationAPI(
+    secret_key=os.environ.get("MODAPI_SECRET_KEY")
+)
+
+try:
+    response = client.content.submit(
+        content={
+            "type": "text",
+            "text": "Hello world!"
+        }
+    )
+
+    print(f"Recommendation: {response.recommendation.action}")
+
+except APIStatusError as e:
+    print(f"API error {e.status_code}: {e.message}")
+except APIConnectionError as e:
+    print(f"Connection error: {e}")
+```
+
+<Note>
+  The SDK automatically retries failed requests up to 2 times by default. You can configure retries when initializing the client with `max_retries=0` or per-request.
+</Note>
 
 ---
 

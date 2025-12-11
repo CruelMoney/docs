@@ -18,6 +18,10 @@
   "interaction": {
     "drilldown": true
   },
+
+  "seo": {
+    "indexing": "all"
+  },
   "contextual": {
     "options": ["copy", "view", "claude", "chatgpt", "mcp", "vscode", "cursor"]
   },
