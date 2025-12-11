@@ -4,9 +4,7 @@ sidebarTitle: "Submit content"
 description: "How to submit content for moderation and which content types you can analyze with Moderation API."
 ---
 
-To analyze content, you need to send a POST request with the content to one of the [moderation endpoints](/api-reference/moderate/analyze-text) and you will receive a response with the results right away.
-
-Remember to [create a project](/content-moderation/creating-projects) first and configure the models you want to use to analyze your content.
+To analyze content, send a POST request to the `/moderate` endpoint. The API accepts different content types (text, image, object, video, audio) and returns results immediately.
 
 ---
 
@@ -65,7 +63,7 @@ if (imageResult.evaluation.flagged) {
 ```
 
 ```javascript Fetch example
-const data = await fetch("https://api.moderationapi.com/v1/moderate", {
+const response = await fetch("https://api.moderationapi.com/v1/moderate", {
   method: "POST",
   headers: {
     Authorization: `Bearer ${API_KEY}`,
@@ -86,9 +84,9 @@ const data = await fetch("https://api.moderationapi.com/v1/moderate", {
   }),
 });
 
-const response = await data.json();
+const result = await response.json();
 
-if (response.evaluation.flagged) {
+if (result.evaluation.flagged) {
   // Return error to user etc.
 } else {
   // Add to database etc.
@@ -101,61 +99,95 @@ if (response.evaluation.flagged) {
 
 ## Content metadata
 
-You can add metadata to the content you are sending for moderation. Some specific metadata is used by the moderation pipeline to improve the accuracy of the moderation and some is used to improve the dashboard experience.
+You can add metadata to the content you send for moderation. Some fields are used by the moderation pipeline to improve accuracy, while others enhance the dashboard experience.
 
-### ContentId
+### contentId
 
-Specify a `contentId` to associate the requests with a specific content. This will usually be the content's unique identifier from your own database.
+Specify a `contentId` to associate the request with specific content. This is typically the content's unique identifier from your database.
 
-If you do not specify a `contentId`, the API will generate a random ID for the content.
+If you don't specify a `contentId`, the API generates a random ID for the content.
 
-When including a `contentId` Moderation API will know that submitting the same `contentId` will be an update to the existing content. This is especially useful if you are using [review queues](/review-queues) and want to update the content in the review queue without adding a new item to the queue.
+When you include a `contentId`, submitting the same ID again updates the existing content. This is useful when using [review queues](/review-queues/overview) - you can update content in the queue without creating duplicate items.
 
-The contentId can also be used to excute actions in the reviiew queue programmatically. For example you can allow users to report content on your platform and then add it to a review queue.
+The `contentId` can also be used to execute actions in the review queue programmatically. For example, you can allow users to report content on your platform and then add it to a review queue.
 
-### ConversationId
+### conversationId
 
-The [text moderation endpoint](/api-reference) allows for `conversationId` in the request body. _(Formerly `contextId`)_<br></br>
+Use `conversationId` to group related content together, such as messages in a chatroom or comments on a post.
 
-This could be the ID of a chatroom or a post thread.<br></br>
+If you're using [review queues](/review-queues/overview), the `conversationId` can filter the queue to show content from a specific conversation.
 
-If you are using [review queues](/review-queues) the `conversationId` can also be used to filter the review queue to only show content from a specific context.
+Enable [context awareness](#context-awareness) to improve moderation accuracy using the `conversationId`.
 
-Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the conversationId.
+### authorId
 
-### AuthorId
+Use `authorId` to identify the user who created the content.
 
-The [text moderation endpoint](/api-reference) allows for `authorId` in the request body. <br></br>
+This enables user-level moderation in [review queues](/review-queues/overview) and allows filtering by specific users.
 
-This would be the ID of the user who wrote the content. <br></br>
+Enable [context awareness](#context-awareness) to improve moderation accuracy using the `authorId`.
 
-This is useful if you are using [review queues](/review-queues), as it enables you to perform user level moderation, and to filter the review queue to only show content from a specific user.
+### metaType
 
-Enable [context awareness](#context-awareness) to improve the accuracy of your moderation using the authorId.
+Use `metaType` to specify what kind of content you're moderating. This helps the API apply appropriate analysis:
 
-### Other metadata
+| Value | Use case |
+|-------|----------|
+| `message` | Chat messages, direct messages |
+| `post` | Forum posts, social media posts |
+| `comment` | Comments on posts or articles |
+| `review` | Product or service reviews |
+| `profile` | User profile information |
+| `product` | Product listings |
+| `event` | Event descriptions |
+| `other` | Any other content type |
 
-The [text moderation endpoint](/api-reference) allows for a `metadata` object in the request body. <br></br>
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "text",
+    text: "Great product, highly recommend!",
+  },
+  metaType: "review",
+  authorId: "user-123",
+});
+```
 
-This can be used to add any additional information to the request. For example you can keep a reference ID to the original content in the metadata object. <br></br>
+### channel
 
-Metadata is shown in the [review queues](/review-queues) and included in any webhooks.
+Use `channel` to route content to a specific channel configuration. If not provided, the project's default channel is used.
+
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "text",
+    text: "Hello world!",
+  },
+  channel: "high-risk-content",
+});
+```
+
+### metadata
+
+Use `metadata` to attach any additional information to the request. This object can contain custom key-value pairs.
+
+Metadata is displayed in [review queues](/review-queues/overview) and included in webhooks.
 
 <Tip>
-  If you add a link it will be clickable from the review queue. Useful if you
-  link to the original content in the metadata, you can easily navigate to the
-  original content from the review queues.
+  If you add a link in metadata, it will be clickable from the review queue. This is useful for linking back to the original content in your application.
 </Tip>
 
 ---
 
 ## Context awareness
 
-Enable `Context awareness` in your project settings, and then include `authorId` and/or `conversationId` in the API request. This enables models to pull in previous messages for their analysis and increase their accuracy.
+Enable `Context awareness` in your channel settings, then include `authorId` and/or `conversationId` in API requests. This allows models to analyze previous messages for improved accuracy.
 
-LLM models like AI agents can use the `conversationId` to see the previous messages in the same context, and `authorId` to see the previous messages from the same author.
+When context awareness is enabled, models analyze the current message alongside recent conversation history. The API retrieves previous messages with the same `conversationId` or `authorId` and provides them to the model sequentially, allowing it to understand the full context before making a decision.
 
-Specifically this can prevent unwanted content that are spread of multiple messages.
+LLM-based policies can use the `conversationId` to see previous messages in the same conversation, and `authorId` to see previous messages from the same author.
+
+This can prevent unwanted content spread across multiple messages:
 
 ```
 msg 1 -> f
@@ -164,7 +196,7 @@ msg 3 -> c
 msg 4 -> k [FLAGGED with context awareness]
 ```
 
-It can also help understanding messages in the context of a conversation.
+It also helps understand messages in the context of a conversation:
 
 ```
 user 1 -> What's the worst thing you know?
@@ -175,7 +207,7 @@ user 2 -> European people [FLAGGED with context awareness]
 
 ## Content types
 
-We provide 5 different endpoints for analyzing content:
+The `/moderate` endpoint accepts different content types through the `content` object:
 
 <CardGroup cols={2}>
 
@@ -184,11 +216,11 @@ We provide 5 different endpoints for analyzing content:
   icon="align-left"
   href="/api-reference/moderate/analyze-text"
 >
-  /api/moderate
+  Analyze text content
 </Card>
 
 <Card title="Image" icon="image" href="/api-reference/moderate/analyze-image">
-  /api/moderate
+  Analyze image content
 </Card>
 
 <Card
@@ -196,7 +228,7 @@ We provide 5 different endpoints for analyzing content:
   icon="brackets-curly"
   href="/api-reference/moderate/analyze-object"
 >
-  /api/moderate
+  Analyze mixed content types
 </Card>
 
 <Card
@@ -204,7 +236,7 @@ We provide 5 different endpoints for analyzing content:
   icon="film"
   href="/api-reference/moderate/analyze-video"
 >
-  /api/moderate
+  Analyze video content
 </Card>
 
 <Card
@@ -212,72 +244,112 @@ We provide 5 different endpoints for analyzing content:
   icon="waveform-lines"
   href="/api-reference/moderate/analyze-audio"
 >
-  /api/moderate
+  Analyze audio content
 </Card>
 
 </CardGroup>
 
 ### Text
 
-[/moderate](/api-reference/moderate/analyze-text)
+Text moderation is the most common type. Use it for:
 
-Text moderation is the most common type of content moderation. It's used to moderate text-based content such as:
+- Chat messages
+- Forum posts
+- Comments
+- Reviews
+- Product descriptions
+- Profile bios
 
-- chat messages
-- forum posts
-- comments
-- reviews
-- product descriptions
-- profile bios
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "text",
+    text: "Hello world!",
+  },
+});
+```
 
-If you are analyzing chat messages or other thread based content, you might benefit from enabling [context awareness](/content-moderation/submit-content#context-awareness) in your project settings.
+If you're analyzing chat messages or thread-based content, enable [context awareness](#context-awareness) for better accuracy.
 
 ### Image
 
-[/moderate](/api-reference/moderate/analyze-image)
+Image moderation analyzes visual content to detect inappropriate or harmful images, including nudity, violence, or other objectionable content.
 
-Image moderation involves analyzing visual content to detect inappropriate or harmful images. This can include identifying nudity, violence, or other objectionable content. The Moderation API uses advanced image recognition techniques to provide accurate and reliable results.
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "image",
+    url: "https://example.com/image.jpg",
+  },
+});
+```
 
 ### Object
 
-[/moderate](/api-reference/moderate/analyze-object)
+Object moderation analyzes multiple fields at once, useful for moderating entire entities like user profiles or product listings.
 
-Object moderation can be used for a comprehensive content analysis across different media types, and simplifies analyzing an entire entity.
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "object",
+    data: {
+      title: { type: "text", text: "Product name" },
+      description: { type: "text", text: "Product description" },
+      image: { type: "image", url: "https://example.com/product.jpg" },
+    },
+  },
+  metaType: "product",
+});
+```
 
-You can select the type of object you want to moderate. Selecting the right type of object can improve the accuracy of the moderation. We currently support the following types:
-
-- Profile
-- Product
-- Event
-- Object (general)
+The response includes `flagged_fields` in each policy result, showing which specific fields triggered the flag.
 
 ### Audio (enterprise)
 
-[/moderate](/api-reference/moderate/analyze-audio)
+Audio moderation analyzes audio content to detect inappropriate language or sounds. Useful for podcasts, voice messages, or other audio content.
 
-Audio moderation is available for enterprise users and involves analyzing audio content to detect inappropriate language or sounds. This can be useful for moderating podcasts, voice messages, or any other audio content.
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "audio",
+    url: "https://example.com/audio.mp3",
+  },
+});
+```
 
 ### Video (enterprise)
 
-[/moderate](/api-reference/moderate/analyze-video)
+Video moderation analyzes video content to detect inappropriate scenes or actions, including violence, nudity, or other objectionable content.
 
-Video moderation, also available for enterprise users, involves analyzing video content to detect inappropriate scenes or actions. This can include identifying violence, nudity, or other objectionable content within video files.
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "video",
+    url: "https://example.com/video.mp4",
+  },
+});
+```
 
 ---
 
 ## Opt out of content store
 
-The [text moderation endpoint](/api-reference) allows for a `doNotStore` boolean in the request body. <br></br>
+Set `doNotStore` to `true` to prevent the content from being stored. The content will still be analyzed but won't appear in the dashboard or review queues.
 
-If you set `doNotStore` to `true`, the content will not be stored and only pass through the moderation models. <br></br>
-
-<Warning>
-  If you set `doNotStore` to `true`, it will make parts of the moderation
-  dashboards less useful.
-</Warning>
-
-<Warning>
-  Do not disable content store if you wish to train or optimize models based on
-  your own data.
-</Warning>
+```javascript
+const result = await moderationApi.content.submit({
+  content: {
+    type: "text",
+    text: "Hello world!",
+  },
+  doNotStore: true,
+});
 ```
+
+<Warning>
+  Setting `doNotStore` to `true` will make parts of the moderation dashboard less useful, as content won't be available for review or analysis.
+</Warning>
+
+<Warning>
+  Do not disable content storage if you want to train or optimize models based on your data.
+</Warning>

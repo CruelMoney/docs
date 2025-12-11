@@ -4,89 +4,296 @@ sidebarTitle: "Understanding API responses"
 description: "Learn what the API response contains and how to act on it."
 ---
 
-```json Detecting email addresses example response
+The moderation API returns a structured response that helps you decide how to handle content. Here's an example response:
+
+```json Example response
 {
-  "status": "success",
-  "contentId": "676d4d3ddf4a56580e7866d8",
-  "request": {
-    "timestamp": 1735902168566,
-    "quota_usage": 1
+  "content": {
+    "id": "message-123",
+    "masked": true,
+    "modified": "This is a test, my email is {{ email hidden }}"
   },
-  "flagged": true,
-  "content_moderated": false,
-  "unicode_spoofing": false,
-  "data_found": true,
-  "original": "This is a test, my email is test@example.com",
-  "content": "This is a test, my email is {{ email hidden }}",
-  "email": {
-    "matches": ["test@example.com"]
+  "author": {
+    "id": "auth_abc123",
+    "external_id": "user-123",
+    "status": "enabled",
+    "block": null,
+    "trust_level": {
+      "level": 2,
+      "manual": false
+    }
+  },
+  "evaluation": {
+    "flagged": true,
+    "flag_probability": 0.87,
+    "severity_score": 0.3,
+    "unicode_spoofed": false
+  },
+  "recommendation": {
+    "action": "review",
+    "reason_codes": ["severity_review"]
+  },
+  "policies": [
+    {
+      "id": "personal_information",
+      "type": "entity_matcher",
+      "probability": 0.95,
+      "flagged": true,
+      "flagged_fields": [],
+      "matches": [
+        {
+          "probability": 0.95,
+          "match": "test@example.com",
+          "span": [28, 44]
+        }
+      ]
+    },
+    {
+      "id": "toxicity",
+      "type": "classifier",
+      "probability": 0.12,
+      "flagged": false,
+      "labels": [
+        {
+          "id": "toxic",
+          "probability": 0.12,
+          "flagged": false
+        }
+      ]
+    }
+  ],
+  "insights": [
+    {
+      "id": "sentiment",
+      "type": "insight",
+      "probability": 0.78,
+      "value": "neutral"
+    },
+    {
+      "id": "language",
+      "type": "insight",
+      "probability": 0.99,
+      "value": "en"
+    }
+  ],
+  "meta": {
+    "status": "success",
+    "timestamp": 1735902168566,
+    "channel_key": "default",
+    "usage": 1,
+    "processing_time": "245ms"
   }
 }
 ```
 
-It's up to you how you want to act on the result of the moderation.
+How you act on the response is up to you:
 
-- You could block the content and return an error message to your user if it gets flagged.
-- You could store it to your database and let a human review it (e.g. use our [review queues](/review-queues)).
-- Or do something in between and only review content when the AI is not so confident in its decision.
+- Block the content and return an error message to your user if it gets flagged
+- Store it to your database and let a human review it using [review queues](/review-queues/overview)
+- Do something in between and only review content when the AI is not confident in its decision
 
-Here we look at the fields in the response you can use to act on the response.
+---
 
-## Check if flagged
+## Use the recommendation
 
-The easiest way to get started is to use the `flagged` field and will be sufficient for most use cases. The `flagged` field is a boolean that indicates if any of the models that you have enabled detected something non-neutral.
-
-You can adjust the thresholds for flagging content in the project settings. See [flagging thresholds](/content-moderation/flagging-thresholds).
+The easiest way to handle moderation responses is to use the `recommendation` object. It provides a clear action based on your channel configuration, severity scores, and author status.
 
 ```javascript
-if (data.flagged) {
-  // Do something
+switch (response.recommendation.action) {
+  case "reject":
+    // Block the content, show an error to the user
+    throw new Error("Content not allowed");
+  case "review":
+    // Save the content but flag for manual review
+    await saveContent(content, { needsReview: true });
+    break;
+  case "allow":
+    // Content is approved, proceed normally
+    await saveContent(content);
+    break;
 }
 ```
 
-## Utilize model scores
+The `reason_codes` array tells you why a particular recommendation was made:
 
-You can also utilize the model scores to have more granular control over the content moderation. For example, if you want to flag content that has a negative sentiment score of more than 0.9, you can do the following:
+| Reason code | Description |
+|-------------|-------------|
+| `severity_reject` | Content severity score exceeded rejection threshold |
+| `severity_review` | Content severity score exceeded review threshold |
+| `author_block` | The author is blocked or suspended |
+| `dry_run` | Dry run mode is enabled (always returns `allow`) |
+
+---
+
+## Check if flagged
+
+For simple use cases, you can check the `evaluation.flagged` field. This boolean indicates if any of your enabled policies detected something that triggered a flag.
 
 ```javascript
-if (data.flagged && data.sentiment.label_scores.NEGATIVE > 0.9) {
-  // Do something
+if (response.evaluation.flagged) {
+  // Content was flagged by at least one policy
+}
+```
+
+### Severity score
+
+The `severity_score` gives you more granular control. Higher scores indicate more severe violations:
+
+```javascript
+if (response.evaluation.flagged && response.evaluation.severity_score > 0.7) {
+  // High severity - reject immediately
+} else if (response.evaluation.flagged) {
+  // Lower severity - send to review queue
 }
 ```
 
 <Note>
-  We recommend adjusting the thresholds in the project settings and utilize the
-  `flagged` field instead of hardcoding the thresholds in your code.
+  We recommend using the `recommendation.action` field instead of implementing your own threshold logic. Configure thresholds in your channel settings for easier management.
 </Note>
 
-## Saving matched entities
+---
 
-If you are using entity matcher models, you can also save the matched entities to your database. For example, if you want to save the email address that was detected in the content, you can do the following:
+## Work with individual policies
+
+The `policies` array contains results from each policy enabled in your channel, sorted by highest probability. Each policy includes:
+
+| Field | Description |
+|-------|-------------|
+| `id` | The policy identifier (e.g., `toxicity`, `personal_information`) |
+| `type` | Either `classifier` or `entity_matcher` |
+| `probability` | Model confidence level (0-1) |
+| `flagged` | Whether this policy triggered based on your thresholds |
+| `flagged_fields` | For object submissions, which fields triggered the flag |
+
+### Classifier policies
+
+Classifier policies (like `toxicity`, `spam`, `hate`) analyze content and return a probability score:
 
 ```javascript
-if (data.email.mathces.length > 0) {
-  // Save data.email.matches[0] to your database
+const toxicityPolicy = response.policies.find(p => p.id === "toxicity");
+
+if (toxicityPolicy?.flagged) {
+  console.log(`Toxicity detected with ${toxicityPolicy.probability * 100}% confidence`);
+}
+
+// Check specific labels within a classifier
+if (toxicityPolicy?.labels) {
+  const severeLabel = toxicityPolicy.labels.find(l => l.id === "severe");
+  if (severeLabel?.flagged) {
+    // Handle severe toxicity differently
+  }
 }
 ```
 
-## Detecting look-alike characters
+### Entity matcher policies
 
-Spammers might try to get around your moderation by spoofing text with look-alike characters. For example, they might write `🅼🅾🅽🅴🆈` instead of `money`, or it can be an even more subtle replacement like hidden spaces or very similar looking letters.
-
-Moderation API detects and normalizes look-alike characters before analyzing content. You can find the normalized text in the `content` field of the response, and the original text in the `original` field.
-
-Additionally you can use the `unicode_spoofing` field to see if look-alike characters were detected.
-
-Lastly, models like the `spam` model are trained to take look-alike characters into account. Specifically the `spam` model should raise a flag for excessive use of look-alike characters. Other models like the `email` model will run on the normalized text to improve accuracy.
-
-## Storing modified content
-
-Some models can be configured to modify the content. For example, the `email` model can mask email addresses with `{{ email hidden }}`. You can store the modified content in your database by using the `content` field.
+Entity matcher policies (like `personal_information`, `url`) detect and extract specific entities:
 
 ```javascript
-if (data.content_moderated) {
-  // Store data.content in your database
+const piiPolicy = response.policies.find(p => p.id === "personal_information");
+
+if (piiPolicy?.matches?.length > 0) {
+  console.log("Found PII:");
+  piiPolicy.matches.forEach(match => {
+    console.log(`  - "${match.match}" at position ${match.span[0]}-${match.span[1]}`);
+  });
 }
 ```
 
-This can be useful if you need to anonymize/pseudonymize the content before storing it in your database, or if you do not wish your end users to see personal information.
+---
+
+## Handle masked content
+
+If you have PII masking enabled, the API can automatically redact sensitive information. Check the `content` object:
+
+```javascript
+if (response.content.masked) {
+  // Use the modified content with masked values
+  const safeContent = response.content.modified;
+  await saveToDatabase(safeContent);
+} else {
+  // No masking applied, use original content
+  await saveToDatabase(originalContent);
+}
+```
+
+This is useful for:
+- Anonymizing content before storing in your database
+- Preventing users from seeing personal information
+- Compliance with data protection regulations
+
+---
+
+## Check author status
+
+If you're using [author management](/users/overview), the response includes author information:
+
+```javascript
+const { author } = response;
+
+if (author?.status === "blocked") {
+  // Author is permanently blocked
+  throw new Error("Your account has been blocked");
+}
+
+if (author?.status === "suspended") {
+  const until = new Date(author.block.until);
+  throw new Error(`Your account is suspended until ${until.toLocaleDateString()}`);
+}
+
+// Optionally adjust behavior based on trust level
+if (author?.trust_level.level >= 3) {
+  // Trusted author - maybe skip certain checks
+}
+```
+
+---
+
+## Use insights
+
+The `insights` array provides additional analysis that doesn't affect flagging:
+
+```javascript
+const sentimentInsight = response.insights.find(i => i.id === "sentiment");
+const languageInsight = response.insights.find(i => i.id === "language");
+
+console.log(`Language: ${languageInsight?.value}`); // e.g., "en"
+console.log(`Sentiment: ${sentimentInsight?.value}`); // "positive", "neutral", or "negative"
+
+// Route negative sentiment to priority review
+if (sentimentInsight?.value === "negative" && response.evaluation.flagged) {
+  await addToPriorityQueue(content);
+}
+```
+
+---
+
+## Detect unicode spoofing
+
+Spammers sometimes use look-alike characters to bypass moderation (e.g., `mоney` with a Cyrillic "о" instead of Latin "o").
+
+The API detects and normalizes these characters. Check the `unicode_spoofed` field:
+
+```javascript
+if (response.evaluation.unicode_spoofed) {
+  console.log("Content contains look-alike characters");
+  // The policies ran on normalized text for accurate detection
+}
+```
+
+---
+
+## Handle errors
+
+Check `meta.status` for the overall request status:
+
+```javascript
+if (response.meta.status === "partial_success") {
+  // Some policies failed - check the errors array
+  response.errors?.forEach(error => {
+    console.warn(`Policy ${error.id} failed: ${error.message}`);
+  });
+}
+```
+
+The `errors` array contains details about any policies that encountered issues during processing.
