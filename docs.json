@@ -34,6 +34,10 @@
     {
       "source": "/quickstart/nodejs",
       "destination": "/quickstart/typescript"
+    },
+    {
+      "source": "/changelog",
+      "destination": "https://product.moderationapi.com/changelog"
     }
   ],
   "api": {
@@ -264,12 +268,7 @@
       },
       {
         "dropdown": "Changelog",
-        "groups": [
-          {
-            "group": "Changelog",
-            "pages": ["changelog"]
-          }
-        ],
+        "href": "https://product.moderationapi.com/changelog",
         "icon": "list"
       },
       {
