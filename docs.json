@@ -38,6 +38,27 @@
     {
       "source": "/changelog",
       "destination": "https://product.moderationapi.com/changelog"
+    },
+
+    {
+      "source": "/api-reference/moderate/analyze-text",
+      "destination": "/api-reference/moderate/submit-content"
+    },
+    {
+      "source": "/api-reference/moderate/analyze-object",
+      "destination": "/api-reference/moderate/submit-content"
+    },
+    {
+      "source": "/api-reference/moderate/analyze-image",
+      "destination": "/api-reference/moderate/submit-content"
+    },
+    {
+      "source": "/api-reference/moderate/analyze-video",
+      "destination": "/api-reference/moderate/submit-content"
+    },
+    {
+      "source": "/api-reference/moderate/analyze-audio",
+      "destination": "/api-reference/moderate/submit-content"
     }
   ],
   "api": {
@@ -213,13 +234,7 @@
           },
           {
             "group": "Moderate",
-            "pages": [
-              "api-reference/moderate/analyze-text",
-              "api-reference/moderate/analyze-object",
-              "api-reference/moderate/analyze-image",
-              "api-reference/moderate/analyze-video",
-              "api-reference/moderate/analyze-audio"
-            ]
+            "pages": ["api-reference/moderate/submit-content"]
           },
           {
             "group": "Authors",

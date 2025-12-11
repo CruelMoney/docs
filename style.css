@@ -10,3 +10,9 @@
 #sidebar > ul {
   background: transparent;
 }
+
+/* smooth scroll everything */
+html,
+body {
+  scroll-behavior: smooth;
+}
