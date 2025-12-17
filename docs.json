@@ -198,13 +198,7 @@
               }
             ]
           },
-          {
-            "group": "Guides",
-            "pages": [
-              "guides/user-flagged-content",
-              "guides/creating-a-custom-model"
-            ]
-          },
+
           {
             "group": "Resources",
             "pages": ["resources/sdks", "resources/integrations"]
